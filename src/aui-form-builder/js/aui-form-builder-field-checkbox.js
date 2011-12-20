@@ -92,6 +92,13 @@ var FormBuilderCheckBoxField = A.Component.create({
 						name: strings[PREDEFINED_VALUE]
 					};
 				}
+				else if (item.attributeName === REQUIRED) {
+					collection[index] = {
+						attributeName: REQUIRED,
+						editor: false,
+						name: strings[REQUIRED]
+					};
+				}
 			});
 
 			return model;
