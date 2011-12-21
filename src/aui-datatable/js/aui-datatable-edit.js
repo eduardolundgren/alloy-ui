@@ -1129,15 +1129,9 @@ var BaseOptionsCellEditor = A.Component.create({
 			if (options && options.size()) {
 				options.set(instance.get(SELECTED_ATTR_NAME), false);
 
-				if (val) {
-					if (!isArray(val)) {
-						val = val.split(_COMMA);
-					}
-
-					AArray.each(val, function(value) {
-						options.filter('[value="' + Lang.trim(value) + '"]').set(instance.get(SELECTED_ATTR_NAME), true);
-					});
-				}
+				AArray.each(AArray(val), function(value) {
+					options.filter('[value="' + value + '"]').set(instance.get(SELECTED_ATTR_NAME), true);
+				});
 			}
 
 			return val;
