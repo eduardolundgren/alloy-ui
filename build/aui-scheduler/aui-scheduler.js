@@ -1312,8 +1312,15 @@ var SchedulerDayView = A.Component.create({
 
 		plotEvent: function(evt) {
 			var instance = this;
-			var node = evt.get(NODE);
-			var paddingNode = evt.get(PADDING_NODE);
+
+			var nodeList = evt.get(NODE);
+
+			if (nodeList.size() < 2) {
+				evt.addPaddingNode();
+			}
+
+			var node = evt.get(NODE).item(0);
+			var paddingNode = evt.get(NODE).item(1);
 			var endShim = instance.getColumnShimByDate(evt.get(END_DATE));
 			var startShim = instance.getColumnShimByDate(evt.get(START_DATE));
 
@@ -1416,7 +1423,7 @@ var SchedulerDayView = A.Component.create({
 				var distributionRate = (eventWidth/total);
 
 				A.Array.each(intercessors, function(evt, j) {
-					var evtNode = evt.get(NODE);
+					var evtNode = evt.get(NODE).item(0);
 					var left = distributionRate*j;
 					var width = distributionRate*1.7;
 
@@ -1449,9 +1456,9 @@ var SchedulerDayView = A.Component.create({
 			var minutesOffset = DateMath.getMinutesOffset(
 				instance.limitDate(endDate, maxVisibleDate), startDate);
 
-			evt.get(NODE).set(OFFSET_HEIGHT, instance.calculateEventHeight(minutesOffset));
+			evt.get(NODE).item(0).set(OFFSET_HEIGHT, instance.calculateEventHeight(minutesOffset));
 
-			var paddingNode = evt.get(PADDING_NODE);
+			var paddingNode = evt.get(NODE).item(1);
 
 			if (paddingNode.inDoc()) {
 				var paddingMinutesOffset = DateMath.getMinutesOffset(
@@ -1464,10 +1471,9 @@ var SchedulerDayView = A.Component.create({
 		syncEventTopUI: function(evt) {
 			var instance = this;
 
-			evt.get(PADDING_NODE).setStyle(TOP, 0);
-
-			evt.get(NODE).setStyle(
-				TOP, instance.calculateTop(evt.get(START_DATE)) + PX);
+			evt.get(NODE).item(0).setStyle(TOP,
+				instance.calculateTop(evt.get(START_DATE)) + PX);
+			evt.get(NODE).item(1).setStyle(TOP, 0);
 		},
 
 		calculateYDelta: function(startXY, xy) {
@@ -1573,8 +1579,6 @@ var SchedulerDayView = A.Component.create({
 
 				instance[EVENT_PLACEHOLDER].removeTarget(scheduler);
 				instance[EVENT_PLACEHOLDER].get(NODE).addClass(
-					CSS_SCHEDULER_EVENT_PROXY).hide();
-				instance[EVENT_PLACEHOLDER].get(PADDING_NODE).addClass(
 					CSS_SCHEDULER_EVENT_PROXY).hide();
 			}
 
@@ -1897,7 +1901,16 @@ var SchedulerWeekView = A.Component.create({
 });
 
 A.SchedulerWeekView = SchedulerWeekView;
-var CSS_ICON = getCN(ICON),
+var CANCEL = 'cancel',
+	LASSO = 'lasso',
+	MOUSEDOWN = 'mousedown',
+	MOUSEMOVE = 'mousemove',
+	MOUSEUP = 'mouseup',
+	OFFSET_HEIGHT = 'offsetHeight',
+	OFFSET_WIDTH = 'offsetWidth',
+	SAVE = 'save',
+
+	CSS_ICON = getCN(ICON),
 	CSS_ICON_ARROWSTOP_LEFT = getCN(ICON, 'arrowstop-1-l'),
 	CSS_ICON_ARROWSTOP_RIGHT = getCN(ICON, 'arrowstop-1-r'),
 	CSS_SVM_COLGRID = getCN(SCHEDULER_VIEW, MONTH, COLGRID),
@@ -1907,6 +1920,7 @@ var CSS_ICON = getCN(ICON),
 	CSS_SVM_HEADER_COL = getCN(SCHEDULER_VIEW, MONTH, HEADER, COL),
 	CSS_SVM_HEADER_DAY = getCN(SCHEDULER_VIEW, MONTH, HEADER, DAY),
 	CSS_SVM_HEADER_TABLE = getCN(SCHEDULER_VIEW, MONTH, HEADER, TABLE),
+	CSS_SVM_LASSO = getCN(SCHEDULER_VIEW, MONTH, LASSO),
 	CSS_SVM_ROW = getCN(SCHEDULER_VIEW, MONTH, ROW),
 	CSS_SVM_ROW_CONTAINER = getCN(SCHEDULER_VIEW, MONTH, ROW, CONTAINER),
 	CSS_SVM_TABLE_DATA = getCN(SCHEDULER_VIEW, MONTH, TABLE, DATA),
@@ -1933,6 +1947,8 @@ var CSS_ICON = getCN(ICON),
 
 	TPL_SVM_HEADER_DAY = '<th class="' + CSS_SVM_HEADER_DAY + '"><div>&nbsp;</div></th>',
 
+	TPL_SVM_LASSO = '<div class="' + CSS_SVM_LASSO + '"></div>',
+
 	TPL_SVM_CONTAINER = '<div class="' + CSS_SVM_CONTAINER + '">' +
 							'<div class="' + CSS_SVM_ROW_CONTAINER + '">' +
 								'<div class="' + CSS_SVM_ROW + '" style="top: 0; height: 16.6667%;"></div>' +
@@ -1947,7 +1963,7 @@ var CSS_ICON = getCN(ICON),
 	TPL_SVM_TABLE_GRID = '<table cellspacing="0" cellpadding="0" class="' + CSS_SVM_TABLE_GRID + '">' +
 							'<tbody>' +
 								'<tr>' +
-									'<td class="' + [ CSS_SVM_COLGRID, CSS_SVM_COLGRID_FIRST ].join(SPACE) + '">&nbsp;</td>' +
+									'<td class="' + [ CSS_SVM_COLGRID, CSS_SVM_COLGRID_FIRST ].join(SPACE) + '">&nbsp;</div></td>' +
 									'<td class="' + CSS_SVM_COLGRID + '">&nbsp;</td>' +
 									'<td class="' + CSS_SVM_COLGRID + '">&nbsp;</td>' +
 									'<td class="' + CSS_SVM_COLGRID + '">&nbsp;</td>' +
@@ -2045,6 +2061,19 @@ var SchedulerMonthView = A.Component.create({
 			instance[MONTH_ROWS] = instance[MONTH_CONTAINER_NODE].all(DOT+CSS_SVM_ROW);
 		},
 
+		bindUI: function() {
+			var instance = this;
+			var scheduler = instance.get(SCHEDULER);
+			var recorder = scheduler.get(EVENT_RECORDER);
+
+			recorder.on(CANCEL,  A.bind(instance._removeLasso, instance));
+			recorder.on(SAVE,  A.bind(instance._removeLasso, instance));
+
+			instance[MONTH_CONTAINER_NODE].on(MOUSEDOWN, A.bind(instance._onMouseDownGrid, instance));
+			instance[MONTH_CONTAINER_NODE].on(MOUSEMOVE, A.bind(instance._onMouseMoveGrid, instance));
+			instance[MONTH_CONTAINER_NODE].on(MOUSEUP, A.bind(instance._onMouseUpGrid, instance));
+		},
+
 		renderUI: function() {
 			var instance = this;
 
@@ -2059,9 +2088,19 @@ var SchedulerMonthView = A.Component.create({
 			});
 		},
 
+		adjustCurrentDate: function() {
+			var instance = this;
+			var scheduler = instance.get(SCHEDULER);
+
+			scheduler.set(
+				CURRENT_DATE,
+				instance._findCurrentMonthStart()
+			);
+		},
+
 		buildEventsTable: function(rowStartDate, rowEndDate) {
 			var instance = this;
-			var displayRows = 5;
+			var displayRows = 4;
 			var monthEndDate = DateMath.clearTime(instance._findCurrentMonthEnd());
 			var monthStartDate = DateMath.clearTime(instance._findCurrentMonthStart());
 
@@ -2123,25 +2162,48 @@ var SchedulerMonthView = A.Component.create({
 							var evtColNode = A.Node.create(TPL_SVM_TABLE_DATA_COL);
 
 							if (evt) {
-								var evtNode = evtColNode.one(DIV);
-								var splitInfo = instance._getEvtSplitInfo(evt, rowStartDate, rowEndDate);
+								var startDate = evt.get(START_DATE);
 
-								evtColNode.attr(COLSPAN, splitInfo.colspan);
-								evtNode.addClass(CSS_SVM_TABLE_DATA_EVENT).setContent( instance._getEvtLabel(evt) );
+								if (!(DateMath.before(startDate, rowStartDate) && DateMath.getDayOffset(celDate, rowStartDate) > 0)) {
+									var evtNodeList = evt.get(NODE);
+									var paddingIndex = Math.floor(DateMath.getDayOffset(celDate, DateMath.getFirstDayOfWeek(startDate)) / WEEK_LENGTH);
 
-								if (splitInfo.left) {
-									evtNode.addClass(CSS_SVM_TABLE_DATA_EVENT_LEFT).prepend(TPL_SVM_EV_ICON_LEFT);
+									if (evtNodeList.size() < paddingIndex + 1) {
+										evt.addPaddingNode();
+									}
+
+									var evtNode = evtNodeList.item(paddingIndex);
+
+									evtNode.setStyles({
+										height: 'auto',
+										left: 0,
+										top: 0,
+										width: 'auto'
+									});
+
+									var evtNodeContainer = evtColNode.one(DIV);
+
+									evtNode.appendTo(evtNodeContainer);
+
+									var splitInfo = instance._getEvtSplitInfo(evt, celDate, rowStartDate, rowEndDate);
+
+									evtColNode.attr(COLSPAN, splitInfo.colspan);
+									evtNodeContainer.addClass(CSS_SVM_TABLE_DATA_EVENT);
+
+									if (splitInfo.left) {
+										evtNodeContainer.addClass(CSS_SVM_TABLE_DATA_EVENT_LEFT).prepend(TPL_SVM_EV_ICON_LEFT);
+									}
+
+									if (splitInfo.right) {
+										evtNodeContainer.addClass(CSS_SVM_TABLE_DATA_EVENT_RIGHT).append(TPL_SVM_EV_ICON_RIGHT);
+									}
+
+									if (evt.get(PARENT_EVENT)) {
+										evtNodeContainer.addClass(CSS_SVM_TABLE_DATA_EVENT_REPEATED);
+									}
+
+									renderIndex += splitInfo.colspan;
 								}
-
-								if (splitInfo.right) {
-									evtNode.addClass(CSS_SVM_TABLE_DATA_EVENT_RIGHT).append(TPL_SVM_EV_ICON_RIGHT);
-								}
-
-								if (evt.get(PARENT_EVENT)) {
-									evtNode.addClass(CSS_SVM_TABLE_DATA_EVENT_REPEATED);
-								}
-
-								renderIndex += splitInfo.colspan;
 							}
 							else {
 								renderIndex++;
@@ -2179,6 +2241,22 @@ var SchedulerMonthView = A.Component.create({
 			return instance.evtDateStack[key];
 		},
 
+		getNextDate: function() {
+			var instance = this;
+			var scheduler = instance.get(SCHEDULER);
+			var currentDate = scheduler.get(CURRENT_DATE);
+
+			return DateMath.add(currentDate, DateMath.MONTH, 1);
+		},
+
+		getPrevDate: function() {
+			var instance = this;
+			var scheduler = instance.get(SCHEDULER);
+			var currentDate = scheduler.get(CURRENT_DATE);
+
+			return DateMath.subtract(currentDate, DateMath.MONTH, 1);
+		},
+
 		loopDates: function(startDate, endDate, fn, incrementBy, factor) {
 			var instance = this;
 			var curDate = DateMath.clone(startDate);
@@ -2196,6 +2274,8 @@ var SchedulerMonthView = A.Component.create({
 			var monthStartDate = instance._findCurrentMonthStart();
 			var startDateRef = DateMath.safeClearTime(instance._findFirstDayOfWeek(monthStartDate));
 
+			instance.flushViewCache();
+
 			instance.bodyNode.all(DOT+CSS_SVM_TABLE_DATA).remove();
 
 			instance[MONTH_ROWS].each(function(rowNode, index) {
@@ -2211,14 +2291,22 @@ var SchedulerMonthView = A.Component.create({
 			});
 		},
 
-		syncStdContent: function() {
+		syncDaysHeaderUI: function() {
 			var instance = this;
+			var scheduler = instance.get(SCHEDULER);
+			var currentDate = scheduler.get(CURRENT_DATE);
+			var dateFormat = instance.get(HEADER_DATE_FORMAT);
+			var locale = instance.get(LOCALE);
+			var firstDayOfWeekDt = instance._findFirstDayOfWeek(currentDate);
 
-			instance.setStdModContent(
-				WidgetStdMod.BODY, instance[MONTH_CONTAINER_NODE].getDOM());
+			instance.colHeaderDaysNode.all(DIV).each(
+				function(columnNode, i) {
+					var columnDate = DateMath.add(firstDayOfWeekDt, DateMath.DAY, i);
+					var formatted = A.DataType.Date.format(columnDate, { format: dateFormat, locale: locale });
 
-			instance.setStdModContent(
-				WidgetStdMod.HEADER, instance.headerTableNode.getDOM());
+					columnNode.html(formatted);
+				}
+			);
 		},
 
 		syncGridUI: function() {
@@ -2243,48 +2331,14 @@ var SchedulerMonthView = A.Component.create({
 			}
 		},
 
-		adjustCurrentDate: function() {
+		syncStdContent: function() {
 			var instance = this;
-			var scheduler = instance.get(SCHEDULER);
 
-			scheduler.set(
-				CURRENT_DATE,
-				instance._findCurrentMonthStart()
-			);
-		},
+			instance.setStdModContent(
+				WidgetStdMod.BODY, instance[MONTH_CONTAINER_NODE].getDOM());
 
-		getNextDate: function() {
-			var instance = this;
-			var scheduler = instance.get(SCHEDULER);
-			var currentDate = scheduler.get(CURRENT_DATE);
-
-			return DateMath.add(currentDate, DateMath.MONTH, 1);
-		},
-
-		getPrevDate: function() {
-			var instance = this;
-			var scheduler = instance.get(SCHEDULER);
-			var currentDate = scheduler.get(CURRENT_DATE);
-
-			return DateMath.subtract(currentDate, DateMath.MONTH, 1);
-		},
-
-		syncDaysHeaderUI: function() {
-			var instance = this;
-			var scheduler = instance.get(SCHEDULER);
-			var currentDate = scheduler.get(CURRENT_DATE);
-			var dateFormat = instance.get(HEADER_DATE_FORMAT);
-			var locale = instance.get(LOCALE);
-			var firstDayOfWeekDt = instance._findFirstDayOfWeek(currentDate);
-
-			instance.colHeaderDaysNode.all(DIV).each(
-				function(columnNode, i) {
-					var columnDate = DateMath.add(firstDayOfWeekDt, DateMath.DAY, i);
-					var formatted = A.DataType.Date.format(columnDate, { format: dateFormat, locale: locale });
-
-					columnNode.html(formatted);
-				}
-			);
+			instance.setStdModContent(
+				WidgetStdMod.HEADER, instance.headerTableNode.getDOM());
 		},
 
 		_findCurrentMonthEnd: function() {
@@ -2319,37 +2373,172 @@ var SchedulerMonthView = A.Component.create({
 			return [ startDate.getHours(), DASH, endDate.getHours(), SPACE, evt.get(CONTENT) ].join(EMPTY_STR);
 		},
 
-		_getEvtSplitInfo: function(evt, rowStartDate, rowEndDate) {
+		_getEvtSplitInfo: function(evt, celDate, rowStartDate, rowEndDate) {
 			var instance = this;
 			var startDate = evt.getClearStartDate();
 			var endDate = evt.getClearEndDate();
-			var duration = evt.getDaysDuration();
-			var info = {};
-			var colspan = 1;
 
-			if (DateMath.after(startDate, rowStartDate)) {
-				colspan = Math.min(duration, Math.abs(DateMath.getDayOffset(rowEndDate, startDate)) + 1);
+			var firstWeekDay = DateMath.getFirstDayOfWeek(celDate);
+			var maxColspan = rowEndDate.getDate() - celDate.getDate();
 
-				if (colspan > 1) {
-					info.right = true;
-				}
-			}
-			else {
-				colspan = Math.abs(DateMath.getDayOffset(endDate, rowStartDate) + 1);
-
-				if (colspan > 1) {
-					info.left = true;
-				}
-			}
-
-			info.colspan = Math.min(colspan, WEEK_LENGTH);
-
-			if (colspan >= WEEK_LENGTH) {
-				info.right = true;
-				info.left = true;
-			}
+			var info = {
+				colspan: Math.min(DateMath.getDayOffset(endDate, celDate), maxColspan) + 1,
+				left: DateMath.before(startDate, rowStartDate),
+				right: DateMath.after(endDate, rowEndDate)
+			};
 
 			return info;
+		},
+
+		_getCoordsColumn: function(ij) {
+			var instance = this;
+
+			return ij[1] * WEEK_LENGTH + ij[0];
+		},
+
+		_getCoordsDate: function(ij) {
+			var instance = this;
+			var monthStartDate = instance._findCurrentMonthStart();
+			var startDateRef = DateMath.safeClearTime(instance._findFirstDayOfWeek(monthStartDate));
+
+			return DateMath.add(startDateRef, DateMath.DAY, instance._getCoordsColumn(ij));
+		},
+
+		_normalizeXY: function(xy) {
+			var instance = this;
+
+			var offsetXY = instance[MONTH_CONTAINER_NODE].getXY();
+
+			return [xy[0] - offsetXY[0], xy[1] - offsetXY[1]];
+		},
+
+		_onMouseDownGrid: function(event) {
+			var instance = this;
+			var target = event.target;
+
+			if (target.test([DOT+CSS_SVM_COLGRID, DOT+CSS_SVM_TABLE_DATA_COL].join())) {
+				instance._recording = true;
+
+				var gridSample = instance[TABLE_GRID_NODE].item(0).all(TD).item(0);
+
+				instance.gridCellHeight = gridSample.get(OFFSET_HEIGHT);
+				instance.gridCellWidth = gridSample.get(OFFSET_WIDTH);
+
+				var eventXY = instance._normalizeXY([event.pageX, event.pageY]);
+
+				instance.lassoStartCoordinates = instance.lastCoords = instance._toCoordinates(eventXY);
+
+				instance._renderLasso(instance.lassoStartCoordinates, instance.lastCoords);
+
+				instance[MONTH_CONTAINER_NODE].unselectable();
+			}
+		},
+
+		_onMouseMoveGrid: function(event) {
+			var instance = this;
+			var target = event.currentTarget;
+
+			var eventXY = instance._normalizeXY([event.pageX, event.pageY]);
+
+			var lastCoords = instance.lastCoords || instance.lassoStartCoordinates;
+			var coords = instance._toCoordinates(eventXY);
+
+			var changed = lastCoords && ((coords[0] != lastCoords[0]) || (coords[1] != lastCoords[1]));
+
+			if (instance._recording && changed) {
+				instance.lastCoords = coords;
+
+				instance._renderLasso(instance.lassoStartCoordinates, coords);
+			}
+		},
+
+		_onMouseUpGrid: function(event) {
+			var instance = this;
+			var target = event.currentTarget;
+			var scheduler = instance.get(SCHEDULER);
+			var recorder = scheduler.get(EVENT_RECORDER);
+
+			if (instance._recording && recorder && !scheduler.get(DISABLED)) {
+				var startDate = instance._getCoordsDate(instance.lassoStartCoordinates);
+				var endDate = instance._getCoordsDate(instance.lastCoords);
+
+				recorder.set(START_DATE, Math.min(startDate, endDate));
+				recorder.set(END_DATE, Math.max(startDate, endDate));
+
+				recorder.showOverlay([event.pageX, event.pageY]);
+
+				instance._recording = false;
+			}
+		},
+
+		_removeLasso: function() {
+			var instance = this;
+
+			if (instance.lasso) {
+				instance.lasso.remove();
+			}
+		},
+
+		_renderLasso: function(coordA, coordB) {
+			var instance = this;
+
+			var minCoord = coordA;
+			var maxCoord = coordB;
+
+			if (coordA[1] > coordB[1]) {
+				minCoord = coordB;
+				maxCoord = coordA;
+			}
+
+			instance.lasso = (instance.lasso || A.NodeList.create()).remove();
+
+			var offsetXY = instance[MONTH_CONTAINER_NODE].getXY();
+
+			for (var i = minCoord[1]; i < maxCoord[1] + 1; i++) {
+				var height = instance.gridCellHeight,
+					width = instance.gridCellWidth,
+					x = offsetXY[0],
+					y = offsetXY[1] + (height * i);
+
+				if (i == minCoord[1]) {
+					if (minCoord[1] == maxCoord[1]) {
+						x += width * Math.min(minCoord[0], maxCoord[0]);
+
+						width *= Math.abs(maxCoord[0] - minCoord[0]) + 1;
+					}
+					else {
+						x += width * minCoord[0];
+
+						width *= WEEK_LENGTH - minCoord[0];
+					}
+				}
+				else if (i == maxCoord[1]) {
+					width *= maxCoord[0] + 1;
+				}
+				else {
+					width *= WEEK_LENGTH;
+				}
+
+				var lassoNode = A.Node.create(TPL_SVM_LASSO);
+
+				instance[MONTH_CONTAINER_NODE].append(lassoNode);
+
+				lassoNode.set(OFFSET_HEIGHT, height);
+				lassoNode.set(OFFSET_WIDTH, width);
+
+				lassoNode.setXY([x, y]);
+
+				instance.lasso.push(lassoNode);
+			}
+		},
+
+		_toCoordinates: function(xy) {
+			var instance = this;
+
+			var i = Math.floor(xy[0] / instance.gridCellWidth);
+			var j = Math.floor(xy[1] / instance.gridCellHeight);
+
+			return [i, j];
 		},
 
 		_uiSetCurrentDate: function(val) {
@@ -2422,7 +2611,6 @@ var Lang = A.Lang,
 	COLOR_BRIGHTNESS_FACTOR = 'colorBrightnessFactor',
 	COLOR_SATURATION_FACTOR = 'colorSaturationFactor',
 	CONTENT = 'content',
-	CONTENT_NODE = 'contentNode',
 	DISABLED = 'disabled',
 	DURATION = 'duration',
 	END_DATE = 'endDate',
@@ -2452,11 +2640,7 @@ var Lang = A.Lang,
 	TEMPLATE = 'template',
 	TITLE = 'title',
 	TITLE_DATE_FORMAT = 'titleDateFormat',
-	TITLE_NODE = 'titleNode',
 	VISIBLE = 'visible',
-	PADDING_NODE = 'paddingNode',
-	PADDING_CONTENT_NODE = 'paddingContentNode',
-	PADDING_TITLE_NODE = 'paddingTitleNode',
 
 	TITLE_DT_FORMAT_ISO = '%H:%M',
 	TITLE_DT_FORMAT_US = '%I:%M',
@@ -2542,17 +2726,7 @@ var SchedulerEvent = A.Component.create({
 
 		node: {
 			valueFn: function() {
-				return A.Node.create(
-					this.EVENT_NODE_TEMPLATE).setData(SCHEDULER_EVENT, this);
-			},
-			setter: A.one
-		},
-
-		paddingNode: {
-			readOnly: true,
-			valueFn: function() {
-				return A.Node.create(
-					this.EVENT_NODE_TEMPLATE).setData(SCHEDULER_EVENT, this);
+				return A.NodeList.create(A.Node.create(this.EVENT_NODE_TEMPLATE).setData(SCHEDULER_EVENT, this));
 			}
 		},
 
@@ -2602,7 +2776,6 @@ var SchedulerEvent = A.Component.create({
 		initializer: function() {
 			var instance = this;
 			var node = instance.get(NODE);
-			var paddingNode = instance.get(PADDING_NODE);
 
 			instance[EVENT_STACK] = {};
 
@@ -2611,11 +2784,6 @@ var SchedulerEvent = A.Component.create({
 			});
 
 			instance._bindUIAttrs();
-
-			instance[CONTENT_NODE] = node.one(DOT+CSS_SCHEDULER_EVENT_CONTENT);
-			instance[TITLE_NODE] = node.one(DOT+CSS_SCHEDULER_EVENT_TITLE);
-			instance[PADDING_CONTENT_NODE] = paddingNode.one(DOT+CSS_SCHEDULER_EVENT_CONTENT);
-			instance[PADDING_TITLE_NODE] = paddingNode.one(DOT+CSS_SCHEDULER_EVENT_TITLE);
 
 			instance.syncNodeUI(true);
 		},
@@ -2628,8 +2796,15 @@ var SchedulerEvent = A.Component.create({
 			});
 
 			instance[EVENT_STACK] = {};
-			instance.get(PADDING_NODE).remove(true);
 			instance.get(NODE).remove(true);
+		},
+
+		addPaddingNode: function() {
+			var instance = this;
+
+			instance.get(NODE).push(A.Node.create(instance.EVENT_NODE_TEMPLATE).setData(SCHEDULER_EVENT, instance));
+
+			instance.syncNodeUI();
 		},
 
 		copyDates: function(evt) {
@@ -2819,15 +2994,33 @@ var SchedulerEvent = A.Component.create({
 		setContent: function(content, propagate) {
 			var instance = this;
 
-			instance._setContent(CONTENT_NODE, content, propagate);
-			instance._setContent(PADDING_CONTENT_NODE, content, propagate);
+			instance.get(NODE).each(function(node) {
+				var contentNode = node.one(_DOT+CSS_SCHEDULER_EVENT_CONTENT);
+
+				contentNode.setContent(content);
+			});
+
+			if (propagate) {
+				instance.eachRepeatedEvent(function(evt, uid) {
+					evt.setContent(content);
+				});
+			}
 		},
 
 		setTitle: function(content, propagate) {
 			var instance = this;
 
-			instance._setContent(TITLE_NODE, content, propagate);
-			instance._setContent(PADDING_TITLE_NODE, content, propagate);
+			instance.get(NODE).each(function(node) {
+				var titleNode = node.one(_DOT+CSS_SCHEDULER_EVENT_TITLE);
+
+				titleNode.setContent(content);
+			});
+
+			if (propagate) {
+				instance.eachRepeatedEvent(function(evt, uid) {
+					evt.setTitle(content);
+				});
+			}
 		},
 
 		syncNodeUI: function(propagate) {
@@ -2842,10 +3035,9 @@ var SchedulerEvent = A.Component.create({
 		syncNodeColorUI: function(propagate) {
 			var instance = this;
 			var node = instance.get(NODE);
-			var paddingNode = instance.get(PADDING_NODE);
 			var borderColor = instance.getBorderColor();
 
-			if (node && paddingNode) {
+			if (node) {
 				var styles = {
 					borderWidth: instance.get(BORDER_WIDTH),
 					borderColor: borderColor,
@@ -2854,7 +3046,6 @@ var SchedulerEvent = A.Component.create({
 				};
 
 				node.setStyles(styles);
-				paddingNode.setStyles(styles);
 			}
 
 			if (propagate) {
@@ -3000,21 +3191,6 @@ var SchedulerEvent = A.Component.create({
 			return val;
 		},
 
-		_setContent: function(nodeRefName, content, propagate) {
-			var instance = this;
-			var node = instance[nodeRefName];
-
-			if (node) {
-				node.setContent(content);
-			}
-
-			if (propagate) {
-				instance.eachRepeatedEvent(function(evt, uid) {
-					evt[nodeRefName].setContent(content);
-				});
-			}
-		},
-
 		_setDate: function(val) {
 			var instance = this;
 
@@ -3093,14 +3269,12 @@ var SchedulerEvent = A.Component.create({
 			var instance = this;
 
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_DISABLED, !!val);
-			instance.get(PADDING_NODE).toggleClass(CSS_SCHEDULER_EVENT_DISABLED, !!val);
 		},
 
 		_uiSetParentEvent: function(val) {
 			var instance = this;
 
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATED, !!val);
-			instance.get(PADDING_NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATED, !!val);
 		},
 
 		_uiSetRepeat: function(val) {
@@ -3108,14 +3282,12 @@ var SchedulerEvent = A.Component.create({
 			var value = !!val && val !== A.SchedulerEventRepeat[NEVER];
 
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATER, value);
-			instance.get(PADDING_NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATER, value);
 		},
 
 		_uiSetVisible: function(val) {
 			var instance = this;
 
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_HIDDEN, !val);
-			instance.get(PADDING_NODE).toggleClass(CSS_SCHEDULER_EVENT_HIDDEN, !val);
 		}
 	}
 });
