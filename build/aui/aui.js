@@ -7898,20 +7898,12 @@ Y.Loader.prototype = {
         var f = this.filter,
             hasFilter = name && (name in this.filters),
             modFilter = hasFilter && this.filters[name],
-<<<<<<< HEAD
-	    groupName = this.moduleInfo[name] ? this.moduleInfo[name].group:null;		
-	    if (groupName && this.groups[groupName] && this.groups[groupName].filter) {		
-	 	   modFilter = this.groups[groupName].filter;
-		   hasFilter = true;		
-	     };
-=======
             groupName = group || (this.moduleInfo[name] ? this.moduleInfo[name].group : null);
 
         if (groupName && this.groups[groupName] && this.groups[groupName].filter) {
             modFilter = this.groups[groupName].filter;
             hasFilter = true;
         }
->>>>>>> AUI-657 Regenerate ant init-yui
 
         if (u) {
             if (hasFilter) {
