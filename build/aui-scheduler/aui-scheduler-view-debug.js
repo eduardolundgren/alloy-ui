@@ -32,6 +32,7 @@ var Lang = A.Lang,
 	CANCEL = 'cancel',
 	COL = 'col',
 	COL_DAYS_NODE = 'colDaysNode',
+	BOUNDING_BOX = 'boundingBox',
 	COL_HEADER_DAYS_NODE = 'colHeaderDaysNode',
 	COLBLANK = 'colblank',
 	COLDATA = 'coldata',
@@ -52,6 +53,8 @@ var Lang = A.Lang,
 	DATA = 'data',
 	DAY = 'day',
 	DAYS = 'days',
+	DD = 'dd',
+	DELEGATE = 'delegate',
 	DELEGATE_CONFIG = 'delegateConfig',
 	DISABLED = 'disabled',
 	DISPLAY_DAYS_INTERVAL = 'displayDaysInterval',
@@ -59,6 +62,8 @@ var Lang = A.Lang,
 	DIVISION = 'division',
 	DOTTED = 'dotted',
 	DOWN = 'down',
+	DRAG_NODE = 'dragNode',
+	DRAGGING = 'dragging',
 	DRAGGING_EVENT = 'draggingEvent',
 	DURATION = 'duration',
 	END_DATE = 'endDate',
@@ -116,6 +121,7 @@ var Lang = A.Lang,
 	PARENT_EVENT = 'parentEvent',
 	PARENT_NODE = 'parentNode',
 	PROXY = 'proxy',
+	PROXY_NODE = 'proxyNode',
 	PX = 'px',
 	REGION = 'region',
 	RENDERED = 'rendered',
@@ -1457,10 +1463,12 @@ var CSS_ICON = getCN(ICON),
 	CSS_SVT_COLGRID_FIRST = getCN(SCHEDULER_VIEW, TABLE, COLGRID, FIRST),
 	CSS_SVT_COLGRID_TODAY = getCN(SCHEDULER_VIEW, TABLE, COLGRID, TODAY),
 	CSS_SVT_CONTAINER = getCN(SCHEDULER_VIEW, TABLE, CONTAINER),
+	CSS_SVT_DRAGGING = getCN(SCHEDULER_VIEW, TABLE, DRAGGING),
 	CSS_SVT_HEADER_COL = getCN(SCHEDULER_VIEW, TABLE, HEADER, COL),
 	CSS_SVT_HEADER_DAY = getCN(SCHEDULER_VIEW, TABLE, HEADER, DAY),
 	CSS_SVT_HEADER_TABLE = getCN(SCHEDULER_VIEW, TABLE, HEADER, TABLE),
 	CSS_SVT_LASSO = getCN(SCHEDULER_VIEW, TABLE, LASSO),
+	CSS_SVT_PROXY_NODE = getCN(SCHEDULER_VIEW, TABLE, PROXY, NODE),
 	CSS_SVT_ROW = getCN(SCHEDULER_VIEW, TABLE, ROW),
 	CSS_SVT_ROW_CONTAINER = getCN(SCHEDULER_VIEW, TABLE, ROW, CONTAINER),
 	CSS_SVT_TABLE_DATA = getCN(SCHEDULER_VIEW, TABLE, DATA),
@@ -1494,6 +1502,8 @@ var CSS_ICON = getCN(ICON),
 
 	TPL_SVT_LASSO = '<div class="' + CSS_SVT_LASSO + '"></div>',
 
+	TPL_SVT_PROXY_NODE = '<div class="' + CSS_SVT_PROXY_NODE + '"></div>',
+
 	TPL_SVT_ROW = '<div class="' + CSS_SVT_ROW + '" style="top: {top}%; height: {height}%;"></div>',
 
 	TPL_SVT_TABLE_DATA = '<table cellspacing="0" cellpadding="0" class="' + CSS_SVT_TABLE_DATA + '">' +
@@ -1518,6 +1528,28 @@ var SchedulerTableView = A.Component.create({
 	ATTRS: {
 		bodyContent: {
 			value: EMPTY_STR
+		},
+
+		delegateConfig: {
+			value: {},
+			setter: function(val) {
+				var instance = this;
+
+				return A.merge(
+					{
+						dragConfig: {
+							offsetNode: false,
+							useShim: false
+						},
+						bubbleTargets: instance,
+						container: instance.get(BOUNDING_BOX),
+						nodes: DOT+CSS_SCHEDULER_EVENT,
+						invalid: 'input, select, button, a, textarea, ' + DOT+CSS_SCHEDULER_EVENT_DISABLED
+					},
+					val || {}
+				);
+			},
+			validator: isObject
 		},
 
 		displayDaysInterval: {
@@ -1598,6 +1630,7 @@ var SchedulerTableView = A.Component.create({
 
 			instance[COLUMN_DAY_HEADER] = instance.headerTableNode.one(DOT+CSS_SVT_HEADER_COL);
 			instance[COLUMN_TABLE_GRID] = A.NodeList.create();
+			instance[PROXY_NODE] = A.Node.create(TPL_SVT_PROXY_NODE);
 			instance[TABLE_ROW_CONTAINER] = instance[ROWS_CONTAINER_NODE].one(DOT+CSS_SVT_ROW_CONTAINER);
 			instance[TABLE_ROWS] = A.NodeList.create();
 		},
@@ -1605,6 +1638,10 @@ var SchedulerTableView = A.Component.create({
 		bindUI: function() {
 			var instance = this;
 			var recorder = instance.get(SCHEDULER).get(EVENT_RECORDER);
+
+			instance.after('drag:align', instance._afterDragAlign);
+			instance.on('drag:end', instance._onEventDragEnd);
+			instance.on('drag:start', instance._onEventDragStart);
 
 			recorder.on({
 				cancel: A.bind(instance.removeLasso, instance),
@@ -1646,8 +1683,17 @@ var SchedulerTableView = A.Component.create({
 				instance[TABLE_ROWS].push(rowNode);
 			}
 
+			instance[PROXY_NODE].appendTo(instance[ROWS_CONTAINER_NODE]);
 			instance[COL_HEADER_DAYS_NODE].appendTo(instance[COLUMN_DAY_HEADER]);
 			instance[TABLE_ROWS].appendTo(instance[TABLE_ROW_CONTAINER]);
+		},
+
+		syncUI: function() {
+			var instance = this;
+
+			SchedulerTableView.superclass.syncUI.apply(this, arguments);
+
+			instance._setupDragDrop();
 		},
 
 		buildEventsTable: function(rowStartDate, rowEndDate) {
@@ -1976,6 +2022,27 @@ var SchedulerTableView = A.Component.create({
 				WidgetStdMod.HEADER, instance[HEADER_TABLE_NODE].getDOM());
 		},
 
+		_afterDragAlign: function(event) {
+			var instance = this;
+			var dd = event.target;
+
+			var draggingEvent = instance[DRAGGING_EVENT];
+			var eventXY = [event.pageX, event.pageY];
+			var position = instance._findPosition(instance._offsetXY(eventXY, -1));
+
+			if (draggingEvent && instance._hasLassoChanged(position)) {
+				instance.lassoLastPosition = position;
+
+				var endPosition = DateMath.add(
+					instance._getPositionDate(position),
+					DateMath.MINUTES,
+					draggingEvent.getMinutesDuration()
+				);
+
+				instance.renderLasso(position, instance._getDatePosition(endPosition));
+			}
+		},
+
 		_findCurrentIntervalEnd: function() {
 			var instance = this;
 			var scheduler = instance.get(SCHEDULER);
@@ -1992,6 +2059,15 @@ var SchedulerTableView = A.Component.create({
 			return scheduler.get(CURRENT_DATE);
 		},
 
+		_findPosition: function(xy) {
+			var instance = this;
+
+			var i = Math.floor(xy[0] / instance.gridCellWidth);
+			var j = Math.floor(xy[1] / instance.gridCellHeight);
+
+			return [i, j];
+		},
+
 		_findFirstDayOfWeek: function(date) {
 			var instance = this;
 			var scheduler = instance.get(SCHEDULER);
@@ -2004,6 +2080,20 @@ var SchedulerTableView = A.Component.create({
 			var instance = this;
 
 			return position[1] * WEEK_LENGTH + position[0];
+		},
+
+		_getDatePosition: function(date) {
+			var instance = this;
+
+			var intervalStartDate = instance._findCurrentIntervalStart();
+			var offset = DateMath.getDayOffset(date, intervalStartDate);
+
+			var position = [];
+
+			position[1] = Math.floor(offset / WEEK_LENGTH);
+			position[0] = offset % WEEK_LENGTH;
+
+			return position;
 		},
 
 		_getEvtLabel: function(evt) {
@@ -2057,11 +2147,72 @@ var SchedulerTableView = A.Component.create({
 			return tableGridNode;
 		},
 
+		_hasLassoChanged: function(position) {
+			var instance = this;
+
+			var lassoLastPosition = instance.lassoLastPosition || instance.lassoStartPosition;
+
+			return lassoLastPosition && ((position[0] !== lassoLastPosition[0]) || (position[1] !== lassoLastPosition[1]));
+		},
+
 		_offsetXY: function(xy, sign) {
 			var instance = this;
 			var offsetXY = instance[ROWS_CONTAINER_NODE].getXY();
 
 			return [ xy[0] + offsetXY[0]*sign, xy[1] + offsetXY[1]*sign ];
+		},
+
+		_onEventDragEnd: function(event) {
+			var instance = this;
+			var draggingEvent = instance[DRAGGING_EVENT];
+
+			if (draggingEvent) {
+				draggingEvent.move(instance._getPositionDate(instance.lassoLastPosition));
+				draggingEvent.set(VISIBLE, true);
+
+				instance[ROWS_CONTAINER_NODE].removeClass(CSS_SVT_DRAGGING).unselectable();
+
+				instance.removeLasso();
+
+				event.target.set(DRAG_NODE, instance.originalDragNode);
+
+				instance.get(SCHEDULER).syncEventsUI();
+			}
+
+			instance[DRAGGING_EVENT] = null;
+		},
+
+		_onEventDragStart: function(event) {
+			var instance = this;
+			var draggingEvent = instance[DRAGGING_EVENT] = instance[DELEGATE][DD].get(NODE).getData(SCHEDULER_EVENT);
+
+			if (draggingEvent) {
+				instance._syncCellDimensions();
+
+				var eventXY = [event.pageX, event.pageY];
+
+				var startPosition = instance._findPosition(instance._offsetXY(eventXY, -1));
+
+				var endPosition = DateMath.add(
+					instance._getPositionDate(startPosition),
+					DateMath.MINUTES,
+					draggingEvent.getMinutesDuration()
+				);
+
+				instance.renderLasso(startPosition, instance._getDatePosition(endPosition));
+
+				draggingEvent.set(VISIBLE, false);
+
+				instance._syncProxyNodeUI(draggingEvent);
+
+				instance.lassoStartPosition = instance.lassoLastPosition = startPosition;
+
+				instance[ROWS_CONTAINER_NODE].addClass(CSS_SVT_DRAGGING).unselectable();
+
+				instance.originalDragNode = event.target.get(DRAG_NODE);
+
+				event.target.set(DRAG_NODE, instance[PROXY_NODE]);
+			}
 		},
 
 		_onMouseDownGrid: function(event) {
@@ -2071,12 +2222,7 @@ var SchedulerTableView = A.Component.create({
 			if (target.test([DOT+CSS_SVT_COLGRID, DOT+CSS_SVT_TABLE_DATA_COL].join(COMMA))) {
 				instance._recording = true;
 
-				var displayDaysInterval = instance.get(DISPLAY_DAYS_INTERVAL);
-				var displayRowsCount = Math.ceil(displayDaysInterval / WEEK_LENGTH);
-				var weekDaysCount = Math.min(displayDaysInterval, WEEK_LENGTH);
-
-				instance.gridCellHeight = instance[ROWS_CONTAINER_NODE].get(OFFSET_HEIGHT) / displayRowsCount;
-				instance.gridCellWidth = instance[ROWS_CONTAINER_NODE].get(OFFSET_WIDTH) / weekDaysCount;
+				instance._syncCellDimensions();
 
 				var eventXY = instance._offsetXY([event.pageX, event.pageY], -1);
 
@@ -2092,14 +2238,10 @@ var SchedulerTableView = A.Component.create({
 			var instance = this;
 			var target = event.currentTarget;
 
-			var eventXY = instance._offsetXY([event.pageX, event.pageY], -1);
-			var lassoLastPosition = instance.lassoLastPosition || instance.lassoStartPosition;
-			var position = instance._findPosition(eventXY);
-			var changed = lassoLastPosition &&
-							((position[0] !== lassoLastPosition[0]) ||
-								(position[1] !== lassoLastPosition[1]));
+			var eventXY = [event.pageX, event.pageY];
+			var position = instance._findPosition(instance._offsetXY(eventXY, -1));
 
-			if (changed && instance._recording) {
+			if (instance._recording && instance._hasLassoChanged(position)) {
 				instance.lassoLastPosition = position;
 
 				instance.renderLasso(instance.lassoStartPosition, position);
@@ -2131,13 +2273,59 @@ var SchedulerTableView = A.Component.create({
 			}
 		},
 
-		_findPosition: function(xy) {
+		_setupDragDrop: function() {
 			var instance = this;
 
-			var i = Math.floor(xy[0] / instance.gridCellWidth);
-			var j = Math.floor(xy[1] / instance.gridCellHeight);
+			if (!instance[DELEGATE]) {
+				instance[DELEGATE] = new A.DD.Delegate(
+					instance.get(DELEGATE_CONFIG));
+			}
 
-			return [i, j];
+			var dd = instance[DELEGATE][DD];
+
+			dd.unplug(A.Plugin.DDConstrained);
+			dd.unplug(A.Plugin.DDNodeScroll);
+			dd.unplug(A.Plugin.DDProxy);
+
+			dd.plug(A.Plugin.DDConstrained, {
+				bubbleTargets: instance,
+				constrain: instance.bodyNode
+			});
+
+			dd.plug(A.Plugin.DDNodeScroll, {
+				node: instance.bodyNode,
+				scrollDelay: 150
+			});
+
+			dd.plug(A.Plugin.DDProxy, {
+				moveOnEnd: false,
+				positionProxy: false
+			});
+		},
+
+		_syncCellDimensions: function() {
+			var instance = this;
+
+			var displayDaysInterval = instance.get(DISPLAY_DAYS_INTERVAL);
+			var displayRowsCount = Math.ceil(displayDaysInterval / WEEK_LENGTH);
+			var weekDaysCount = Math.min(displayDaysInterval, WEEK_LENGTH);
+
+			instance.gridCellHeight = instance[ROWS_CONTAINER_NODE].get(OFFSET_HEIGHT) / displayRowsCount;
+			instance.gridCellWidth = instance[ROWS_CONTAINER_NODE].get(OFFSET_WIDTH) / weekDaysCount;
+		},
+
+		_syncProxyNodeUI: function(evt) {
+			var instance = this;
+
+			var eventNode = evt.get(NODE).item(0);
+
+			instance[PROXY_NODE].setStyles({
+				backgroundColor: eventNode.getStyle('backgroundColor'),
+				display: 'block',
+				width: '200px'
+			});
+
+			instance[PROXY_NODE].setContent(evt.get(CONTENT));
 		},
 
 		_uiSetCurrentDate: function(val) {
@@ -2266,4 +2454,4 @@ var SchedulerMonthView = A.Component.create({
 
 A.SchedulerMonthView = SchedulerMonthView;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-scheduler-event','aui-calendar','aui-button-item','dd-drag','dd-delegate','dd-drop','dd-constrain']});
+}, '@VERSION@' ,{skinnable:true, requires:['aui-scheduler-event','aui-calendar','aui-button-item','dd-drag','dd-delegate','dd-drop','dd-constrain','dd-proxy']});
