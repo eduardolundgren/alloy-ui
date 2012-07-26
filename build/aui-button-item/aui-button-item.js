@@ -19,6 +19,7 @@ var Lang = A.Lang,
 	HANDLER = 'handler',
 	ICON = 'icon',
 	ICON_NODE = 'iconNode',
+	ID = 'id',
 	LABEL = 'label',
 	LABEL_NODE = 'labelNode',
 	ONLY = 'only',
@@ -40,7 +41,7 @@ var Lang = A.Lang,
 
 	REGEX_ICON = new RegExp(CSS_ICON + '-([a-zA-Z0-9-]+)'),
 
-	TPL_BUTTON = '<button type="button"></button>',
+	TPL_BUTTON = '<button type="{type}"></button>',
 	TPL_ICON = '<span class="' + [CSS_BUTTON_ICON, CSS_ICON].join(' ') + '"></span>',
 	TPL_LABEL = '<span class="' + CSS_BUTTON_LABEL + '"></span>';
 
@@ -71,6 +72,19 @@ var Lang = A.Lang,
  * @extends Component
  * @uses WidgetChild
  */
+
+// Temporarily exposing ButtonItem type attribute to A.Widget. It needs to be accessed during Widget init phase
+// in order to be used by _setBB to create the <button> tag using the right type. IE doesn't allow changing the type
+// of the button tag after it has already been created.
+var widgetTypeATTR = A.Widget.ATTRS.type; 
+
+A.Widget.ATTRS.type = {
+	validator: function(val) {
+		return (val === BUTTON || val === SUBMIT || val === RESET);
+	},
+	value: BUTTON,
+	writeOnce: true
+};
 
 var ButtonItem = A.Component.create(
 	{
@@ -230,20 +244,6 @@ var ButtonItem = A.Component.create(
 			title: {
 				setter: '_setTitle',
 				value: false
-			},
-
-			/**
-			 * Button type.
-			 *
-			 * @attribute type
-			 * @default button
-			 * @type String
-			 */
-			type: {
-				validator: function(val) {
-					return (val === BUTTON || val === SUBMIT || val === RESET);
-				},
-				value: BUTTON
 			}
 		},
 
@@ -427,6 +427,19 @@ var ButtonItem = A.Component.create(
 				);
 			},
 
+			_setBB: function(node) {
+				var instance = this;
+
+				var boundingTemplate = Lang.sub(
+					instance.BOUNDING_TEMPLATE,
+					{
+						type: instance.get(TYPE)
+					}
+				);
+
+				return instance._setBox(instance.get(ID), node, boundingTemplate);
+			},
+
 			/**
 			 * Setter for the title attribute
 			 *
@@ -598,6 +611,8 @@ var ButtonItem = A.Component.create(
 	}
 );
 
+A.Widget.ATTRS.type = widgetTypeATTR;
+
 A.ButtonItem = ButtonItem;
 
-}, '@VERSION@' ,{requires:['aui-base','aui-state-interaction','widget-child'], skinnable:true});
+}, '@VERSION@' ,{skinnable:true, requires:['aui-base','aui-state-interaction','widget-child']});
