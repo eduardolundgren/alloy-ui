@@ -59,7 +59,7 @@
 						'aui-parse-content': {requires:['async-queue','aui-base','plugin'], skinnable:false},
 						'aui-portal-layout': {requires:['aui-base','dd-drag','dd-delegate','dd-drop','dd-proxy'], skinnable:true},
 						'aui-progressbar': {requires:['aui-base','aui-aria'], skinnable:true},
-						'aui-property-list': {requires:['aui-datatable'], skinnable:true},
+						'aui-property-list': {requires:['aui-datatable','datatable-scroll','datatable-sort'], skinnable:true},
 						'aui-rating': {requires:['aui-base'], skinnable:true},
 						'aui-resize-iframe': {requires:['aui-base','aui-task-manager','plugin'], skinnable:true},
 						'aui-resize': {submodules: {'aui-resize-constrain': {skinnable:false, requires:['aui-resize-base','dd-constrain','plugin']}, 'aui-resize-base': {skinnable:true, requires:['aui-base','dd-drag','dd-delegate','dd-drop']} }, use:['aui-resize-base','aui-resize-constrain'], skinnable:true},
