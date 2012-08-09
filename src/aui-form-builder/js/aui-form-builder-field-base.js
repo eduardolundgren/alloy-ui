@@ -659,17 +659,18 @@ var FormBuilderField = A.Component.create({
 			var instance = this;
 			var builder = instance.get(BUILDER);
 			var controlsToolbar = instance.controlsToolbar;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			if (controlsToolbar) {
 				if (val && !builder.get(ALLOW_REMOVE_REQUIRED_FIELDS)) {
-					controlsToolbar.remove(DELETE_EVENT);
+					controlsToolbar.remove(id + _UNDERLINE + DELETE_EVENT);
 				}
 				else {
 					controlsToolbar.add({
 						handler: A.bind(instance._handleDeleteEvent, instance),
 						icon: CLOSE,
-						id: DELETE_EVENT,
+						id: id + _UNDERLINE + DELETE_EVENT,
 						title: strings[DELETE_MESSAGE]
 					});
 				}
@@ -717,19 +718,20 @@ var FormBuilderField = A.Component.create({
 			var instance = this;
 			var boundingBox = instance.get(BOUNDING_BOX);
 			var controlsToolbar = instance.controlsToolbar;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			boundingBox.toggleClass(CSS_FB_UNIQUE, val);
 
 			if (controlsToolbar) {
 				if (val) {
-					controlsToolbar.remove(DUPLICATE_EVENT);
+					controlsToolbar.remove(id + _UNDERLINE + DUPLICATE_EVENT);
 				}
 				else {
 					controlsToolbar.add({
 						handler: A.bind(instance._handleDuplicateEvent, instance),
 						icon: NEWWIN,
-						id: DUPLICATE_EVENT,
+						id: id + _UNDERLINE + DUPLICATE_EVENT,
 						title: strings[DUPLICATE_MESSAGE]
 					});
 				}
@@ -738,6 +740,7 @@ var FormBuilderField = A.Component.create({
 
 		_valueControlsToolbar: function() {
 			var instance = this;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			return {
@@ -746,19 +749,19 @@ var FormBuilderField = A.Component.create({
 					{
 						handler: A.bind(instance._handleEditEvent, instance),
 						icon: GEAR,
-						id: EDIT_EVENT,
+						id: id + _UNDERLINE + EDIT_EVENT,
 						title: strings[EDIT_MESSAGE]
 					},
 					{
 						handler: A.bind(instance._handleDuplicateEvent, instance),
 						icon: NEWWIN,
-						id: DUPLICATE_EVENT,
+						id: id + _UNDERLINE + DUPLICATE_EVENT,
 						title: strings[DUPLICATE_MESSAGE]
 					},
 					{
 						handler: A.bind(instance._handleDeleteEvent, instance),
 						icon: CLOSE,
-						id: DELETE_EVENT,
+						id: id + _UNDERLINE + DELETE_EVENT,
 						title: strings[DELETE_MESSAGE]
 					}
 				]
