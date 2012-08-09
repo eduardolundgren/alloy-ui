@@ -37,6 +37,7 @@ var L = A.Lang,
 	ALLOW_REMOVE_REQUIRED_FIELDS = 'allowRemoveRequiredFields',
 	ADD = 'add',
 	APPEND = 'append',
+	ATTRIBUTE_NAME = 'attributeName',
 	AUTO_SELECT_FIELDS = 'autoSelectFields',
 	AVAILABLE_FIELD = 'availableField',
 	AVAILABLE_FIELDS = 'availableFields',
@@ -121,7 +122,6 @@ var L = A.Lang,
 	PREPEND = 'prepend',
 	READ_ONLY_ATTRIBUTES = 'readOnlyAttributes',
 	RECORDS = 'records',
-	RECORDSET = 'recordset',
 	REGION = 'region',
 	REMOVE = 'remove',
 	RENDER = 'render',
@@ -290,7 +290,7 @@ var FormBuilder = A.Component.create({
 				'drag:end': instance._onDragEnd,
 				'drag:start': instance._onDragStart,
 				'drag:mouseDown': instance._onDragMouseDown,
-				save: instance._onSave
+				'*:save': instance._onSave
 			});
 
 			instance.uniqueFields.after(ADD, A.bind(instance._afterUniqueFieldsAdd, instance));
@@ -348,13 +348,7 @@ var FormBuilder = A.Component.create({
 				instance.closeEditProperties();
 
 				instance.tabView.selectTab(A.FormBuilder.SETTINGS_TAB);
-
-				// The current YUI DataTable version has issues with plugins
-				// event order when sort and scroll are plugged, to prevent
-				// misalignment between columns and headers set the record set
-				// twice, the first time set to an empty recordset then the desired value.
-				instance.propertyList.set(RECORDSET, [{}]);
-				instance.propertyList.set(RECORDSET, instance.getFieldProperties(field));
+				instance.propertyList.set(DATA, instance.getFieldProperties(field));
 
 				field.get(BOUNDING_BOX).addClass(CSS_FORM_BUILDER_FIELD_EDITING);
 
@@ -470,7 +464,7 @@ var FormBuilder = A.Component.create({
 			var config  = {};
 
 			AArray.each(instance.getFieldProperties(field), function(property) {
-				var name = property.attributeName;
+				var name = property[ATTRIBUTE_NAME];
 
 				if (AArray.indexOf(INVALID_CLONE_ATTRS, name) === -1) {
 					config[name] = property.value;
@@ -649,12 +643,8 @@ var FormBuilder = A.Component.create({
 			var editingField = instance.editingField;
 
 			if (editingField) {
-				var recordset = instance.propertyList.get(RECORDSET);
-
-				AArray.each(recordset.get(RECORDS), function(record) {
-					var data = record.get(DATA);
-
-					editingField.set(data.attributeName, data.value);
+				instance.propertyList.get(DATA).each(function(record) {
+					editingField.set(record.get(ATTRIBUTE_NAME), record.get(VALUE));
 				});
 
 				instance._syncUniqueField(editingField);

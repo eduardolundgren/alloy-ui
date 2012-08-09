@@ -46,7 +46,7 @@ var L = A.Lang,
 
 	TPL_INPUT = '<input id="{id}" class="' + [CSS_FORM_BUILDER_FIELD_NODE, CSS_FIELD_INPUT].join(SPACE) + '" name="{name}" type="{type}" value="{value}" />',
 
-	BUTTON_TYPES = [SUBMIT, RESET, BUTTON]
+	BUTTON_TYPES = [SUBMIT, RESET, BUTTON];
 
 var FormBuilderButtonField = A.Component.create({
 
@@ -102,7 +102,7 @@ var FormBuilderButtonField = A.Component.create({
 					type: instance.get(BUTTON_TYPE),
 					value: instance.get(PREDEFINED_VALUE)
 				}
-			)
+			);
 		},
 
 		getPropertyModel: function() {
@@ -127,7 +127,7 @@ var FormBuilderButtonField = A.Component.create({
 
 			return model;
 		},
-		
+
 		_uiSetButtonType: function(val) {
 			var instance = this;
 			var templateNode = instance.get(TEMPLATE_NODE);

@@ -660,17 +660,18 @@ var FormBuilderField = A.Component.create({
 			var instance = this;
 			var builder = instance.get(BUILDER);
 			var controlsToolbar = instance.controlsToolbar;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			if (controlsToolbar) {
 				if (val && !builder.get(ALLOW_REMOVE_REQUIRED_FIELDS)) {
-					controlsToolbar.remove(DELETE_EVENT);
+					controlsToolbar.remove(id + _UNDERLINE + DELETE_EVENT);
 				}
 				else {
 					controlsToolbar.add({
 						handler: A.bind(instance._handleDeleteEvent, instance),
 						icon: CLOSE,
-						id: DELETE_EVENT,
+						id: id + _UNDERLINE + DELETE_EVENT,
 						title: strings[DELETE_MESSAGE]
 					});
 				}
@@ -718,19 +719,20 @@ var FormBuilderField = A.Component.create({
 			var instance = this;
 			var boundingBox = instance.get(BOUNDING_BOX);
 			var controlsToolbar = instance.controlsToolbar;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			boundingBox.toggleClass(CSS_FB_UNIQUE, val);
 
 			if (controlsToolbar) {
 				if (val) {
-					controlsToolbar.remove(DUPLICATE_EVENT);
+					controlsToolbar.remove(id + _UNDERLINE + DUPLICATE_EVENT);
 				}
 				else {
 					controlsToolbar.add({
 						handler: A.bind(instance._handleDuplicateEvent, instance),
 						icon: NEWWIN,
-						id: DUPLICATE_EVENT,
+						id: id + _UNDERLINE + DUPLICATE_EVENT,
 						title: strings[DUPLICATE_MESSAGE]
 					});
 				}
@@ -739,6 +741,7 @@ var FormBuilderField = A.Component.create({
 
 		_valueControlsToolbar: function() {
 			var instance = this;
+			var id = instance.get(ID);
 			var strings = instance.getStrings();
 
 			return {
@@ -747,19 +750,19 @@ var FormBuilderField = A.Component.create({
 					{
 						handler: A.bind(instance._handleEditEvent, instance),
 						icon: GEAR,
-						id: EDIT_EVENT,
+						id: id + _UNDERLINE + EDIT_EVENT,
 						title: strings[EDIT_MESSAGE]
 					},
 					{
 						handler: A.bind(instance._handleDuplicateEvent, instance),
 						icon: NEWWIN,
-						id: DUPLICATE_EVENT,
+						id: id + _UNDERLINE + DUPLICATE_EVENT,
 						title: strings[DUPLICATE_MESSAGE]
 					},
 					{
 						handler: A.bind(instance._handleDeleteEvent, instance),
 						icon: CLOSE,
-						id: DELETE_EVENT,
+						id: id + _UNDERLINE + DELETE_EVENT,
 						title: strings[DELETE_MESSAGE]
 					}
 				]
@@ -821,7 +824,7 @@ var L = A.Lang,
 
 	TPL_INPUT = '<input id="{id}" class="' + [CSS_FORM_BUILDER_FIELD_NODE, CSS_FIELD_INPUT].join(SPACE) + '" name="{name}" type="{type}" value="{value}" />',
 
-	BUTTON_TYPES = [SUBMIT, RESET, BUTTON]
+	BUTTON_TYPES = [SUBMIT, RESET, BUTTON];
 
 var FormBuilderButtonField = A.Component.create({
 
@@ -877,7 +880,7 @@ var FormBuilderButtonField = A.Component.create({
 					type: instance.get(BUTTON_TYPE),
 					value: instance.get(PREDEFINED_VALUE)
 				}
-			)
+			);
 		},
 
 		getPropertyModel: function() {
@@ -902,7 +905,7 @@ var FormBuilderButtonField = A.Component.create({
 
 			return model;
 		},
-		
+
 		_uiSetButtonType: function(val) {
 			var instance = this;
 			var templateNode = instance.get(TEMPLATE_NODE);
