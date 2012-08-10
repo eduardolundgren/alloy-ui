@@ -35,7 +35,7 @@ var FormBuilderTextAreaField = A.Component.create({
 	EXTENDS: A.FormBuilderTextField,
 
 	prototype: {
-		
+
 		getPropertyModel: function() {
 			var instance = this;
 			var options = instance.get(OPTIONS);
