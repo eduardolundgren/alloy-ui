@@ -902,7 +902,7 @@ var FormBuilderButtonField = A.Component.create({
 
 			return model;
 		},
-		
+
 		_uiSetButtonType: function(val) {
 			var instance = this;
 			var templateNode = instance.get(TEMPLATE_NODE);
@@ -1958,7 +1958,7 @@ var FormBuilderTextAreaField = A.Component.create({
 	EXTENDS: A.FormBuilderTextField,
 
 	prototype: {
-		
+
 		getPropertyModel: function() {
 			var instance = this;
 			var options = instance.get(OPTIONS);

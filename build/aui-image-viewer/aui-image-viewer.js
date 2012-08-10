@@ -960,7 +960,7 @@ var ImageViewer = A.Component.create(
 			},
 
 			/**
-			 * Creates the preload image instance, and add's it 
+			 * Creates the preload image instance, and add's it
 			 * to the internal pool.
 			 *
 			 * @method _createPreloadImage
@@ -2551,5 +2551,5 @@ A.MediaViewer = A.ImageViewer;
 }, '@VERSION@' ,{requires:['aui-image-viewer-base'], skinnable:false});
 
 
-AUI.add('aui-image-viewer', function(A){}, '@VERSION@' ,{use:['aui-image-viewer-base','aui-image-viewer-gallery','aui-media-viewer-plugin'], skinnable:true});
+AUI.add('aui-image-viewer', function(A){}, '@VERSION@' ,{skinnable:true, use:['aui-image-viewer-base','aui-image-viewer-gallery','aui-media-viewer-plugin']});
 

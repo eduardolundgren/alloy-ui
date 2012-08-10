@@ -1,9 +1,9 @@
 AUI.add('aui-parse-content', function(A) {
 /**
- * The ParseContent Utility - Parse the content of a Node so that all of the 
+ * The ParseContent Utility - Parse the content of a Node so that all of the
  * javascript contained in that Node will be executed according to the order
  * that it appears.
- * 
+ *
  * @module aui-parse-content
  */
 
