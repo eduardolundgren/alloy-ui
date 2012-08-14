@@ -1,6 +1,13 @@
 var BOUNDING_BOX = 'boundingBox',
     ID = 'id',
 
+    DIRECTIONS = {
+        down: 'down',
+        left: 'left',
+        right: 'right',
+        up: 'up'
+    },
+
     POSITIONS = {
         'bottom': [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL],
         'bottom-left': [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL],
@@ -31,26 +38,30 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
     _afterAdd: function(event) {
         var instance = this,
         	child = event.child,
+            direction = instance.get('direction'),
         	size = instance.size(),
+            indent = instance.get('indent'),
         	index = event.index,
         	alignNode = 'body',
-        	position = POSITIONS[child.get('position')];
+        	position = POSITIONS[instance.get('position')];
 
         if (size > 1) {
        		var maxRows = instance.get('maxRows');
 
         	if ((size % maxRows) == 1) {
       			var previousNode = instance.item(index - maxRows);
-				alignNode = previousNode.get(BOUNDING_BOX);
 
-				position = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TL];
+                alignNode = previousNode.get(BOUNDING_BOX);
+
+                position = instance._getPosition(indent);
         	}
        		else {
 				var previousNode = instance.item(index - 1);
+
 				alignNode = previousNode.get(BOUNDING_BOX);
 
-				position = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
-        	}
+                position = instance._getPosition(direction);   
+            }
         }
 
 		if (position == 'center') {
@@ -74,6 +85,22 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 
     	instance.remove(index);
     	delete instance.regions[instance.item(index).get(ID)];
+    },
+
+    _getPosition: function(i) {
+        switch(i) {
+            case DIRECTIONS.down:
+                return POSITIONS.bottom;
+            
+            case DIRECTIONS.up:
+                return POSITIONS.top;
+            
+            case DIRECTIONS.left:
+                return POSITIONS.left;
+
+            case DIRECTIONS.right:
+                return POSITIONS.right;
+        }
     },
 
     _moveChildren: function(index) {
@@ -114,13 +141,51 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 },
 {
     ATTRS: {
-    	maxRows: {
-    		value: 3
-    	},
+        alignNode: {
+            value: 'body'
+        },
 
         defaultChildType: {
             value: A.NotifyItem,
             readOnly: true
+        },
+
+        direction: {
+            valueFn: function() {
+                var position = this.get('position');
+                
+                if (position.indexOf('top') === 0) {
+                    return DIRECTIONS.down;
+                }
+                else if (position.indexOf('bottom') === 0) {
+                    return DIRECTIONS.up;
+                }
+
+                return undefined;
+            }
+        },
+
+        indent: {
+            valueFn: function() {
+                var position = this.get('position');
+                
+                if (position.indexOf('right') !== -1) {
+                    return DIRECTIONS.left;
+                }
+                else if (position.indexOf('left') !== -1) {
+                    return DIRECTIONS.right;
+                }
+
+                return undefined;
+            }
+        },
+
+        maxRows: {
+            value: 5
+        },
+
+        position: {
+            value: 'top-left'
         }
     }
 });

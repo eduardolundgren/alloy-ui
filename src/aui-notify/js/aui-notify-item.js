@@ -86,10 +86,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
     }
 }, {
     ATTRS: {
-        alignNode: {
-            value: 'body'
-        },
-
         border: {
             value: false
         },
@@ -98,10 +94,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
             value: {
                 opacity: 0
             }
-        },
-
-        position: {
-            value: 'top-right'
         },
 
         shadow: {
