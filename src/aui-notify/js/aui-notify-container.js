@@ -1,12 +1,10 @@
 var BOUNDING_BOX = 'boundingBox',
     ID = 'id',
 
-    DIRECTIONS = {
-        down: 'down',
-        left: 'left',
-        right: 'right',
-        up: 'up'
-    },
+    BOTTOM = 'bottom',
+    LEFT = 'left',
+    RIGHT = 'right',
+    TOP = 'top',
 
     POSITIONS = {
         'bottom': [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL],
@@ -53,14 +51,14 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 
                 alignNode = previousNode.get(BOUNDING_BOX);
 
-                position = instance._getPosition(indent);
+                position = POSITIONS[indent];
         	}
        		else {
 				var previousNode = instance.item(index - 1);
 
 				alignNode = previousNode.get(BOUNDING_BOX);
 
-                position = instance._getPosition(direction);   
+                position = POSITIONS[direction];   
             }
         }
 
@@ -85,22 +83,6 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 
     	instance.remove(index);
     	delete instance.regions[instance.item(index).get(ID)];
-    },
-
-    _getPosition: function(i) {
-        switch(i) {
-            case DIRECTIONS.down:
-                return POSITIONS.bottom;
-            
-            case DIRECTIONS.up:
-                return POSITIONS.top;
-            
-            case DIRECTIONS.left:
-                return POSITIONS.left;
-
-            case DIRECTIONS.right:
-                return POSITIONS.right;
-        }
     },
 
     _moveChildren: function(index) {
@@ -154,11 +136,11 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             valueFn: function() {
                 var position = this.get('position');
                 
-                if (position.indexOf('top') === 0) {
-                    return DIRECTIONS.down;
+                if (position.indexOf(TOP) === 0) {
+                    return BOTTOM;
                 }
-                else if (position.indexOf('bottom') === 0) {
-                    return DIRECTIONS.up;
+                else if (position.indexOf(BOTTOM) === 0) {
+                    return TOP;
                 }
 
                 return undefined;
@@ -169,11 +151,11 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             valueFn: function() {
                 var position = this.get('position');
                 
-                if (position.indexOf('right') !== -1) {
-                    return DIRECTIONS.left;
+                if (position.indexOf(RIGHT) !== -1) {
+                    return LEFT;
                 }
-                else if (position.indexOf('left') !== -1) {
-                    return DIRECTIONS.right;
+                else if (position.indexOf(LEFT) !== -1) {
+                    return RIGHT;
                 }
 
                 return undefined;
