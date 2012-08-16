@@ -23,6 +23,7 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
         var instance = this;
 
         instance.after('render', instance._afterRender);
+        instance.after('visibleChange', instance._afterVisibleChange);
     },
 
     renderUI: function() {
@@ -69,14 +70,18 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
 
         if (timeout > 0) {
             setTimeout(function() {
-                instance._hide();
+                instance.hide();
             }, timeout);
         }
     },
 
-    _hide: function() {
+    _afterVisibleChange: function(event) {
         var instance = this,
             boundingBox = instance.get(BOUNDING_BOX);
+
+        if (event.newVal) {
+            return;
+        }
 
         boundingBox.transition(instance.get('hideTransition'), function() {
             var index = instance.get('index');
