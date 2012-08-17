@@ -111,7 +111,9 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
         },
 
         hideTransition: { 
-            opacity: 0
+            value: {
+                opacity: 0
+            }
         },
 
         shadow: {
@@ -140,7 +142,7 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
             validator: function(val) {
                 return (val === ALERT || val === INFO || val === NOTICE);
             },
-            value: NOTICE
+            value: INFO
         }
     }
 });
