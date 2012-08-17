@@ -6,19 +6,17 @@ var BORDER = 'border',
     SHADOW = 'shadow',
     SHOW_TRANSITION = 'showTransition',
     TEXT = 'text',
-    TEXT_NODE = 'textNode',
+    TIMEOUT = 'timeout',
+    TITLE = 'title',
     TYPE = 'type',
 
     getCN = A.ClassNameManager.getClassName,
 
     CSS_SHADOW = getCN(NOTIFY_ITEM, SHADOW),
-    CSS_TEXT = getCN(NOTIFY_ITEM, TEXT),
     CSS_TYPE_NOTICE = getCN(NOTIFY_ITEM, NOTICE);
-    CSS_TYPE_NOTICE_BORDER = getCN(NOTIFY_ITEM, NOTICE, BORDER),
+    CSS_TYPE_NOTICE_BORDER = getCN(NOTIFY_ITEM, NOTICE, BORDER);
 
-    TPL_TEXT = '<div class="' + CSS_TEXT + '"></div>';
-
-A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign], {
+A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
     bindUI: function() {
         var instance = this;
 
@@ -28,21 +26,11 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
 
     renderUI: function() {
         var instance = this,
-            contentBox = instance.get(CONTENT_BOX),
-            textNode = instance.get(TEXT_NODE);
-
-        contentBox.append(textNode);
-    },
-
-    syncUI: function() {
-        var instance = this,
             border = instance.get(BORDER),
             boundingBox = instance.get(BOUNDING_BOX),
             contentBox = instance.get(CONTENT_BOX),
             shadow = instance.get(SHADOW),
             showTransition = instance.get(SHOW_TRANSITION),
-            text = instance.get(TEXT),
-            textNode = instance.get(TEXT_NODE),
             type = instance.get(TYPE);
 
         if (type == NOTICE) {
@@ -60,13 +48,20 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
         if (showTransition) {
             boundingBox.transition(showTransition);
         }
+    },
 
-        textNode.html(text);       
+    syncUI: function() {
+        var instance = this,
+			text = instance.get(TEXT),
+			title = instance.get(TITLE);
+
+		instance.setStdModContent(A.WidgetStdMod.HEADER, title);
+		instance.setStdModContent(A.WidgetStdMod.BODY, text);
     },
 
     _afterRender: function() {
         var instance = this,
-            timeout = instance.get('timeout');
+            timeout = instance.get(TIMEOUT);
 
         if (timeout > 0) {
             setTimeout(function() {
@@ -131,14 +126,12 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
             value: ''
         },
 
-        textNode: {
-            valueFn: function() {
-                return A.Node.create(TPL_TEXT);
-            }
-        },
-
         timeout: {
             value: 2000
+        },
+
+        title: {
+            value: ''
         },
 
         type: {
