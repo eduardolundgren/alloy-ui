@@ -5,15 +5,34 @@
 	padding: 10px;
 }
 
+.yui3-notify-item-alert {
+	background-color: #F2DEDE;
+	color: #B94A48;
+}
+
+.yui3-notify-item-alert-border {
+	border: 1px solid #EED3D7;
+}
+
 .yui3-notify-item-content {
 	border-radius: 4px;
 	padding: .8em;
+}
+
+.yui3-notify-item-info {
+	background-color: #D9EDF7;
+	color: #3A87AD;
+}
+
+.yui3-notify-item-info-border {
+	border: 1px solid #BCE8F1;
 }
 
 .yui3-notify-item-notice {
 	background-color: #FCF8E3;
 	color: #C09853;
 }
+
 .yui3-notify-item-notice-border {
 	border: 1px solid #F0C36D;
 }
