@@ -32,11 +32,13 @@ POSITIONS[TOP_LEFT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL];
 POSITIONS[TOP_RIGHT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR];
 
 A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent], {
-	regions: null,
+	handles: null,
+    regions: null,
 
 	initializer: function() {
 		var instance = this;
 
+        instance.handles = {};
 		instance.regions = {};
 	},
 
@@ -83,20 +85,31 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 		    child.align(alignNode, position);
 		}
 
-		child.after(function() {
+		var handle = child.after(function() {
 			instance.regions[child.get(ID)] = child.get(BOUNDING_BOX).get(REGION);
 		}, child, '_doAlign');
+
+        instance.handles[child.get(ID)] = handle;
     },
 
     _afterHide: function(event) {
     	var instance = this,
-            index = event.index;
+            index = event.index,
+            child = instance.item(index);
 
     	instance._syncRegions(index);
     	instance._moveChildren(index);
 
+        var id = instance.item(index).get(ID);
+
+        var handle = instance.handles[id];
+
+        handle.detach();
+
+        delete instance.handles[id];
+    	delete instance.regions[id];
+
     	instance.remove(index);
-    	delete instance.regions[instance.item(index).get(ID)];
     },
 
     _moveChildren: function(index) {
@@ -107,8 +120,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 				return;
 			}
 
-			var previousChild = instance.item(i - 1);
-    		var region = instance.regions[previousChild.get(ID)];
+    		var region = instance.regions[child.get(ID)];
 
 			if (!region) {
 				return;
@@ -181,7 +193,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         },
 
         position: {
-            value: TOP_LEFT
+            value: TOP_RIGHT
         }
     }
 });

@@ -18,7 +18,7 @@ var BORDER = 'border',
 
     TPL_TEXT = '<div class="' + CSS_TEXT + '"></div>';
 
-A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign], {
+A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign], {
     bindUI: function() {
         var instance = this;
 
@@ -77,17 +77,25 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
 
     _afterVisibleChange: function(event) {
         var instance = this,
-            boundingBox = instance.get(BOUNDING_BOX);
+            boundingBox = instance.get(BOUNDING_BOX),
+            hideTransition = instance.get('hideTransition');
 
         if (event.newVal) {
             return;
         }
 
-        boundingBox.transition(instance.get('hideTransition'), function() {
+        if (hideTransition) {
+            boundingBox.transition(hideTransition, function() {
+                var index = instance.get('index');
+
+                instance.fire('hide', { index: index });
+            });
+        }
+        else {
             var index = instance.get('index');
 
             instance.fire('hide', { index: index });
-        });
+        }
     }
 }, {
     ATTRS: {
@@ -95,11 +103,19 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetChild, A.WidgetPosi
             value: false
         },
 
-        hideTransition: {
-            value: {
-                opacity: 0
-            }
+        hideOn: {
+            valueFn: function() {
+                return [
+                    {
+                        node: this.get(BOUNDING_BOX),
+                        eventName: 'click'
+                    }
+                ];
+            },
+            validator: A.Lang.isArray
         },
+
+        hideTransition: { opacity: 0 },
 
         shadow: {
             value: true
