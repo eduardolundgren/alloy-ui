@@ -1,350 +1,364 @@
 AUI.add('aui-notify', function(A) {
-var ALERT = 'alert',
-    BORDER = 'border',
-    BOUNDING_BOX = 'boundingBox',
-    CONTENT_BOX = 'contentBox',
-    INFO = 'info',
-    NOTICE = 'notice',
-    NOTIFY_ITEM = 'notify-item',
-    SHADOW = 'shadow',
-    SHOW_TRANSITION = 'showTransition',
-    TEXT = 'text',
-    TIMEOUT = 'timeout',
-    TITLE = 'title',
-    TYPE = 'type',
+var Lang = A.Lang,
+	isUndefined = Lang.isUndefined,
+	isNumber = Lang.isNumber,
 
-    getCN = A.ClassNameManager.getClassName,
+	ALERT = 'alert',
+	BOUNDING_BOX = 'boundingBox',
+	CONTENT_BOX = 'contentBox',
+	INFO = 'info',
+	NOTICE = 'notice',
+	RENDERED = 'rendered',
+	SHADOW = 'shadow',
+	SHOW_TRANSITION = 'showTransition',
+	TEXT = 'text',
+	TIMEOUT = 'timeout',
+	TITLE = 'title',
+	TYPE = 'type',
 
-    CSS_SHADOW = getCN(NOTIFY_ITEM, SHADOW);
+	NOTIFY_ITEM_NAME = 'notify-item',
 
-A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
-    bindUI: function() {
-        var instance = this;
+	UI_ATTRS = [TEXT, TIMEOUT, TITLE],
+	WIDGET_UI_ATTRS = A.Widget.prototype._UI_ATTRS,
 
-        instance.after('render', instance._afterRender);
-        instance.after('visibleChange', instance._afterVisibleChange);
-    },
+	getCN = A.ClassNameManager.getClassName;
 
-    renderUI: function() {
-        var instance = this,
-            border = instance.get(BORDER),
-            boundingBox = instance.get(BOUNDING_BOX),
-            contentBox = instance.get(CONTENT_BOX),
-            shadow = instance.get(SHADOW),
-            showTransition = instance.get(SHOW_TRANSITION),
-            type = instance.get(TYPE);
+A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
+	_timerId: null,
 
-        if (type) {
-            contentBox.addClass(getCN(NOTIFY_ITEM, type));
+	bindUI: function() {
+		var instance = this;
 
-            if (border) {
-                contentBox.addClass(getCN(NOTIFY_ITEM, type, BORDER));
-            }
-        }
+		instance.after({
+			// TODO: Check why when after render 'rendered' attribute is false
+			renderedChange: instance._afterRender,
+			visibleChange: instance._afterVisibleChange
+		});
+	},
 
-        if (shadow) {
-            contentBox.addClass(CSS_SHADOW);
-        }
+	renderUI: function() {
+		var instance = this,
+			boundingBox = instance.get(BOUNDING_BOX),
+			showTransition = instance.get(SHOW_TRANSITION),
+			type = instance.get(TYPE);
 
-        if (showTransition) {
-            boundingBox.transition(showTransition);
-        }
-    },
+		boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
 
-    syncUI: function() {
-        var instance = this,
-			text = instance.get(TEXT),
-			title = instance.get(TITLE);
+		if (showTransition) {
+			boundingBox.transition(showTransition);
+		}
+	},
 
-		instance.setStdModContent(A.WidgetStdMod.HEADER, title);
-		instance.setStdModContent(A.WidgetStdMod.BODY, text);
-    },
+	_afterRender: function() {
+		var instance = this;
 
-    _afterRender: function() {
-        var instance = this,
-            timeout = instance.get(TIMEOUT);
+		instance._uiSetTimeout(instance.get(TIMEOUT));
+	},
 
-        if (timeout > 0) {
-            setTimeout(function() {
-                instance.hide();
-            }, timeout);
-        }
-    },
+	// STOP
 
-    _afterVisibleChange: function(event) {
-        var instance = this,
-            boundingBox = instance.get(BOUNDING_BOX),
-            hideTransition = instance.get('hideTransition');
+	_afterVisibleChange: function(event) {
+		var instance = this,
+			boundingBox = instance.get(BOUNDING_BOX),
+			hideTransition = instance.get('hideTransition');
 
-        if (event.newVal) {
-            return;
-        }
+		if (event.newVal) {
+			return;
+		}
 
-        if (hideTransition) {
-            boundingBox.transition(hideTransition, function() {
-                var index = instance.get('index');
+		if (hideTransition) {
+			boundingBox.transition(hideTransition, function() {
+				var index = instance.get('index');
 
-                instance.fire('hide', { index: index });
-            });
-        }
-        else {
-            var index = instance.get('index');
+				instance.fire('hide', { index: index });
+			});
+		}
+		else {
+			var index = instance.get('index');
 
-            instance.fire('hide', { index: index });
-        }
-    }
+			instance.fire('hide', { index: index });
+		}
+	},
+
+	_uiSetText: function(val) {
+		var instance = this;
+
+		if (!isUndefined(val)) {
+			instance.setStdModContent(A.WidgetStdMod.BODY, val);
+		}
+	},
+
+	_uiSetTimeout: function(val) {
+		var instance = this;
+
+		if (instance.get(RENDERED)) {
+			clearTimeout(instance._timerId);
+
+			if (val < Infinity) {
+				instance._timerId = setTimeout(
+					A.bind(instance.hide, instance),
+					instance.get(TIMEOUT)
+				);
+			}
+		}
+	},
+
+	_uiSetTitle: function(val) {
+		var instance = this;
+
+		if (!isUndefined(val)) {
+			instance.setStdModContent(A.WidgetStdMod.HEADER, val);
+		}
+	},
+
+	_UI_ATTRS: {
+		BIND: WIDGET_UI_ATTRS.BIND.concat(UI_ATTRS),
+		SYNC: WIDGET_UI_ATTRS.SYNC.concat(UI_ATTRS)
+	}
 }, {
-    ATTRS: {
-        border: {
-            value: false
-        },
+	ATTRS: {
+		hideOn: {
+			valueFn: function() {
+				return [
+					{
+						node: this.get(BOUNDING_BOX),
+						eventName: 'click'
+					}
+				];
+			},
+			validator: A.Lang.isArray
+		},
 
-        hideOn: {
-            valueFn: function() {
-                return [
-                    {
-                        node: this.get(BOUNDING_BOX),
-                        eventName: 'click'
-                    }
-                ];
-            },
-            validator: A.Lang.isArray
-        },
+		hideTransition: {
+			value: {
+				opacity: 0
+			}
+		},
 
-        hideTransition: { 
-            value: {
-                opacity: 0
-            }
-        },
+		showTransition: {
+			value: {
+				opacity: 1
+			}
+		},
 
-        shadow: {
-            value: true
-        },
+		text: {
+		},
 
-        showTransition: {
-            value: {
-                opacity: 1
-            }
-        },
+		timeout: {
+			validator: function(val) {
+				return isNumber(val) || val === Infinity;
+			},
+			value: Infinity
+		},
 
-        text: {
-            value: ''
-        },
+		title: {
+		},
 
-        timeout: {
-            value: 2000
-        },
-
-        title: {
-            value: ''
-        },
-
-        type: {
-            validator: function(val) {
-                return (val === ALERT || val === INFO || val === NOTICE);
-            },
-            value: INFO
-        }
-    }
+		type: {
+			validator: function(val) {
+				return (val === ALERT || val === INFO || val === NOTICE);
+			},
+			value: ALERT
+		}
+	}
 });
 var BODY = 'body',
-    BOUNDING_BOX = 'boundingBox',
-    CENTER = 'center',
-    DIRECTION = 'direction',
-    ID = 'id',
-    INDENT = 'indent',
-    MAX_ROWS = 'maxRows',
-    REGION = 'region',
+	CENTER = 'center',
+	DIRECTION = 'direction',
+	ID = 'id',
+	INDENT = 'indent',
+	MAX_ROWS = 'maxRows',
+	REGION = 'region',
 
-    BOTTOM = 'bottom',
-    BOTTOM_LEFT = 'bottom-left',
-    BOTTOM_RIGHT = 'bottom-right',
-    LEFT = 'left',
-    RIGHT = 'right',
-    TOP = 'top',
-    TOP_LEFT = 'top-left',
-    TOP_RIGHT = 'top-right',
+	BOTTOM = 'bottom',
+	BOTTOM_LEFT = 'bottom-left',
+	BOTTOM_RIGHT = 'bottom-right',
+	LEFT = 'left',
+	RIGHT = 'right',
+	TOP = 'top',
+	TOP_LEFT = 'top-left',
+	TOP_RIGHT = 'top-right',
 
-    POSITION = 'position',
+	POSITION = 'position',
 
-    POSITIONS = {},
+	POSITIONS = {},
 
-    PX = 'px';
+	PX = 'px';
 
 A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent], {
 	handles: null,
-    regions: null,
+	regions: null,
 
 	initializer: function() {
 		var instance = this;
 
-        instance.handles = {};
+		instance.handles = {};
 		instance.regions = {};
 
-        POSITIONS[BOTTOM] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
-        POSITIONS[BOTTOM_LEFT] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL];
-        POSITIONS[BOTTOM_RIGHT] = [A.WidgetPositionAlign.BR, A.WidgetPositionAlign.BR];
-        POSITIONS[LEFT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TL];
-        POSITIONS[RIGHT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TR];
-        POSITIONS[TOP] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.TL];
-        POSITIONS[TOP_LEFT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL];
-        POSITIONS[TOP_RIGHT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR];
+		POSITIONS[BOTTOM] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
+		POSITIONS[BOTTOM_LEFT] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL];
+		POSITIONS[BOTTOM_RIGHT] = [A.WidgetPositionAlign.BR, A.WidgetPositionAlign.BR];
+		POSITIONS[LEFT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TL];
+		POSITIONS[RIGHT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TR];
+		POSITIONS[TOP] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.TL];
+		POSITIONS[TOP_LEFT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL];
+		POSITIONS[TOP_RIGHT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR];
 	},
 
 	bindUI: function() {
-        var instance = this;
+		var instance = this;
 
-        instance.after('addChild', instance._afterAdd);
-        instance.after('notify-item:hide', instance._afterHide);
-    },
+		instance.after('addChild', instance._afterAdd);
+		instance.after('notify-item:hide', instance._afterHide);
+	},
 
-    _afterAdd: function(event) {
-        var instance = this,
-        	child = event.child,
-            direction = instance.get(DIRECTION),
-        	size = instance.size(),
-            indent = instance.get(INDENT),
-        	index = event.index,
-        	alignNode = BODY,
-        	position = POSITIONS[instance.get(POSITION)];
+	_afterAdd: function(event) {
+		var instance = this,
+			child = event.child,
+			direction = instance.get(DIRECTION),
+			size = instance.size(),
+			indent = instance.get(INDENT),
+			index = event.index,
+			alignNode = BODY,
+			position = POSITIONS[instance.get(POSITION)];
 
-        if (size > 1) {
-       		var maxRows = instance.get(MAX_ROWS);
+		if (size > 1) {
+			var maxRows = instance.get(MAX_ROWS),
+				previousNode;
 
-        	if ((size % maxRows) == 1) {
-      			var previousNode = instance.item(index - maxRows);
-
-                alignNode = previousNode.get(BOUNDING_BOX);
-
-                position = POSITIONS[indent];
-        	}
-       		else {
-				var previousNode = instance.item(index - 1);
+			if ((size % maxRows) === 1) {
+				previousNode = instance.item(index - maxRows);
 
 				alignNode = previousNode.get(BOUNDING_BOX);
 
-                position = POSITIONS[direction];   
-            }
-        }
+				position = POSITIONS[indent];
+			}
+			else {
+				previousNode = instance.item(index - 1);
 
-		if (position == CENTER) {
-		    child.centered(alignNode);
+				alignNode = previousNode.get(BOUNDING_BOX);
+
+				position = POSITIONS[direction];
+			}
+		}
+
+		if (position === CENTER) {
+			child.centered(alignNode);
 		}
 		else {
-		    child.align(alignNode, position);
+			child.align(alignNode, position);
 		}
 
 		var handle = child.after(function() {
 			instance.regions[child.get(ID)] = child.get(BOUNDING_BOX).get(REGION);
 		}, child, '_doAlign');
 
-        instance.handles[child.get(ID)] = handle;
-    },
+		instance.handles[child.get(ID)] = handle;
+	},
 
-    _afterHide: function(event) {
-    	var instance = this,
-            index = event.index,
-            child = instance.item(index);
+	_afterHide: function(event) {
+		var instance = this,
+			index = event.index;
 
-    	instance._syncRegions(index);
-    	instance._moveChildren(index);
+		instance._syncRegions(index);
+		instance._moveChildren(index);
 
-        var id = instance.item(index).get(ID);
+		var id = instance.item(index).get(ID);
 
-        var handle = instance.handles[id];
+		var handle = instance.handles[id];
 
-        handle.detach();
+		handle.detach();
 
-        delete instance.handles[id];
-    	delete instance.regions[id];
+		delete instance.handles[id];
+		delete instance.regions[id];
 
-    	instance.remove(index);
-    },
+		instance.remove(index);
+	},
 
-    _moveChildren: function(index) {
-    	var instance = this;
+	_moveChildren: function(index) {
+		var instance = this;
 
-    	instance.each(function(child, i) {
-    		if (i <= index) {
+		instance.each(function(child, i) {
+			if (i <= index) {
 				return;
 			}
 
-    		var region = instance.regions[child.get(ID)];
+			var region = instance.regions[child.get(ID)];
 
 			if (!region) {
 				return;
 			}
 
-    		var node = child.get(BOUNDING_BOX);
+			var node = child.get(BOUNDING_BOX);
 
-    		node.transition({
-    			top: region.top + PX,
-    			left: region.left + PX
-    		});
-    	});
-    },
+			node.transition({
+				top: region.top + PX,
+				left: region.left + PX
+			});
+		});
+	},
 
-    _syncRegions: function(index) {
-    	var instance = this;
-    	var i = instance.size() - 1;
+	_syncRegions: function(index) {
+		var instance = this;
+		var i = instance.size() - 1;
 
-    	for (; i > index; i--) {
-    		var child = instance.item(i);
-    		var previousChild = instance.item(i - 1);
+		for (; i > index; i--) {
+			var child = instance.item(i);
+			var previousChild = instance.item(i - 1);
 
-    		instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
-    	}
-    }
+			instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
+		}
+	}
 },
 {
-    ATTRS: {
-        alignNode: {
-            value: BODY
-        },
+	ATTRS: {
+		alignNode: {
+			value: BODY
+		},
 
-        defaultChildType: {
-            value: A.NotifyItem,
-            readOnly: true
-        },
+		defaultChildType: {
+			value: A.NotifyItem,
+			readOnly: true
+		},
 
-        direction: {
-            valueFn: function() {
-                var position = this.get(POSITION);
-                
-                if (position.indexOf(TOP) === 0) {
-                    return BOTTOM;
-                }
-                else if (position.indexOf(BOTTOM) === 0) {
-                    return TOP;
-                }
+		direction: {
+			valueFn: function() {
+				var position = this.get(POSITION);
 
-                return undefined;
-            }
-        },
+				if (position.indexOf(TOP) === 0) {
+					return BOTTOM;
+				}
+				else if (position.indexOf(BOTTOM) === 0) {
+					return TOP;
+				}
 
-        indent: {
-            valueFn: function() {
-                var position = this.get(POSITION);
-                
-                if (position.indexOf(RIGHT) !== -1) {
-                    return LEFT;
-                }
-                else if (position.indexOf(LEFT) !== -1) {
-                    return RIGHT;
-                }
+				return undefined;
+			}
+		},
 
-                return undefined;
-            }
-        },
+		indent: {
+			valueFn: function() {
+				var position = this.get(POSITION);
 
-        maxRows: {
-            value: 5
-        },
+				if (position.indexOf(RIGHT) !== -1) {
+					return LEFT;
+				}
+				else if (position.indexOf(LEFT) !== -1) {
+					return RIGHT;
+				}
 
-        position: {
-            value: TOP_LEFT
-        }
-    }
+				return undefined;
+			}
+		},
+
+		maxRows: {
+			value: 5
+		},
+
+		position: {
+			value: TOP_RIGHT
+		}
+	}
 });
 
 }, '@VERSION@' ,{skinnable:true, requires:['aui-base','transition','widget','widget-autohide','widget-child','widget-parent','widget-position','widget-position-align','widget-stdmod']});

@@ -1,0 +1,26 @@
+.yui3-notify-item-content {
+	border-radius: 4px;
+}
+
+.yui3-notify-item-alert .yui3-notify-item-content {
+	background-color: #F2DEDE;
+	border: 1px solid #EED3D7;
+	color: #B94A48;
+}
+
+.yui3-notify-item-info .yui3-notify-item-content {
+	background-color: #D9EDF7;
+	border: 1px solid #BCE8F1;
+	color: #3A87AD;
+}
+
+.yui3-notify-item-notice .yui3-notify-item-content {
+	background-color: #FCF8E3;
+	border: 1px solid #F0C36D;
+	color: #C09853;
+}
+
+.yui3-notify-item-content {
+	-webkit-box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
+	box-shadow: 0px 2px 10px rgba(50, 50, 50, 0.5);
+}
