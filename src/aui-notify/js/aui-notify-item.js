@@ -1,10 +1,11 @@
-var ALERT = 'alert',
-    BORDER = 'border',
+var Lang = A.Lang,
+    isUndefined = Lang.isUndefined,
+
+    ALERT = 'alert',
     BOUNDING_BOX = 'boundingBox',
     CONTENT_BOX = 'contentBox',
     INFO = 'info',
     NOTICE = 'notice',
-    NOTIFY_ITEM = 'notify-item',
     SHADOW = 'shadow',
     SHOW_TRANSITION = 'showTransition',
     TEXT = 'text',
@@ -12,37 +13,28 @@ var ALERT = 'alert',
     TITLE = 'title',
     TYPE = 'type',
 
-    getCN = A.ClassNameManager.getClassName,
+    NOTIFY_ITEM_NAME = 'notify-item',
 
-    CSS_SHADOW = getCN(NOTIFY_ITEM, SHADOW);
+    getCN = A.ClassNameManager.getClassName;
 
-A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
+A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
     bindUI: function() {
         var instance = this;
 
-        instance.after('render', instance._afterRender);
-        instance.after('visibleChange', instance._afterVisibleChange);
+        instance.after({
+            render: instance._afterRender,
+            visibleChange: instance._afterVisibleChange
+        });
     },
 
     renderUI: function() {
         var instance = this,
-            border = instance.get(BORDER),
             boundingBox = instance.get(BOUNDING_BOX),
-            contentBox = instance.get(CONTENT_BOX),
-            shadow = instance.get(SHADOW),
             showTransition = instance.get(SHOW_TRANSITION),
             type = instance.get(TYPE);
 
         if (type) {
-            contentBox.addClass(getCN(NOTIFY_ITEM, type));
-
-            if (border) {
-                contentBox.addClass(getCN(NOTIFY_ITEM, type, BORDER));
-            }
-        }
-
-        if (shadow) {
-            contentBox.addClass(CSS_SHADOW);
+            boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
         }
 
         if (showTransition) {
@@ -52,11 +44,17 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
 
     syncUI: function() {
         var instance = this,
-			text = instance.get(TEXT),
-			title = instance.get(TITLE);
+            text = instance.get(TEXT),
+            title = instance.get(TITLE);
 
-		instance.setStdModContent(A.WidgetStdMod.HEADER, title);
-		instance.setStdModContent(A.WidgetStdMod.BODY, text);
+        if (!isUndefined(title)) {
+            instance.setStdModContent(A.WidgetStdMod.HEADER, title);
+        }
+
+        if (!isUndefined(text)) {
+            instance.setStdModContent(A.WidgetStdMod.BODY, text);
+        }
+
     },
 
     _afterRender: function() {
@@ -94,10 +92,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
     }
 }, {
     ATTRS: {
-        border: {
-            value: false
-        },
-
         hideOn: {
             valueFn: function() {
                 return [
@@ -110,14 +104,10 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
             validator: A.Lang.isArray
         },
 
-        hideTransition: { 
+        hideTransition: {
             value: {
                 opacity: 0
             }
-        },
-
-        shadow: {
-            value: true
         },
 
         showTransition: {
@@ -127,7 +117,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
         },
 
         text: {
-            value: ''
         },
 
         timeout: {
@@ -135,14 +124,13 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
         },
 
         title: {
-            value: ''
         },
 
         type: {
             validator: function(val) {
                 return (val === ALERT || val === INFO || val === NOTICE);
             },
-            value: INFO
+            value: ALERT
         }
     }
 });

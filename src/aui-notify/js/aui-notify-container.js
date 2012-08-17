@@ -1,5 +1,4 @@
 var BODY = 'body',
-    BOUNDING_BOX = 'boundingBox',
     CENTER = 'center',
     DIRECTION = 'direction',
     ID = 'id',
@@ -23,14 +22,14 @@ var BODY = 'body',
     PX = 'px';
 
 A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent], {
-	handles: null,
+    handles: null,
     regions: null,
 
-	initializer: function() {
-		var instance = this;
+    initializer: function() {
+        var instance = this;
 
         instance.handles = {};
-		instance.regions = {};
+        instance.regions = {};
 
         POSITIONS[BOTTOM] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
         POSITIONS[BOTTOM_LEFT] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL];
@@ -40,9 +39,9 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         POSITIONS[TOP] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.TL];
         POSITIONS[TOP_LEFT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL];
         POSITIONS[TOP_RIGHT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR];
-	},
+    },
 
-	bindUI: function() {
+    bindUI: function() {
         var instance = this;
 
         instance.after('addChild', instance._afterAdd);
@@ -51,54 +50,54 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 
     _afterAdd: function(event) {
         var instance = this,
-        	child = event.child,
+            child = event.child,
             direction = instance.get(DIRECTION),
-        	size = instance.size(),
+            size = instance.size(),
             indent = instance.get(INDENT),
-        	index = event.index,
-        	alignNode = BODY,
-        	position = POSITIONS[instance.get(POSITION)];
+            index = event.index,
+            alignNode = BODY,
+            position = POSITIONS[instance.get(POSITION)];
 
         if (size > 1) {
-       		var maxRows = instance.get(MAX_ROWS);
+            var maxRows = instance.get(MAX_ROWS),
+                previousNode;
 
-        	if ((size % maxRows) == 1) {
-      			var previousNode = instance.item(index - maxRows);
+            if ((size % maxRows) === 1) {
+                previousNode = instance.item(index - maxRows);
 
                 alignNode = previousNode.get(BOUNDING_BOX);
 
                 position = POSITIONS[indent];
-        	}
-       		else {
-				var previousNode = instance.item(index - 1);
+            }
+            else {
+                previousNode = instance.item(index - 1);
 
-				alignNode = previousNode.get(BOUNDING_BOX);
+                alignNode = previousNode.get(BOUNDING_BOX);
 
-                position = POSITIONS[direction];   
+                position = POSITIONS[direction];
             }
         }
 
-		if (position == CENTER) {
-		    child.centered(alignNode);
-		}
-		else {
-		    child.align(alignNode, position);
-		}
+        if (position === CENTER) {
+            child.centered(alignNode);
+        }
+        else {
+            child.align(alignNode, position);
+        }
 
-		var handle = child.after(function() {
-			instance.regions[child.get(ID)] = child.get(BOUNDING_BOX).get(REGION);
-		}, child, '_doAlign');
+        var handle = child.after(function() {
+            instance.regions[child.get(ID)] = child.get(BOUNDING_BOX).get(REGION);
+        }, child, '_doAlign');
 
         instance.handles[child.get(ID)] = handle;
     },
 
     _afterHide: function(event) {
-    	var instance = this,
-            index = event.index,
-            child = instance.item(index);
+        var instance = this,
+            index = event.index;
 
-    	instance._syncRegions(index);
-    	instance._moveChildren(index);
+        instance._syncRegions(index);
+        instance._moveChildren(index);
 
         var id = instance.item(index).get(ID);
 
@@ -107,44 +106,44 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         handle.detach();
 
         delete instance.handles[id];
-    	delete instance.regions[id];
+        delete instance.regions[id];
 
-    	instance.remove(index);
+        instance.remove(index);
     },
 
     _moveChildren: function(index) {
-    	var instance = this;
+        var instance = this;
 
-    	instance.each(function(child, i) {
-    		if (i <= index) {
-				return;
-			}
+        instance.each(function(child, i) {
+            if (i <= index) {
+                return;
+            }
 
-    		var region = instance.regions[child.get(ID)];
+            var region = instance.regions[child.get(ID)];
 
-			if (!region) {
-				return;
-			}
+            if (!region) {
+                return;
+            }
 
-    		var node = child.get(BOUNDING_BOX);
+            var node = child.get(BOUNDING_BOX);
 
-    		node.transition({
-    			top: region.top + PX,
-    			left: region.left + PX
-    		});
-    	});
+            node.transition({
+                top: region.top + PX,
+                left: region.left + PX
+            });
+        });
     },
 
     _syncRegions: function(index) {
-    	var instance = this;
-    	var i = instance.size() - 1;
+        var instance = this;
+        var i = instance.size() - 1;
 
-    	for (; i > index; i--) {
-    		var child = instance.item(i);
-    		var previousChild = instance.item(i - 1);
+        for (; i > index; i--) {
+            var child = instance.item(i);
+            var previousChild = instance.item(i - 1);
 
-    		instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
-    	}
+            instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
+        }
     }
 },
 {
@@ -161,7 +160,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         direction: {
             valueFn: function() {
                 var position = this.get(POSITION);
-                
+
                 if (position.indexOf(TOP) === 0) {
                     return BOTTOM;
                 }
@@ -176,7 +175,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         indent: {
             valueFn: function() {
                 var position = this.get(POSITION);
-                
+
                 if (position.indexOf(RIGHT) !== -1) {
                     return LEFT;
                 }
