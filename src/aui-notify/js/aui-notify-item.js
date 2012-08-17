@@ -1,6 +1,8 @@
-var BORDER = 'border',
+var ALERT = 'alert',
+    BORDER = 'border',
     BOUNDING_BOX = 'boundingBox',
     CONTENT_BOX = 'contentBox',
+    INFO = 'info',
     NOTICE = 'notice',
     NOTIFY_ITEM = 'notify-item',
     SHADOW = 'shadow',
@@ -12,9 +14,7 @@ var BORDER = 'border',
 
     getCN = A.ClassNameManager.getClassName,
 
-    CSS_SHADOW = getCN(NOTIFY_ITEM, SHADOW),
-    CSS_TYPE_NOTICE = getCN(NOTIFY_ITEM, NOTICE);
-    CSS_TYPE_NOTICE_BORDER = getCN(NOTIFY_ITEM, NOTICE, BORDER);
+    CSS_SHADOW = getCN(NOTIFY_ITEM, SHADOW);
 
 A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
     bindUI: function() {
@@ -33,11 +33,11 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
             showTransition = instance.get(SHOW_TRANSITION),
             type = instance.get(TYPE);
 
-        if (type == NOTICE) {
-            contentBox.addClass(CSS_TYPE_NOTICE);
+        if (type) {
+            contentBox.addClass(getCN(NOTIFY_ITEM, type));
 
             if (border) {
-                contentBox.addClass(CSS_TYPE_NOTICE_BORDER);
+                contentBox.addClass(getCN(NOTIFY_ITEM, type, BORDER));
             }
         }
 
@@ -110,7 +110,9 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
             validator: A.Lang.isArray
         },
 
-        hideTransition: { opacity: 0 },
+        hideTransition: { 
+            opacity: 0
+        },
 
         shadow: {
             value: true
@@ -135,6 +137,9 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM, A.Widget, [A.WidgetAutohide, A.WidgetC
         },
 
         type: {
+            validator: function(val) {
+                return (val === ALERT || val === INFO || val === NOTICE);
+            },
             value: NOTICE
         }
     }
