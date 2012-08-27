@@ -2,15 +2,20 @@ AUI.add('aui-datepicker-base', function(A) {
 var Lang = A.Lang,
 	isBoolean = Lang.isBoolean,
 	isFunction = Lang.isFunction,
+	isArray	= Lang.isArray,
+	isString = Lang.isString,
+	DataType = A.DataType,
+	AArray = A.Array,
 
 	CALENDAR = 'calendar',
 	CONTENT_BOX = 'contentBox',
 	CURRENT_NODE = 'currentNode',
+	DATEPICKER = 'date-picker',
 	FORMATTER = 'formatter',
-	SELECT_MULTIPLE_DATES = 'selectMultipleDates',
-	SET_VALUE = 'setValue',
+	LOCALE = 'locale',
+	SELECT_MULTIPLE_DATES = 'selectionMode',
+	SET_VALUE = 'setValue';
 
-	DATEPICKER = 'date-picker';
 
 var DatePicker = A.Component.create({
 	NAME: DATEPICKER,
@@ -29,6 +34,20 @@ var DatePicker = A.Component.create({
 		},
 
 		/**
+		 * The default date format string which can be overriden for
+		 * localization support. The format must be valid according to
+		 * <a href="DataType.Date.html">A.DataType.Date.format</a>.
+		 *
+		 * @attribute dateFormat
+		 * @default %m/%d/%Y
+		 * @type String
+		 */
+		dateFormat: {
+			value: '%m/%d/%Y',
+			validator: isString
+		},
+
+		/**
 		 * Function to format the array of the selected dates before set the
          * value of the input.
 		 *
@@ -37,16 +56,40 @@ var DatePicker = A.Component.create({
 		 * @type function
 		 */
 		formatter: {
-			value: function(dates) {
-				return dates.formatted.join(',');
+			value: function (dates) {
+				var instance = this,
+					formattedDates = [];
+
+				if (isArray(dates)) {
+					AArray.each(dates, function (date, index) {
+						formattedDates[index] = instance.formatDate(date);
+					});
+
+					return formattedDates.join(',');
+				} else {
+					return instance.formatDate(dates);
+				}
 			},
+
 			validator: isFunction
 		},
 
 		/**
+		 * Default selected Dates
+		 *
+		 * @attribute selectedDates
+		 * @default true
+		 * @type Array
+		 */
+		selectedDates: {
+			value: new Date(),
+			setter: AArray
+		},
+
+		/**
 		 * If true set the selected date with the correct
-		 * <a href="Calendar.html#config_dateFormat">dateFormat</a> to the
-		 * value of the input field which is hosting the Calendar.
+		 * dateFormat to the value of the input field
+		 * which is hosting the Calendar.
 		 *
 		 * @attribute setValue
 		 * @default true
@@ -80,6 +123,8 @@ var DatePicker = A.Component.create({
 		}
 	},
 
+	UI_ATTRS: ['selectedDates'],
+
 	EXTENDS: A.OverlayContext,
 
 	prototype: {
@@ -89,12 +134,19 @@ var DatePicker = A.Component.create({
 		 * @method initializer
 		 * @protected
 		 */
-		initializer: function() {
+		initializer: function () {
 			var instance = this;
 
 			instance.calendar = new A.Calendar(
 				instance.get(CALENDAR)
 			);
+		},
+
+		formatDate: function (date) {
+			var instance = this,
+				locale = instance.get(LOCALE);
+
+			return DataType.Date.format(date, {format: instance.get('dateFormat'), locale: locale});
 		},
 
 		/**
@@ -103,18 +155,18 @@ var DatePicker = A.Component.create({
 		 * @method bindUI
 		 * @protected
 		 */
-		bindUI: function() {
+		bindUI: function () {
 			var instance = this;
 
 			DatePicker.superclass.bindUI.apply(this, arguments);
 
 			instance.on('show', instance._onShowOverlay);
-			instance.after('calendar:select', instance._afterSelectDate);
+			instance.after('calendar:dateClick', instance._afterSelectDate);
 
 			// Set the value of the trigger with the Calendar current date
 			if (instance.get(SET_VALUE)) {
 				instance._setTriggerValue(
-					instance.calendar._getSelectEventData().date
+					instance.formatDate(instance.calendar.get('date'))
 				);
 			}
 		},
@@ -126,7 +178,7 @@ var DatePicker = A.Component.create({
 		 * @method destructor
 		 * @protected
 		 */
-		destructor: function() {
+		destructor: function () {
 			var instance = this;
 
 			instance.calendar.destroy();
@@ -139,15 +191,15 @@ var DatePicker = A.Component.create({
 		 * @param {Event} event
 		 * @protected
 		 */
-		_afterSelectDate: function(event) {
+		_afterSelectDate: function (event) {
 			var instance = this;
 
-			if (!instance.calendar.get(SELECT_MULTIPLE_DATES)) {
+			if (instance.calendar.get(SELECT_MULTIPLE_DATES) != 'multiple') {
 				instance.hide();
 			}
 
 			if (instance.get(SET_VALUE)) {
-				instance._setTriggerValue(event.date);
+				instance._setTriggerValue(instance.calendar.get('selectedDates'));
 			}
 		},
 
@@ -159,7 +211,7 @@ var DatePicker = A.Component.create({
 		 * @param {Event} event
 		 * @protected
 		 */
-		_onShowOverlay: function(event) {
+		_onShowOverlay: function (event) {
 			var instance = this;
 
 			instance._renderCalendar();
@@ -171,7 +223,7 @@ var DatePicker = A.Component.create({
 		 * @method _renderCalendar
 		 * @protected
 		 */
-		_renderCalendar: function() {
+		_renderCalendar: function () {
 			var instance = this;
 
 			instance.calendar.render(
@@ -188,7 +240,7 @@ var DatePicker = A.Component.create({
 		 * @protected
 		 * @return {}
 		 */
-		_setCalendar: function(val) {
+		_setCalendar: function (val) {
 			var instance = this;
 
 			A.mix(val, {
@@ -206,7 +258,7 @@ var DatePicker = A.Component.create({
 		 * @protected
 		 * @return {boolean}
 		 */
-		_setStack: function(value) {
+		_setStack: function (value) {
 			var instance = this;
 
 			if (value) {
@@ -226,12 +278,29 @@ var DatePicker = A.Component.create({
 		 * @param {Object} dateObj Object containing date information
 		 * @protected
 		 */
-		_setTriggerValue: function(dateObj) {
+		_setTriggerValue: function (dateObj) {
 			var instance = this;
 
 			var value = instance.get(FORMATTER).apply(instance, [dateObj]);
 
 			instance.get(CURRENT_NODE).val(value);
+		},
+
+		/**
+		 * Setter of selectedDates attribute
+		 *
+		 * @method _uiSetSelectedDates
+		 * @param {Array} Array of dates
+		 * @protected
+		 */
+		_uiSetSelectedDates: function (val) {
+			var instance = this;
+
+			instance.calendar._clearSelection();
+			instance.calendar.selectDates(val);
+			instance.calendar.set('date', val[0]);
+
+			instance._setTriggerValue(instance.calendar.get('selectedDates'));
 		}
 	}
 });
@@ -261,4 +330,4 @@ A.DatepickerManager = new A.OverlayManager({
 	zIndexBase: 1000
 });
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-calendar','aui-overlay-context']});
+}, '@VERSION@' ,{skinnable:true, requires:['aui-datatype','calendar','aui-overlay-context']});
