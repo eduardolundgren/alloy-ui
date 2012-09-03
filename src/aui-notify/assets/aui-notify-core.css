@@ -1,12 +1,13 @@
 .yui3-notify-item {
-	-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
-	filter: alpha(opacity=0);
-	opacity: 0;
 	padding: 10px;
 	position: fixed;
 	width: 300px;
 }
 
-.yui3-notify-item-content {
+.yui3-notify-item .yui3-notify-item-content {
 	padding: 10px;
+}
+
+.yui3-notify-item-hidden {
+	display: none;
 }

@@ -45,7 +45,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         var instance = this;
 
         instance.after('addChild', instance._afterAdd);
-        instance.after('notify-item:hide', instance._afterHide);
+        instance.on('notify-item:visibleChange', instance._onVisibleChange);
     },
 
     _afterAdd: function(event) {
@@ -92,9 +92,26 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         instance.handles[child.get(ID)] = handle;
     },
 
-    _afterHide: function(event) {
-        var instance = this,
-            index = event.index;
+    _onVisibleChange: function(event) {
+        var child = event.target,
+            boundingBox = child.get(BOUNDING_BOX),
+            instance = this,
+            index = instance.indexOf(child),
+            hideTransition = child.get('hideTransition');
+
+        // hide
+
+        console.log(event.newVal);
+
+        return;
+
+        if (hideTransition) {
+            boundingBox.transition(hideTransition, function() {
+                child.hide();
+            });
+
+            event.halt();
+        }
 
         instance._syncRegions(index);
         instance._moveChildren(index);

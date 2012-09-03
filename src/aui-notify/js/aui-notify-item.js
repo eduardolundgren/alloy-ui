@@ -1,11 +1,13 @@
 var Lang = A.Lang,
     isUndefined = Lang.isUndefined,
+    isNumber = Lang.isNumber,
 
     ALERT = 'alert',
     BOUNDING_BOX = 'boundingBox',
     CONTENT_BOX = 'contentBox',
     INFO = 'info',
     NOTICE = 'notice',
+    RENDERED = 'rendered',
     SHADOW = 'shadow',
     SHOW_TRANSITION = 'showTransition',
     TEXT = 'text',
@@ -15,14 +17,20 @@ var Lang = A.Lang,
 
     NOTIFY_ITEM_NAME = 'notify-item',
 
+    UI_ATTRS = [TIMEOUT],
+    WIDGET_UI_ATTRS = A.Widget.prototype._UI_ATTRS,
+
     getCN = A.ClassNameManager.getClassName;
 
 A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
+    _timerId: null,
+
     bindUI: function() {
         var instance = this;
 
         instance.after({
-            render: instance._afterRender,
+            // TODO: Check why when after render 'rendered' attribute is false
+            renderedChange: instance._afterRender,
             visibleChange: instance._afterVisibleChange
         });
     },
@@ -30,65 +38,91 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
     renderUI: function() {
         var instance = this,
             boundingBox = instance.get(BOUNDING_BOX),
-            showTransition = instance.get(SHOW_TRANSITION),
+            // showTransition = instance.get(SHOW_TRANSITION),
             type = instance.get(TYPE);
 
-        if (type) {
-            boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
-        }
+        boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
 
-        if (showTransition) {
-            boundingBox.transition(showTransition);
-        }
-    },
-
-    syncUI: function() {
-        var instance = this,
-            text = instance.get(TEXT),
-            title = instance.get(TITLE);
-
-        if (!isUndefined(title)) {
-            instance.setStdModContent(A.WidgetStdMod.HEADER, title);
-        }
-
-        if (!isUndefined(text)) {
-            instance.setStdModContent(A.WidgetStdMod.BODY, text);
-        }
-
+        // if (showTransition) {
+        //  boundingBox.transition(showTransition);
+        // }
     },
 
     _afterRender: function() {
-        var instance = this,
-            timeout = instance.get(TIMEOUT);
+        var instance = this;
 
-        if (timeout > 0) {
-            setTimeout(function() {
-                instance.hide();
-            }, timeout);
+        instance._uiSetTimeout(instance.get(TIMEOUT));
+    },
+
+    // _afterVisibleChange: function(event) {
+    //  var instance = this,
+    //      boundingBox = instance.get(BOUNDING_BOX),
+    //      hideTransition = instance.get('hideTransition');
+
+    //  if (event.newVal) {
+    //      return;
+    //  }
+
+    //  if (hideTransition) {
+    //      boundingBox.transition(hideTransition);
+    //  }
+    //  // else {
+    //  //  var index = instance.get('index');
+
+    //  //  instance.fire('hide', { index: index });
+    //  // }
+    // },
+
+    _uiSetTimeout: function(val) {
+        var instance = this;
+
+        if (instance.get(RENDERED)) {
+            clearTimeout(instance._timerId);
+
+            if (val < Infinity) {
+                instance._timerId = setTimeout(
+                    A.bind(instance.hide, instance),
+                    instance.get(TIMEOUT)
+                );
+            }
         }
     },
 
-    _afterVisibleChange: function(event) {
+    _uiSetVisible: function(val) {
         var instance = this,
             boundingBox = instance.get(BOUNDING_BOX),
-            hideTransition = instance.get('hideTransition');
+            boundingBoxDomElement = boundingBox.getDOM(),
+            showTransition = instance.get('showTransition'),
+            hideTransition = instance.get('hideTransition'),
+            _uiSetVisibleParent = A.bind(A.NotifyItem.superclass._uiSetVisible, instance, val);
 
-        if (event.newVal) {
+        if ((val && !showTransition) || (!val && !hideTransition)) {
+            A.NotifyItem.superclass._uiSetVisible.apply(this, arguments);
+
             return;
         }
 
-        if (hideTransition) {
-            boundingBox.transition(hideTransition, function() {
-                var index = instance.get('index');
+        // TODO - bugfix
+        // if (!instance.get('rendered')) {
+        //  return;
+        // }
 
-                instance.fire('hide', { index: index });
-            });
+        if (val) {
+            // Set initial opacity, to avoid initial flicker
+            if (showTransition.hasOwnProperty('opacity') && (boundingBoxDomElement.style.opacity === "")) {
+                boundingBox.setStyle('opacity', 0);
+            }
+
+            boundingBox.transition(showTransition, _uiSetVisibleParent);
         }
         else {
-            var index = instance.get('index');
-
-            instance.fire('hide', { index: index });
+            boundingBox.transition(hideTransition, _uiSetVisibleParent);
         }
+    },
+
+    _UI_ATTRS: {
+        BIND: WIDGET_UI_ATTRS.BIND.concat(UI_ATTRS),
+        SYNC: WIDGET_UI_ATTRS.SYNC.concat(UI_ATTRS)
     }
 }, {
     ATTRS: {
@@ -105,25 +139,23 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
         },
 
         hideTransition: {
-            value: {
-                opacity: 0
-            }
+            // value: {
+            //  opacity: 0,
+            //  duration: 10
+            // }
         },
 
         showTransition: {
-            value: {
-                opacity: 1
-            }
-        },
-
-        text: {
+            // value: {
+            //  opacity: 1
+            // }
         },
 
         timeout: {
-            value: 2000
-        },
-
-        title: {
+            validator: function(val) {
+                return isNumber(val) || val === Infinity;
+            },
+            value: Infinity
         },
 
         type: {
