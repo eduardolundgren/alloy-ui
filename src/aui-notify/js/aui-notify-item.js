@@ -1,18 +1,13 @@
 var Lang = A.Lang,
-    isUndefined = Lang.isUndefined,
     isNumber = Lang.isNumber,
+    isString = Lang.isString,
 
     ALERT = 'alert',
     BOUNDING_BOX = 'boundingBox',
-    CONTENT_BOX = 'contentBox',
     INFO = 'info',
     NOTICE = 'notice',
     RENDERED = 'rendered',
-    SHADOW = 'shadow',
-    SHOW_TRANSITION = 'showTransition',
-    TEXT = 'text',
     TIMEOUT = 'timeout',
-    TITLE = 'title',
     TYPE = 'type',
 
     NOTIFY_ITEM_NAME = 'notify-item',
@@ -28,24 +23,16 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
     bindUI: function() {
         var instance = this;
 
-        instance.after({
-            // TODO: Check why when after render 'rendered' attribute is false
-            renderedChange: instance._afterRender,
-            visibleChange: instance._afterVisibleChange
-        });
+        // TODO: Check why when after render 'rendered' attribute is false
+        instance.after('renderedChange', instance._afterRender);
     },
 
     renderUI: function() {
         var instance = this,
             boundingBox = instance.get(BOUNDING_BOX),
-            // showTransition = instance.get(SHOW_TRANSITION),
             type = instance.get(TYPE);
 
         boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
-
-        // if (showTransition) {
-        //  boundingBox.transition(showTransition);
-        // }
     },
 
     _afterRender: function() {
@@ -53,25 +40,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
 
         instance._uiSetTimeout(instance.get(TIMEOUT));
     },
-
-    // _afterVisibleChange: function(event) {
-    //  var instance = this,
-    //      boundingBox = instance.get(BOUNDING_BOX),
-    //      hideTransition = instance.get('hideTransition');
-
-    //  if (event.newVal) {
-    //      return;
-    //  }
-
-    //  if (hideTransition) {
-    //      boundingBox.transition(hideTransition);
-    //  }
-    //  // else {
-    //  //  var index = instance.get('index');
-
-    //  //  instance.fire('hide', { index: index });
-    //  // }
-    // },
 
     _uiSetTimeout: function(val) {
         var instance = this;
@@ -82,7 +50,7 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
             if (val < Infinity) {
                 instance._timerId = setTimeout(
                     A.bind(instance.hide, instance),
-                    instance.get(TIMEOUT)
+                    instance.get(TIMEOUT) + instance.get('hideTransition.duration')
                 );
             }
         }
@@ -96,16 +64,19 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
             hideTransition = instance.get('hideTransition'),
             _uiSetVisibleParent = A.bind(A.NotifyItem.superclass._uiSetVisible, instance, val);
 
-        if ((val && !showTransition) || (!val && !hideTransition)) {
-            A.NotifyItem.superclass._uiSetVisible.apply(this, arguments);
+        if (val && !showTransition) {
+            _uiSetVisibleParent();
 
             return;
         }
 
-        // TODO - bugfix
-        // if (!instance.get('rendered')) {
-        //  return;
-        // }
+        if (!val && !hideTransition) {
+            _uiSetVisibleParent();
+
+            instance.fire('hideTransitionEnd');
+
+            return;
+        }
 
         if (val) {
             // Set initial opacity, to avoid initial flicker
@@ -116,7 +87,14 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
             boundingBox.transition(showTransition, _uiSetVisibleParent);
         }
         else {
-            boundingBox.transition(hideTransition, _uiSetVisibleParent);
+            // hideTransition.left = instance.get('parent').regions[instance.get('id')].left;
+            // console.log(hideTransition.left);
+
+            boundingBox.transition(hideTransition, function() {
+                _uiSetVisibleParent();
+
+                instance.fire('hideTransitionEnd');
+            });
         }
     },
 
@@ -139,16 +117,16 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
         },
 
         hideTransition: {
-            // value: {
-            //  opacity: 0,
-            //  duration: 10
-            // }
+            value: {
+                opacity: 0,
+                duration: 1
+            }
         },
 
         showTransition: {
-            // value: {
-            //  opacity: 1
-            // }
+            value: {
+                opacity: 1
+            }
         },
 
         timeout: {

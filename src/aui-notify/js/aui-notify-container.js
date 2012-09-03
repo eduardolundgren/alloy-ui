@@ -4,22 +4,29 @@ var BODY = 'body',
     ID = 'id',
     INDENT = 'indent',
     MAX_ROWS = 'maxRows',
+    POSITION = 'position',
+    PX = 'px';
     REGION = 'region',
 
-    BOTTOM = 'bottom',
-    BOTTOM_LEFT = 'bottom-left',
-    BOTTOM_RIGHT = 'bottom-right',
-    LEFT = 'left',
-    RIGHT = 'right',
-    TOP = 'top',
-    TOP_LEFT = 'top-left',
-    TOP_RIGHT = 'top-right',
+    B = 'b',
+    BL = 'bl',
+    BR = 'br',
+    L = 'l',
+    R = 'r',
+    T = 't',
+    TL = 'tl',
+    TR = 'tr',
 
-    POSITION = 'position',
-
-    POSITIONS = {},
-
-    PX = 'px';
+    POSITIONS = {
+        b: [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL],
+        bl: [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL],
+        br: [A.WidgetPositionAlign.BR, A.WidgetPositionAlign.BR],
+        l: [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TL],
+        r: [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TR],
+        t: [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.TL],
+        tl: [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL],
+        tr: [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR]
+    },
 
 A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent], {
     handles: null,
@@ -30,22 +37,16 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
 
         instance.handles = {};
         instance.regions = {};
-
-        POSITIONS[BOTTOM] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.BL];
-        POSITIONS[BOTTOM_LEFT] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.BL];
-        POSITIONS[BOTTOM_RIGHT] = [A.WidgetPositionAlign.BR, A.WidgetPositionAlign.BR];
-        POSITIONS[LEFT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TL];
-        POSITIONS[RIGHT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TR];
-        POSITIONS[TOP] = [A.WidgetPositionAlign.BL, A.WidgetPositionAlign.TL];
-        POSITIONS[TOP_LEFT] = [A.WidgetPositionAlign.TL, A.WidgetPositionAlign.TL];
-        POSITIONS[TOP_RIGHT] = [A.WidgetPositionAlign.TR, A.WidgetPositionAlign.TR];
     },
 
     bindUI: function() {
         var instance = this;
 
-        instance.after('addChild', instance._afterAdd);
-        instance.on('notify-item:visibleChange', instance._onVisibleChange);
+        instance.after({
+            'addChild': instance._afterAdd,
+            'notify-item:hideTransitionEnd': instance._afterChildHideTransitionEnd,
+            'notify-item:renderedChange': instance._afterChildRender
+        });
     },
 
     _afterAdd: function(event) {
@@ -55,27 +56,25 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             size = instance.size(),
             indent = instance.get(INDENT),
             index = event.index,
-            alignNode = BODY,
+            alignNode = instance.get('alignNode'),
             position = POSITIONS[instance.get(POSITION)];
 
         if (size > 1) {
             var maxRows = instance.get(MAX_ROWS),
                 previousNode;
 
-            if ((size % maxRows) === 1) {
+            if ((size % maxRows) === 1 || maxRows === 1) {
                 previousNode = instance.item(index - maxRows);
-
-                alignNode = previousNode.get(BOUNDING_BOX);
 
                 position = POSITIONS[indent];
             }
             else {
                 previousNode = instance.item(index - 1);
 
-                alignNode = previousNode.get(BOUNDING_BOX);
-
                 position = POSITIONS[direction];
             }
+
+            alignNode = previousNode.get(BOUNDING_BOX);
         }
 
         if (position === CENTER) {
@@ -84,48 +83,27 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         else {
             child.align(alignNode, position);
         }
-
-        var handle = child.after(function() {
-            instance.regions[child.get(ID)] = child.get(BOUNDING_BOX).get(REGION);
-        }, child, '_doAlign');
-
-        instance.handles[child.get(ID)] = handle;
     },
 
-    _onVisibleChange: function(event) {
-        var child = event.target,
-            boundingBox = child.get(BOUNDING_BOX),
-            instance = this,
-            index = instance.indexOf(child),
-            hideTransition = child.get('hideTransition');
+    _afterChildHideTransitionEnd: function(event) {
+        var instance = this,
+            child = event.target,
+            index = instance.indexOf(child);
 
-        // hide
-
-        console.log(event.newVal);
-
-        return;
-
-        if (hideTransition) {
-            boundingBox.transition(hideTransition, function() {
-                child.hide();
-            });
-
-            event.halt();
-        }
-
-        instance._syncRegions(index);
+        instance._swapRegions(index);
         instance._moveChildren(index);
 
-        var id = instance.item(index).get(ID);
-
-        var handle = instance.handles[id];
-
-        handle.detach();
-
-        delete instance.handles[id];
-        delete instance.regions[id];
+        // delete instance.regions[child.get(ID)];
 
         instance.remove(index);
+    },
+
+    _afterChildRender: function(event) {
+        var instance = this,
+            child = event.target,
+            boundingBox =  child.get(BOUNDING_BOX);
+
+        instance.regions[child.get(ID)] = boundingBox.get(REGION);
     },
 
     _moveChildren: function(index) {
@@ -143,7 +121,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             }
 
             var node = child.get(BOUNDING_BOX);
-
+console.log(region.top, region.left);
             node.transition({
                 top: region.top + PX,
                 left: region.left + PX
@@ -151,7 +129,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         });
     },
 
-    _syncRegions: function(index) {
+    _swapRegions: function(index) {
         var instance = this;
         var i = instance.size() - 1;
 
@@ -160,6 +138,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             var previousChild = instance.item(i - 1);
 
             instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
+            console.log(instance.regions[child.get(ID)], child.get(ID), instance.regions, previousChild.bodyNode.html(), child.bodyNode.html());
         }
     }
 },
@@ -178,14 +157,12 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             valueFn: function() {
                 var position = this.get(POSITION);
 
-                if (position.indexOf(TOP) === 0) {
-                    return BOTTOM;
+                if ((position === T) || (position === TL) || (position === TR)) {
+                    return B;
                 }
-                else if (position.indexOf(BOTTOM) === 0) {
-                    return TOP;
+                else {
+                    return T;
                 }
-
-                return undefined;
             }
         },
 
@@ -193,23 +170,31 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             valueFn: function() {
                 var position = this.get(POSITION);
 
-                if (position.indexOf(RIGHT) !== -1) {
-                    return LEFT;
+                if ((position === R) || (position === BR) || (position === TR)) {
+                    return L;
                 }
-                else if (position.indexOf(LEFT) !== -1) {
-                    return RIGHT;
+                else {
+                    return R;
                 }
-
-                return undefined;
             }
+            // valueFn: function() {
+            //     var position = this.get(POSITION);
+
+            //     if (position.indexOf(R) !== -1) {
+            //         return L;
+            //     }
+            //     else if (position.indexOf(L) !== -1) {
+            //         return R;
+            //     }
+            // }
         },
 
         maxRows: {
-            value: 5
+            value: 1
         },
 
         position: {
-            value: TOP_RIGHT
+            value: TR
         }
     }
 });
