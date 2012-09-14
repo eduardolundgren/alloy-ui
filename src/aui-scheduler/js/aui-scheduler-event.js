@@ -21,8 +21,6 @@ var Lang = A.Lang,
 	_SPACE = ' ',
 	_UNDERLINE = '_',
 
-	_PROPAGATE_SET = '_propagateSet',
-
 	ACTIVE_VIEW = 'activeView',
 	ALL = 'all',
 	ALL_DAY = 'allDay',
@@ -39,7 +37,6 @@ var Lang = A.Lang,
 	DISABLED = 'disabled',
 	END_DATE = 'endDate',
 	EVENT_CLASS = 'eventClass',
-	EVENT_STACK = 'eventStack',
 	HIDDEN = 'hidden',
 	HSB_COLOR = 'hsbColor',
 	ICON = 'icon',
@@ -47,12 +44,12 @@ var Lang = A.Lang,
 	INHERIT = 'inherit',
 	ISO_TIME = 'isoTime',
 	LOCALE = 'locale',
+	MEETING = 'meeting',
 	NEVER = 'never',
 	NODE = 'node',
 	OVERLAY = 'overlay',
-	PARENT_EVENT = 'parentEvent',
 	RECORDER = 'recorder',
-	REPEAT = 'repeat',
+	REMINDER = 'reminder',
 	REPEATED = 'repeated',
 	REPEATER = 'repeater',
 	SCHEDULER = 'scheduler',
@@ -90,17 +87,19 @@ var Lang = A.Lang,
 	CSS_SCHEDULER_EVENT = getCN(SCHEDULER_EVENT),
 	CSS_SCHEDULER_EVENT_ALL_DAY = getCN(SCHEDULER_EVENT, ALL, DAY),
 	CSS_SCHEDULER_EVENT_CONTENT = getCN(SCHEDULER_EVENT, CONTENT),
-	CSS_SCHEDULER_EVENT_HIDDEN = getCN(SCHEDULER_EVENT, HIDDEN),
 	CSS_SCHEDULER_EVENT_DISABLED = getCN(SCHEDULER_EVENT, DISABLED),
-	CSS_SCHEDULER_EVENT_RECORDER = getCN(SCHEDULER_EVENT, RECORDER),
-	CSS_SCHEDULER_EVENT_REPEATED = getCN(SCHEDULER_EVENT, REPEATED),
-	CSS_SCHEDULER_EVENT_REPEATER = getCN(SCHEDULER_EVENT, REPEATER),
-	CSS_SCHEDULER_EVENT_SHORT = getCN(SCHEDULER_EVENT, SHORT),
-	CSS_SCHEDULER_EVENT_TITLE = getCN(SCHEDULER_EVENT, TITLE),
-	CSS_SCHEDULER_EVENT_ICONS = getCN(SCHEDULER_EVENT, ICONS),
+	CSS_SCHEDULER_EVENT_HIDDEN = getCN(SCHEDULER_EVENT, HIDDEN),
 	CSS_SCHEDULER_EVENT_ICON_DISABLED = getCN(SCHEDULER_EVENT, ICON, DISABLED),
+	CSS_SCHEDULER_EVENT_ICON_MEETING = getCN(SCHEDULER_EVENT, ICON, MEETING),
+	CSS_SCHEDULER_EVENT_ICON_REMINDER = getCN(SCHEDULER_EVENT, ICON, REMINDER),
 	CSS_SCHEDULER_EVENT_ICON_REPEATED = getCN(SCHEDULER_EVENT, ICON, REPEATED),
-	CSS_SCHEDULER_EVENT_ICON_REPEATER = getCN(SCHEDULER_EVENT, ICON, REPEATER);
+	CSS_SCHEDULER_EVENT_ICONS = getCN(SCHEDULER_EVENT, ICONS),
+	CSS_SCHEDULER_EVENT_MEETING = getCN(SCHEDULER_EVENT, MEETING),
+	CSS_SCHEDULER_EVENT_RECORDER = getCN(SCHEDULER_EVENT, RECORDER),
+	CSS_SCHEDULER_EVENT_REMINDER = getCN(SCHEDULER_EVENT, REMINDER),
+	CSS_SCHEDULER_EVENT_REPEATED = getCN(SCHEDULER_EVENT, REPEATED),
+	CSS_SCHEDULER_EVENT_SHORT = getCN(SCHEDULER_EVENT, SHORT),
+	CSS_SCHEDULER_EVENT_TITLE = getCN(SCHEDULER_EVENT, TITLE);
 
 var SchedulerEvent = A.Component.create({
 	NAME: SCHEDULER_EVENT,
@@ -193,18 +192,25 @@ var SchedulerEvent = A.Component.create({
 			validator: isBoolean
 		},
 
+		meeting: {
+			value: false,
+			validator: isBoolean
+		},
+
 		node: {
 			valueFn: function() {
 				return A.NodeList.create(A.Node.create(this.EVENT_NODE_TEMPLATE).setData(SCHEDULER_EVENT, this));
 			}
 		},
 
-		parentEvent: {
+		reminder: {
+			value: false,
+			validator: isBoolean
 		},
 
-		repeat: {
-			value: _EMPTY_STR,
-			setter: '_setRepeat'
+		repeated: {
+			value: false,
+			validator: isBoolean
 		},
 
 		scheduler: {
@@ -234,23 +240,16 @@ var SchedulerEvent = A.Component.create({
 									'<div class="' + CSS_SCHEDULER_EVENT_TITLE + '"></div>' +
 									'<div class="' + CSS_SCHEDULER_EVENT_CONTENT + '"></div>' +
 									'<div class="' + CSS_SCHEDULER_EVENT_ICONS + '">' +
-										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_REPEATED].join(_SPACE) + '"></span>' +
-										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_REPEATER].join(_SPACE) + '"></span>' +
 										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_DISABLED].join(_SPACE) + '"></span>' +
+										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_MEETING].join(_SPACE) + '"></span>' +
+										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_REMINDER].join(_SPACE) + '"></span>' +
+										'<span class="' + [CSS_ICON, CSS_SCHEDULER_EVENT_ICON_REPEATED].join(_SPACE) + '"></span>' +
 									'</div>' +
 								'</div>',
-
-		eventStack: null,
 
 		initializer: function() {
 			var instance = this;
 			var node = instance.get(NODE);
-
-			instance[EVENT_STACK] = {};
-
-			A.Array.each(instance.get(EVENT_CLASS).PROPAGATE_ATTRS, function(attrName) {
-				instance.after(attrName+CHANGE, instance._propagateAttrChange);
-			});
 
 			instance._bindUIAttrs();
 
@@ -260,11 +259,6 @@ var SchedulerEvent = A.Component.create({
 		destroy: function() {
 			var instance = this;
 
-			instance.eachRepeatedEvent(function(evt, uid) {
-				evt.destroy();
-			});
-
-			instance[EVENT_STACK] = {};
 			instance.get(NODE).remove(true);
 		},
 
@@ -362,32 +356,6 @@ var SchedulerEvent = A.Component.create({
 			return DateMath.before(startDate, evtStartDate);
 		},
 
-		repeatByDate: function(date) {
-			var instance = this;
-			var uid = instance.uidByDate(date);
-
-			if (!instance[EVENT_STACK][uid]) {
-				var startDate = DateMath.clone(date);
-				var endDate = DateMath.clone(date);
-
-				DateMath.copyHours(startDate, instance.get(START_DATE));
-				DateMath.copyHours(endDate, instance.get(END_DATE));
-
-				var newEvt = new instance.get(EVENT_CLASS)({
-					endDate: endDate,
-					parentEvent: instance,
-					scheduler: instance.get(SCHEDULER),
-					startDate: startDate
-				});
-
-				newEvt.copyPropagateAttrValues(instance);
-
-				instance[EVENT_STACK][uid] = newEvt;
-			}
-
-			return instance[EVENT_STACK][uid];
-		},
-
 		intersects: function(evt) {
 			var instance = this;
 			var endDate = instance.get(END_DATE);
@@ -424,13 +392,6 @@ var SchedulerEvent = A.Component.create({
 				instance.get(START_DATE), instance.get(END_DATE));
 		},
 
-		isRepeatableDate: function(date) {
-			var instance = this;
-			var repeat = instance.get(REPEAT);
-
-			return (repeat && repeat.validate(instance, date));
-		},
-
 		getClearEndDate: function() {
 			var instance = this;
 
@@ -451,16 +412,7 @@ var SchedulerEvent = A.Component.create({
 			instance.set(END_DATE, DateMath.add(DateMath.clone(date), DateMath.MINUTES, duration));
 		},
 
-		uidByDate: function(date) {
-			var instance = this;
-
-			date = isDate(date) ?
-					DateMath.safeClearTime(date) : instance.getClearStartDate();
-
-			return [SCHEDULER_EVENT, date.getTime()].join(_UNDERLINE);
-		},
-
-		setContent: function(content, propagate) {
+		setContent: function(content) {
 			var instance = this;
 
 			instance.get(NODE).each(function(node) {
@@ -468,15 +420,9 @@ var SchedulerEvent = A.Component.create({
 
 				contentNode.setContent(content);
 			});
-
-			if (propagate) {
-				instance.eachRepeatedEvent(function(evt, uid) {
-					evt.setContent(content);
-				});
-			}
 		},
 
-		setTitle: function(content, propagate) {
+		setTitle: function(content) {
 			var instance = this;
 
 			instance.get(NODE).each(function(node) {
@@ -484,24 +430,18 @@ var SchedulerEvent = A.Component.create({
 
 				titleNode.setContent(content);
 			});
-
-			if (propagate) {
-				instance.eachRepeatedEvent(function(evt, uid) {
-					evt.setTitle(content);
-				});
-			}
 		},
 
-		syncNodeUI: function(propagate) {
+		syncNodeUI: function() {
 			var instance = this;
 
 			instance._syncUIAttrs();
-			instance.syncNodeColorUI(propagate);
-			instance.syncNodeTitleUI(propagate);
-			instance.syncNodeContentUI(propagate);
+			instance.syncNodeColorUI();
+			instance.syncNodeTitleUI();
+			instance.syncNodeContentUI();
 		},
 
-		syncNodeColorUI: function(propagate) {
+		syncNodeColorUI: function() {
 			var instance = this;
 			var node = instance.get(NODE);
 			var borderColor = instance.getBorderColor();
@@ -517,21 +457,15 @@ var SchedulerEvent = A.Component.create({
 
 				node.setStyles(styles);
 			}
-
-			if (propagate) {
-				instance.eachRepeatedEvent(function(evt, uid) {
-					evt.syncNodeColorUI();
-				});
-			}
 		},
 
-		syncNodeContentUI: function(propagate) {
+		syncNodeContentUI: function() {
 			var instance = this;
 
-			instance.setContent(instance.get(CONTENT), propagate);
+			instance.setContent(instance.get(CONTENT));
 		},
 
-		syncNodeTitleUI: function(propagate) {
+		syncNodeTitleUI: function() {
 			var instance = this,
 				format = instance.get(TITLE_DATE_FORMAT),
 				startDate = instance.get(START_DATE),
@@ -546,7 +480,7 @@ var SchedulerEvent = A.Component.create({
 				title.push(instance._formatDate(endDate, format.endDate));
 			}
 
-			instance.setTitle(title.join(_SPACE), propagate);
+			instance.setTitle(title.join(_SPACE));
 		},
 
 		split: function() {
@@ -562,29 +496,6 @@ var SchedulerEvent = A.Component.create({
 			}
 
 			return [ [ s1, e1 ] ];
-		},
-
-		eachRepeatedEvent: function(fn) {
-			var instance = this;
-
-			A.each(instance[EVENT_STACK], fn, instance);
-		},
-
-		unlink: function() {
-			var instance = this;
-
-			if (instance.get(PARENT_EVENT)) {
-				instance.set(PARENT_EVENT, null);
-			}
-			else {
-				instance.eachRepeatedEvent(function(evt, uid) {
-					evt.unlink();
-				});
-			}
-
-			instance[EVENT_STACK] = {};
-
-			instance.syncNodeUI();
 		},
 
 		_afterAllDayChange: function(event) {
@@ -605,22 +516,28 @@ var SchedulerEvent = A.Component.create({
 			instance._uiSetEndDate(event.newVal);
 		},
 
+		_afterMeetingChange: function(event) {
+			var instance = this;
+
+			instance._uiSetMeeting(event.newVal);
+		},
+
+		_afterReminderChange: function(event) {
+			var instance = this;
+
+			instance._uiSetReminder(event.newVal);
+		},
+
+		_afterRepeatedChange: function(event) {
+			var instance = this;
+
+			instance._uiSetRepeated(event.newVal);
+		},
+
 		_afterVisibleChange: function(event) {
 			var instance = this;
 
 			instance._uiSetVisible(event.newVal);
-		},
-
-		_afterRepeatChange: function(event) {
-			var instance = this;
-
-			instance._uiSetRepeat(event.newVal);
-		},
-
-		_afterParentEventChange: function(event) {
-			var instance = this;
-
-			instance._uiSetParentEvent(event.newVal);
 		},
 
 		_bindUIAttrs: function() {
@@ -630,47 +547,13 @@ var SchedulerEvent = A.Component.create({
 				allDayChange: instance._afterAllDayChange,
 				disabledChange: instance._afterDisabledChange,
 				endDateChange: instance._afterEndDateChange,
-				parentEventChange: instance._afterParentEventChange,
-				repeatChange: instance._afterRepeatChange,
+				meetingChange: instance._afterMeetingChange,
+				reminderChange: instance._afterReminderChange,
+				repeatedChange: instance._afterRepeatedChange,
 				visibleChange: instance._afterVisibleChange
 			});
 
 			instance._syncUIAttrs();
-		},
-
-		_propagateAttrChange: function(event) {
-			var instance = this;
-			var attrName = event.attrName;
-			var newVal = event.newVal;
-
-			instance.eachRepeatedEvent(function(evt, uid) {
-				var propFn = evt[_PROPAGATE_SET+_toInitialCap(attrName)];
-
-				if (propFn) {
-					propFn.apply(instance, [evt, attrName, newVal]);
-				}
-				else {
-					evt.set(attrName, event.newVal);
-				}
-
-				evt.syncNodeUI();
-			});
-
-			instance.syncNodeUI();
-		},
-
-		_propagateSetEndDate: function(evt, attrName, val) {
-			var endDate = DateMath.clone(evt.get(END_DATE));
-
-			DateMath.copyHours(endDate, val);
-			evt.set(END_DATE, endDate);
-		},
-
-		_propagateSetStartDate: function(evt, attrName, val) {
-			var startDate = DateMath.clone(evt.get(START_DATE));
-
-			DateMath.copyHours(startDate, val);
-			evt.set(START_DATE, startDate);
 		},
 
 		_setColor: function(val) {
@@ -693,16 +576,6 @@ var SchedulerEvent = A.Component.create({
 			}
 
 			return val;
-		},
-
-		_setRepeat: function(val) {
-			var instance = this;
-
-			if (isString(val)) {
-				val = A.SchedulerEventRepeat[val];
-			}
-
-			return isObject(val) ? val : null;
 		},
 
 		_setScheduler: function(val) {
@@ -730,14 +603,17 @@ var SchedulerEvent = A.Component.create({
 			instance._uiSetEndDate(
 				instance.get(END_DATE)
 			);
+			instance._uiSetMeeting(
+				instance.get(MEETING)
+			);
+			instance._uiSetReminder(
+				instance.get(REMINDER)
+			);
+			instance._uiSetRepeated(
+				instance.get(REPEATED)
+			);
 			instance._uiSetVisible(
 				instance.get(VISIBLE)
-			);
-			instance._uiSetParentEvent(
-				instance.get(PARENT_EVENT)
-			);
-			instance._uiSetRepeat(
-				instance.get(REPEAT)
 			);
 		},
 
@@ -785,17 +661,22 @@ var SchedulerEvent = A.Component.create({
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_SHORT, instance.getMinutesDuration() <= 30);
 		},
 
-		_uiSetParentEvent: function(val) {
+		_uiSetMeeting: function(val) {
+			var instance = this;
+
+			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_MEETING, !!val);
+		},
+
+		_uiSetReminder: function(val) {
+			var instance = this;
+
+			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_REMINDER, !!val);
+		},
+
+		_uiSetRepeated: function(val) {
 			var instance = this;
 
 			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATED, !!val);
-		},
-
-		_uiSetRepeat: function(val) {
-			var instance = this;
-			var value = !!val && val !== A.SchedulerEventRepeat[NEVER];
-
-			instance.get(NODE).toggleClass(CSS_SCHEDULER_EVENT_REPEATER, value);
 		},
 
 		_uiSetVisible: function(val) {
