@@ -518,7 +518,7 @@ var SchedulerDayView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%a %m/%d',
+						format: '%d %A',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -568,7 +568,7 @@ var SchedulerDayView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%A, %b %d, %Y',
+						format: '%A, %B %d, %Y',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -1492,7 +1492,7 @@ var SchedulerWeekView = A.Component.create({
 			var startDateLabel = A.DataType.Date.format(
 				startDate,
 				{
-					format: '%b %d',
+					format: '%B %d',
 					locale: locale
 				}
 			);
@@ -1502,7 +1502,7 @@ var SchedulerWeekView = A.Component.create({
 			var endDateLabel = A.DataType.Date.format(
 				endDate,
 				{
-					format: (DateMath.isMonthOverlapWeek(date) ? '%b %d' : '%d') + ', %Y',
+					format: (DateMath.isMonthOverlapWeek(date) ? '%B %d' : '%d') + ', %Y',
 					locale: locale
 				}
 			);
@@ -1615,7 +1615,7 @@ var SchedulerTableView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%a',
+						format: '%A',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -2122,6 +2122,10 @@ var SchedulerTableView = A.Component.create({
 				var columnNode = A.Node.create(TPL_SVT_GRID_COLUMN);
 
 				firstRowNode.append(columnNode);
+
+				if (i == 0) {
+					columnNode.addClass(CSS_SVT_COLGRID_FIRST);
+				}
 
 				instance[COLUMN_TABLE_GRID].push(columnNode);
 			}
