@@ -56,6 +56,7 @@ var Lang = A.Lang,
 	NEXT_DATE = 'nextDate',
 	PREV = 'prev',
 	PREV_DATE = 'prevDate',
+	RADIO = 'radio',
 	RENDERED = 'rendered',
 	SCHEDULER = 'scheduler',
 	START_DATE = 'startDate',
@@ -85,14 +86,16 @@ var Lang = A.Lang,
 	CSS_SCHEDULER_VIEW_ = getCN(SCHEDULER_BASE, VIEW, EMPTY_STR),
 	CSS_SCHEDULER_VIEWS = getCN(SCHEDULER_BASE, VIEWS),
 
+	CSS_SCHEDULER_VIEW_SELECTED = 'yui3-button-selected',
+
 	TPL_SCHEDULER_CONTROLS = '<div class="'+CSS_SCHEDULER_CONTROLS+'"></div>',
 	TPL_SCHEDULER_VIEW_DATE = '<div class="'+CSS_SCHEDULER_VIEW_DATE+'"></div>',
 	TPL_SCHEDULER_HD = '<div class="'+CSS_SCHEDULER_HD+'"></div>',
-	TPL_SCHEDULER_ICON_NEXT = '<a href="#" class="'+[ CSS_ICON, CSS_SCHEDULER_ICON_NEXT ].join(SPACE)+'">Next</a>',
-	TPL_SCHEDULER_ICON_PREV = '<a href="#" class="'+[ CSS_ICON, CSS_SCHEDULER_ICON_PREV ].join(SPACE)+'">Prev</a>',
+	TPL_SCHEDULER_ICON_NEXT = '<button class="'+[ CSS_ICON, CSS_SCHEDULER_ICON_NEXT ].join(SPACE)+' yui3-button">Next</button>',
+	TPL_SCHEDULER_ICON_PREV = '<button class="'+[ CSS_ICON, CSS_SCHEDULER_ICON_PREV ].join(SPACE)+' yui3-button">Prev</button>',
 	TPL_SCHEDULER_NAV = '<div class="'+CSS_SCHEDULER_NAV+'"></div>',
-	TPL_SCHEDULER_TODAY = '<a href="#" class="'+CSS_SCHEDULER_TODAY+'">{today}</a>',
-	TPL_SCHEDULER_VIEW = '<a href="#" class="'+[ CSS_SCHEDULER_VIEW, CSS_SCHEDULER_VIEW_ ].join(SPACE)+'{name}" data-view-name="{name}">{label}</a>',
+	TPL_SCHEDULER_TODAY = '<button class="'+CSS_SCHEDULER_TODAY+' yui3-button">{today}</button>',
+	TPL_SCHEDULER_VIEW = '<button class="'+[ CSS_SCHEDULER_VIEW, CSS_SCHEDULER_VIEW_ ].join(SPACE)+'{name} {activeViewClass}" data-view-name="{name}">{label}</button>',
 	TPL_SCHEDULER_VIEWS = '<div class="'+CSS_SCHEDULER_VIEWS+'"></div>';
 
 var SchedulerEventSupport = function() {};
@@ -363,6 +366,14 @@ var SchedulerBase = A.Component.create({
 				activeViewChange: instance._afterActiveViewChange,
 				render: instance._afterRender
 			});
+
+			instance.viewsButtonGroup = new A.ButtonGroup({
+				srcNode: instance[VIEWS_NODE],
+				type: RADIO,
+				on: {
+					selectionChange: A.bind(instance._onButtonGroupViewChange, instance)
+				}
+			});
 		},
 
 		bindUI: function() {
@@ -520,7 +531,6 @@ var SchedulerBase = A.Component.create({
 		_bindDelegate: function() {
 			var instance = this;
 
-			instance[VIEWS_NODE].delegate('click', instance._onClickViewTrigger, DOT+CSS_SCHEDULER_VIEW, instance);
 			instance[CONTROLS_NODE].delegate('click', instance._onClickPrevIcon, DOT+CSS_SCHEDULER_ICON_PREV, instance);
 			instance[CONTROLS_NODE].delegate('click', instance._onClickNextIcon, DOT+CSS_SCHEDULER_ICON_NEXT, instance);
 			instance[CONTROLS_NODE].delegate('click', instance._onClickToday, DOT+CSS_SCHEDULER_TODAY, instance);
@@ -530,12 +540,14 @@ var SchedulerBase = A.Component.create({
 			var instance = this;
 
 			if (!view.get(TRIGGER_NODE)) {
-				var name = view.get(NAME);
+				var name = view.get(NAME),
+					activeView = instance.get(ACTIVE_VIEW);
 
 				view.set(
 					TRIGGER_NODE,
 					A.Node.create(
 						Lang.sub(TPL_SCHEDULER_VIEW, {
+							activeViewClass: (activeView == view) ? CSS_SCHEDULER_VIEW_SELECTED : EMPTY_STR,
 							name: name,
 							label: (instance.getString(name) || name)
 						})
@@ -612,9 +624,9 @@ var SchedulerBase = A.Component.create({
 			event.preventDefault();
 		},
 
-		_onClickViewTrigger: function(event) {
-			var instance = this;
-			var viewName = event.currentTarget.attr(DATA_VIEW_NAME);
+		_onButtonGroupViewChange: function(event) {
+			var instance = this,
+				viewName = event.originEvent.target.attr(DATA_VIEW_NAME);
 
 			instance.set(ACTIVE_VIEW, instance.getViewByName(viewName));
 
@@ -684,6 +696,8 @@ var SchedulerBase = A.Component.create({
 			instance[HEADER].addClass(CSS_HELPER_CLEARFIX);
 
 			instance.setStdModContent(WidgetStdMod.HEADER, instance[HEADER].getDOM());
+
+			instance.viewsButtonGroup.render();
 		},
 
 		_uiSetDate: function(val) {
@@ -712,7 +726,7 @@ var SchedulerBase = A.Component.create({
 
 A.Scheduler = SchedulerBase;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-scheduler-view','datasource']});
+}, '@VERSION@' ,{skinnable:true, requires:['aui-scheduler-view','datasource','button-group']});
 AUI.add('aui-scheduler-view', function(A) {
 var Lang = A.Lang,
 	isBoolean = Lang.isBoolean,
@@ -1233,7 +1247,7 @@ var SchedulerDayView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%a %m/%d',
+						format: '%d %A',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -1283,7 +1297,7 @@ var SchedulerDayView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%A, %b %d, %Y',
+						format: '%A, %B %d, %Y',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -2207,7 +2221,7 @@ var SchedulerWeekView = A.Component.create({
 			var startDateLabel = A.DataType.Date.format(
 				startDate,
 				{
-					format: '%b %d',
+					format: '%B %d',
 					locale: locale
 				}
 			);
@@ -2217,7 +2231,7 @@ var SchedulerWeekView = A.Component.create({
 			var endDateLabel = A.DataType.Date.format(
 				endDate,
 				{
-					format: (DateMath.isMonthOverlapWeek(date) ? '%b %d' : '%d') + ', %Y',
+					format: (DateMath.isMonthOverlapWeek(date) ? '%B %d' : '%d') + ', %Y',
 					locale: locale
 				}
 			);
@@ -2330,7 +2344,7 @@ var SchedulerTableView = A.Component.create({
 				return A.DataType.Date.format(
 					date,
 					{
-						format: '%a',
+						format: '%A',
 						locale: scheduler.get(LOCALE)
 					}
 				);
@@ -2837,6 +2851,10 @@ var SchedulerTableView = A.Component.create({
 				var columnNode = A.Node.create(TPL_SVT_GRID_COLUMN);
 
 				firstRowNode.append(columnNode);
+
+				if (i == 0) {
+					columnNode.addClass(CSS_SVT_COLGRID_FIRST);
+				}
 
 				instance[COLUMN_TABLE_GRID].push(columnNode);
 			}
