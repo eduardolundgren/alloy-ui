@@ -9,6 +9,7 @@ var Lang = A.Lang,
     RENDERED = 'rendered',
     TIMEOUT = 'timeout',
     TYPE = 'type',
+    VISIBLE = 'visible',
 
     NOTIFY_ITEM_NAME = 'notify-item',
 
@@ -18,12 +19,12 @@ var Lang = A.Lang,
     getCN = A.ClassNameManager.getClassName;
 
 A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.WidgetChild, A.WidgetPosition, A.WidgetPositionAlign, A.WidgetStdMod], {
+    _hiding: false,
     _timerId: null,
 
     bindUI: function() {
         var instance = this;
 
-        // TODO: Check why when after render 'rendered' attribute is false
         instance.after('renderedChange', instance._afterRender);
     },
 
@@ -41,6 +42,17 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
         instance._uiSetTimeout(instance.get(TIMEOUT));
     },
 
+    _syncUIPosAlign: function () {
+        var instance = this,
+            visible = instance.get(VISIBLE);
+
+        if (!visible && instance._hiding) {
+            return;
+        }
+
+        A.WidgetPositionAlign.prototype._syncUIPosAlign.apply(instance, arguments);
+    },
+
     _uiSetTimeout: function(val) {
         var instance = this;
 
@@ -50,7 +62,7 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
             if (val < Infinity) {
                 instance._timerId = setTimeout(
                     A.bind(instance.hide, instance),
-                    instance.get(TIMEOUT) + instance.get('hideTransition.duration')
+                    instance.get(TIMEOUT)
                 );
             }
         }
@@ -79,7 +91,6 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
         }
 
         if (val) {
-            // Set initial opacity, to avoid initial flicker
             if (showTransition.hasOwnProperty('opacity') && (boundingBoxDomElement.style.opacity === "")) {
                 boundingBox.setStyle('opacity', 0);
             }
@@ -87,14 +98,19 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
             boundingBox.transition(showTransition, _uiSetVisibleParent);
         }
         else {
-            // hideTransition.left = instance.get('parent').regions[instance.get('id')].left;
-            // console.log(hideTransition.left);
+            var duration = hideTransition.duration * 1000;
 
-            boundingBox.transition(hideTransition, function() {
+            instance._hiding = true;
+
+            boundingBox.transition(hideTransition);
+
+            setTimeout(function() {
+                instance._hiding = false;
+
                 _uiSetVisibleParent();
 
                 instance.fire('hideTransitionEnd');
-            });
+            }, duration);
         }
     },
 

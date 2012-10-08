@@ -1,4 +1,5 @@
-var BODY = 'body',
+var ALIGN_NODE = 'alignNode',
+    BODY = 'body',
     CENTER = 'center',
     DIRECTION = 'direction',
     ID = 'id',
@@ -29,14 +30,12 @@ var BODY = 'body',
     },
 
 A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent], {
-    handles: null,
-    regions: null,
+    _regions: null,
 
     initializer: function() {
         var instance = this;
 
-        instance.handles = {};
-        instance.regions = {};
+        instance._regions = {};
     },
 
     bindUI: function() {
@@ -56,7 +55,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             size = instance.size(),
             indent = instance.get(INDENT),
             index = event.index,
-            alignNode = instance.get('alignNode'),
+            alignNode = instance.get(ALIGN_NODE),
             position = POSITIONS[instance.get(POSITION)];
 
         if (size > 1) {
@@ -93,7 +92,7 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
         instance._swapRegions(index);
         instance._moveChildren(index);
 
-        // delete instance.regions[child.get(ID)];
+        delete instance._regions[child.get(ID)];
 
         instance.remove(index);
     },
@@ -103,7 +102,36 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
             child = event.target,
             boundingBox =  child.get(BOUNDING_BOX);
 
-        instance.regions[child.get(ID)] = boundingBox.get(REGION);
+        instance._regions[child.get(ID)] = boundingBox.get(REGION);
+    },
+
+    _checkDimensionDiffs: function(index) {
+        var instance = this,
+            size = instance.size(),
+            maxRows = instance.get(MAX_ROWS),
+            curColumn = Math.floor(index/maxRows + 1),
+            columns = Math.floor(size/maxRows + 1),
+            i = index + 1;
+
+        for (; curColumn <= columns; curColumn++) {
+            var diff = 0,
+                rows = (curColumn * maxRows);
+
+            for (; (i < rows) && (i < size); i++) {
+                if ((i % maxRows) == 0) {
+                    continue;
+                }
+
+                var child = instance.item(i),
+                    childRegion = instance._regions[child.get(ID)];
+                    previousChild = instance.item(i - 1),
+                    previousRegion = instance._regions[previousChild.get(ID)];
+
+                diff = diff + (childRegion.height - previousRegion.height);
+
+                childRegion.top = childRegion.top + diff;
+            }
+        }
     },
 
     _moveChildren: function(index) {
@@ -114,14 +142,14 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
                 return;
             }
 
-            var region = instance.regions[child.get(ID)];
+            var region = instance._regions[child.get(ID)];
 
             if (!region) {
                 return;
             }
 
             var node = child.get(BOUNDING_BOX);
-console.log(region.top, region.left);
+
             node.transition({
                 top: region.top + PX,
                 left: region.left + PX
@@ -130,15 +158,18 @@ console.log(region.top, region.left);
     },
 
     _swapRegions: function(index) {
-        var instance = this;
-        var i = instance.size() - 1;
+        var instance = this,
+            i = instance.size() - 1;
+
+        instance._checkDimensionDiffs(index);
 
         for (; i > index; i--) {
-            var child = instance.item(i);
-            var previousChild = instance.item(i - 1);
+            var child = instance.item(i),
+                previousChild = instance.item(i - 1),
+                previousRegion = instance._regions[previousChild.get(ID)];
 
-            instance.regions[child.get(ID)] = instance.regions[previousChild.get(ID)];
-            console.log(instance.regions[child.get(ID)], child.get(ID), instance.regions, previousChild.bodyNode.html(), child.bodyNode.html());
+            instance._regions[child.get(ID)].top = previousRegion.top;
+            instance._regions[child.get(ID)].left = previousRegion.left;
         }
     }
 },
@@ -177,20 +208,10 @@ console.log(region.top, region.left);
                     return R;
                 }
             }
-            // valueFn: function() {
-            //     var position = this.get(POSITION);
-
-            //     if (position.indexOf(R) !== -1) {
-            //         return L;
-            //     }
-            //     else if (position.indexOf(L) !== -1) {
-            //         return R;
-            //     }
-            // }
         },
 
         maxRows: {
-            value: 1
+            value: 5
         },
 
         position: {
