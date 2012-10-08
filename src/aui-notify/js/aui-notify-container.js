@@ -100,9 +100,15 @@ A.NotifyContainer = A.Base.create('notify-container', A.Widget, [A.WidgetParent]
     _afterChildRender: function(event) {
         var instance = this,
             child = event.target,
-            boundingBox =  child.get(BOUNDING_BOX);
+            boundingBox =  child.get(BOUNDING_BOX),
+			region = boundingBox.get(REGION);
 
-        instance._regions[child.get(ID)] = boundingBox.get(REGION);
+        instance._regions[child.get(ID)] = {
+			height: region.height,
+			left: boundingBox.get('offsetLeft'),
+			top: boundingBox.get('offsetTop'),
+			width: region.width
+		};
     },
 
     _checkDimensionDiffs: function(index) {
