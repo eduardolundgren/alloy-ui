@@ -36,6 +36,17 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
         boundingBox.addClass(getCN(NOTIFY_ITEM_NAME, type));
     },
 
+    _afterHideTransitionEnd: function() {
+        var instance = this,
+            _uiSetVisibleParent = A.bind(A.NotifyItem.superclass._uiSetVisible, instance, false);
+
+        instance._hiding = false;
+
+        _uiSetVisibleParent();
+
+        instance.fire('hideTransitionEnd');
+    },
+
     _afterRender: function() {
         var instance = this;
 
@@ -104,13 +115,10 @@ A.NotifyItem = A.Base.create(NOTIFY_ITEM_NAME, A.Widget, [A.WidgetAutohide, A.Wi
 
             boundingBox.transition(hideTransition);
 
-            setTimeout(function() {
-                instance._hiding = false;
-
-                _uiSetVisibleParent();
-
-                instance.fire('hideTransitionEnd');
-            }, duration);
+            setTimeout(
+                A.bind(instance._afterHideTransitionEnd, instance),
+                duration
+            );
         }
     },
 
