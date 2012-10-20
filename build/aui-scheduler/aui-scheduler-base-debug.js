@@ -227,26 +227,6 @@ A.mix(SchedulerEventSupport.prototype, {
 		}
 	},
 
-	// removeEvent: function(evt) {
-	// 	var instance = this;
-	// 	var events = [].concat(instance.get(EVENTS));
-
-	// 	if (events.length) {
-	// 		A.Array.removeItem(events, evt);
-
-	// 		instance.set(EVENTS, events);
-	// 	}
-	// },
-
-	// removeEvents: function(events) {
-	// 	var instance = this;
-
-	// 	A.Array.each(
-	// 		instance._normalizeEvents(events),
-	// 		A.bind(instance.removeEvent, instance)
-	// 	);
-	// },
-
 	sortEventsByDateAsc: function(events) {
 		var instance = this;
 
