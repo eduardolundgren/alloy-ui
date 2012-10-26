@@ -7,6 +7,7 @@
 
 var L = A.Lang,
 	isArray = L.isArray,
+	isBoolean = L.isBoolean,
 	isObject = L.isObject,
 	isUndefined = L.isUndefined,
 
@@ -16,6 +17,8 @@ var L = A.Lang,
 	DOT = '.',
 	ID = 'id',
 	INDEX = 'index',
+	LAZY_LOAD = 'lazyLoad',
+	LEAF = 'leaf',
 	NEXT_SIBLING = 'nextSibling',
 	NODE = 'node',
 	OWNER_TREE = 'ownerTree',
@@ -27,11 +30,11 @@ var L = A.Lang,
 	TREE_DATA = 'tree-data',
 
 	isTreeNode = function(v) {
-		return ( v instanceof A.TreeNode );
+		return ( A.instanceOf(v, A.TreeNode) );
 	},
 
 	isTreeView = function(v) {
-		return ( v instanceof A.TreeView );
+		return ( A.instanceOf(v, A.TreeView) );
 	},
 
 	getCN = A.getClassName,
@@ -97,6 +100,8 @@ TreeData.ATTRS = {
 };
 
 A.mix(TreeData.prototype, {
+	childrenLength: 0,
+
 	/**
 	 * Construction logic executed during TreeData instantiation. Lifecycle.
 	 *
@@ -257,6 +262,9 @@ A.mix(TreeData.prototype, {
 
 		if (isTreeView(instance)) {
 			node.addTarget(instance);
+
+			// when the node is appended to the TreeView set the OWNER_TREE
+			node.set(OWNER_TREE, instance);
 		}
 
 		node._inheritOwnerTreeAttrs();
@@ -379,7 +387,7 @@ A.mix(TreeData.prototype, {
 
 		while (parentNode) {
 			if (parentNode) {
-				fn.apply(instance, [parentNode]);
+				fn.call(instance, parentNode);
 			}
 			parentNode = parentNode.get(PARENT_NODE);
 		}
@@ -481,8 +489,8 @@ A.mix(TreeData.prototype, {
 		var prevIndex = length - 2;
 		var prevSibling = instance.item(prevIndex);
 
-		node.set(NEXT_SIBLING, null);
-		node.set(PREV_SIBLING, prevSibling);
+		node._nextSibling = null;
+		node._prevSibling = prevSibling;
 
 		// render node
 		node.render(instance.get(CONTAINER));
@@ -522,7 +530,9 @@ A.mix(TreeData.prototype, {
 	 * @return {boolean}
 	 */
 	hasChildNodes: function() {
-		return ( this.get(CHILDREN).length > 0 );
+		var instance = this;
+
+		return (instance.getChildrenLength() > 0);
 	},
 
 	/**
@@ -546,6 +556,12 @@ A.mix(TreeData.prototype, {
 		}
 
 		return cNodes;
+	},
+
+	getChildrenLength: function() {
+		var instance = this;
+
+		return (instance.childrenLength || instance.get(CHILDREN).length);
 	},
 
 	/**
@@ -760,26 +776,66 @@ A.mix(TreeData.prototype, {
 	_setChildren: function(v) {
 		var instance = this;
 		var childNodes = [];
+		var container = instance.get(CONTAINER);
 
-		A.Array.each(v, function(node) {
+		if (!container) {
+			container = instance._createNodeContainer();
+		}
+
+		// before render the node, make sure the PARENT_NODE and OWNER_TREE references are updated
+		// this is required on the render phase of the TreeNode (_createNodeContainer)
+		// to propagate the events callback (appendChild/expand)
+		var ownerTree = instance;
+
+		if (isTreeNode(instance)) {
+			ownerTree = instance.get(OWNER_TREE);
+		}
+
+		var hasOwnerTree = isTreeView(ownerTree);
+		var lazyLoad = true;
+
+		if (hasOwnerTree) {
+			lazyLoad = ownerTree.get(LAZY_LOAD);
+		}
+
+		instance.updateIndex({});
+
+		if (v.length > 0) {
+			instance.set(LEAF, false);
+		}
+
+		A.Array.each(v, function(node, index) {
 			if (node) {
 				if (!isTreeNode(node) && isObject(node)) {
+					// cache and remove children to lazy add them later for
+					// performance reasons
+					var children = node[CHILDREN];
+					var hasChildren = children && children.length;
+
+					node[OWNER_TREE] = ownerTree;
+					node[PARENT_NODE] = instance;
+
+					if (hasChildren && lazyLoad) {
+						delete node[CHILDREN];
+					}
+
 					// creating node from json
 					node = instance.createNode(node);
+
+					if (hasChildren && lazyLoad) {
+						node.childrenLength = children.length;
+
+						A.setTimeout(function() {
+							node.set(CHILDREN, children);
+						}, 50);
+					}
 				}
 
-				// before render the node, make sure the PARENT_NODE and OWNER_TREE references are updated
-				// this is required on the render phase of the TreeNode (_createNodeContainer)
-				// to propagate the events callback (appendChild/expand)
-				if (!isTreeNode(instance)) {
-					node.set(OWNER_TREE, instance);
-				}
-				else {
-					node.set(OWNER_TREE, instance.get(OWNER_TREE));
+				if (hasOwnerTree) {
+					ownerTree.registerNode(node);
 				}
 
-				node._inheritOwnerTreeAttrs();
-				node.render(instance.get(CONTAINER));
+				node.render(container);
 
 				// avoid duplicated children on the childNodes list
 				if (A.Array.indexOf(childNodes, node) === -1) {
