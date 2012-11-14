@@ -63,22 +63,21 @@ var Lang = A.Lang,
 	PLACEHOLDER_TARGET_MARGIN_BOTTOM = 0,
 	PLACEHOLDER_TARGET_MARGIN_TOP = 0,
 
-	isNodeList = function(v) {
-		return (v instanceof A.NodeList);
-	},
-
 	concat = function() {
 		return Array.prototype.slice.call(arguments).join(SPACE);
-	},
-
-	nodeListSetter = function(val) {
-		return isNodeList(val) ? val : A.all(val);
 	},
 
 	getNumStyle = function(elem, styleName) {
 		return toInt(elem.getStyle(styleName));
 	},
 
+	isNodeList = function(v) {
+		return (v instanceof A.NodeList);
+	},
+
+	nodeListSetter = function(val) {
+		return isNodeList(val) ? val : A.all(val);
+	},
 	getCN = A.getClassName,
 
 	CSS_DRAG_INDICATOR = getCN(PORTAL_LAYOUT, DRAG, INDICATOR),
@@ -90,9 +89,9 @@ var Lang = A.Lang,
 	CSS_ICON_CIRCLE_TRIANGLE_L = getCN(ICON, CIRCLE, TRIANGLE, L),
 	CSS_ICON_CIRCLE_TRIANGLE_R = getCN(ICON, CIRCLE, TRIANGLE, R),
 
-	TPL_PLACEHOLDER = '<div class="'+CSS_DRAG_INDICATOR+'">' +
-							'<div class="'+concat(CSS_DRAG_INDICATOR_ICON, CSS_DRAG_INDICATOR_ICON_LEFT, CSS_ICON, CSS_ICON_CIRCLE_TRIANGLE_R)+'"></div>' +
-							'<div class="'+concat(CSS_DRAG_INDICATOR_ICON, CSS_DRAG_INDICATOR_ICON_RIGHT, CSS_ICON, CSS_ICON_CIRCLE_TRIANGLE_L)+'"></div>' +
+	TPL_PLACEHOLDER = '<div class="' + CSS_DRAG_INDICATOR + '">' +
+							'<div class="' + concat(CSS_DRAG_INDICATOR_ICON, CSS_DRAG_INDICATOR_ICON_LEFT, CSS_ICON, CSS_ICON_CIRCLE_TRIANGLE_R) + '"></div>' +
+							'<div class="' + concat(CSS_DRAG_INDICATOR_ICON, CSS_DRAG_INDICATOR_ICON_RIGHT, CSS_ICON, CSS_ICON_CIRCLE_TRIANGLE_L) + '"></div>' +
 						'<div>';
 
 /**
@@ -141,7 +140,6 @@ var PortalLayout = A.Component.create(
 		 */
 		ATTRS: {
 			delegateConfig: {
-				value: null,
 				setter: function(val) {
 					var instance = this;
 
@@ -162,13 +160,8 @@ var PortalLayout = A.Component.create(
 
 					return config;
 				},
-				validator: isObject
-			},
-
-			proxyNode: {
-				setter: function(val) {
-					return isString(val) ? A.Node.create(val) : val;
-				}
+				validator: isObject,
+				value: null
 			},
 
 			dragNodes: {
@@ -176,10 +169,10 @@ var PortalLayout = A.Component.create(
 			},
 
 			dropContainer: {
+				validator: isFunction,
 				value: function(dropNode) {
 					return dropNode;
-				},
-				validator: isFunction
+				}
 			},
 
 			dropNodes: {
@@ -191,12 +184,11 @@ var PortalLayout = A.Component.create(
 			},
 
 			lazyStart: {
-				value: false,
-				validator: isBoolean
+				validator: isBoolean,
+				value: false
 			},
 
 			placeholder: {
-				value: TPL_PLACEHOLDER,
 				setter: function(val) {
 					var placeholder = isString(val) ? A.Node.create(val) : val;
 
@@ -215,11 +207,11 @@ var PortalLayout = A.Component.create(
 					PLACEHOLDER_TARGET_MARGIN_TOP = getNumStyle(placeholder, MARGIN_TOP);
 
 					return placeholder;
-				}
+				},
+				value: TPL_PLACEHOLDER
 			},
 
 			proxy: {
-				value: null,
 				setter: function(val) {
 					var instance = this;
 
@@ -234,6 +226,13 @@ var PortalLayout = A.Component.create(
 					}
 
 					return A.merge(defaults, val || {});
+				},
+				value: null
+			},
+
+			proxyNode: {
+				setter: function(val) {
+					return isString(val) ? A.Node.create(val) : val;
 				}
 			}
 		},
@@ -257,12 +256,15 @@ var PortalLayout = A.Component.create(
 				var instance = this;
 
 				// publishing placeholderAlign event
-				instance.publish(EV_PLACEHOLDER_ALIGN, {
-					defaultFn: instance._defPlaceholderAlign,
-					queuable: false,
-					emitFacade: true,
-					bubbles: true
-				});
+				instance.publish(
+					EV_PLACEHOLDER_ALIGN,
+					{
+						bubbles: true,
+						defaultFn: instance._defPlaceholderAlign,
+						emitFacade: true,
+						queuable: false
+					}
+				);
 
 				instance._bindDDEvents();
 				instance._bindDropZones();
@@ -305,6 +307,7 @@ var PortalLayout = A.Component.create(
 
 			alignPlaceholder: function(region, isTarget) {
 				var instance = this;
+
 				var placeholder = instance.get(PLACEHOLDER);
 
 				if (!instance.lazyEvents) {
@@ -321,8 +324,9 @@ var PortalLayout = A.Component.create(
 
 			calculateDirections: function(drag) {
 				var instance = this;
-				var lastY = instance.lastY;
+
 				var lastX = instance.lastX;
+				var lastY = instance.lastY;
 
 				var x = drag.lastXY[0];
 				var y = drag.lastXY[1];
@@ -345,9 +349,13 @@ var PortalLayout = A.Component.create(
 
 			calculateQuadrant: function(drag, drop) {
 				var instance = this;
+
 				var quadrant = 1;
+
 				var region = drop.get(NODE).get(REGION);
+
 				var mouseXY = drag.mouseXY;
+
 				var mouseX = mouseXY[0];
 				var mouseY = mouseXY[1];
 
@@ -373,7 +381,9 @@ var PortalLayout = A.Component.create(
 
 			getPlaceholderXY: function(region, isTarget) {
 				var instance = this;
+
 				var placeholder = instance.get(PLACEHOLDER);
+
 				var marginBottom = PLACEHOLDER_MARGIN_BOTTOM;
 				var marginTop = PLACEHOLDER_MARGIN_TOP;
 
@@ -407,8 +417,20 @@ var PortalLayout = A.Component.create(
 				);
 			},
 
+			/*
+			* Listeners
+			*/
+			_afterDragStart: function(event) {
+				var instance = this;
+
+				if (instance.get(PROXY)) {
+					instance._syncProxyNodeUI(event);
+				}
+			},
+
 			_alignCondition: function() {
 				var instance = this;
+
 				var activeDrag = DDM.activeDrag;
 				var activeDrop = instance.activeDrop;
 
@@ -424,6 +446,7 @@ var PortalLayout = A.Component.create(
 
 			_bindDDEvents: function() {
 				var instance = this;
+
 				var delegateConfig = instance.get(DELEGATE_CONFIG);
 				var proxy = instance.get(PROXY);
 
@@ -446,17 +469,21 @@ var PortalLayout = A.Component.create(
 
 			_bindDropZones: function() {
 				var instance = this;
+
 				var dropNodes = instance.get(DROP_NODES);
 
 				if (dropNodes) {
-					dropNodes.each(function(node, i) {
-						instance.addDropNode(node);
-					});
+					dropNodes.each(
+						function(node, i) {
+							instance.addDropNode(node);
+						}
+					);
 				}
 			},
 
 			_defPlaceholderAlign: function(event) {
 				var instance = this;
+
 				var activeDrop = instance.activeDrop;
 				var placeholder = instance.get(PLACEHOLDER);
 
@@ -489,7 +516,9 @@ var PortalLayout = A.Component.create(
 
 			_fireQuadrantEvents: function() {
 				var instance = this;
+
 				var evOutput = instance._evOutput();
+
 				var lastQuadrant = instance.lastQuadrant;
 				var quadrant = instance.quadrant;
 
@@ -529,103 +558,6 @@ var PortalLayout = A.Component.create(
 
 			_getAppendNode: function() {
 				return DDM.activeDrag.get(NODE);
-			},
-
-			_positionNode: function(event) {
-				var instance = this;
-				var activeDrop = instance.lastAlignDrop || instance.activeDrop;
-
-				if (activeDrop) {
-					var dragNode = instance.appendNode;
-
-					var dropNode = activeDrop.get(NODE);
-
-					// detects if the activeDrop is a dd target (portlet) or a drop area only (column)
-					// DD.Delegate use the Drop Plugin on its "target" items. Using Drop Plugin a "node.drop" namespace is created.
-					// Using the .drop namespace to detect when the node is also a "target" DD.Delegate node
-					var isTarget = isValue(dropNode.drop);
-					var topQuadrants = (instance.quadrant < 3);
-
-					if (instance._alignCondition()) {
-						if (isTarget) {
-							dropNode[ topQuadrants ? PLACE_BEFORE : PLACE_AFTER ](dragNode);
-						}
-						// interacting with the columns (drop areas only)
-						else {
-							// find the dropContainer of the dropNode, the default DROP_CONTAINER function returns the dropNode
-							var dropContainer = instance.get(DROP_CONTAINER).apply(instance, [dropNode]);
-
-							dropContainer[ topQuadrants ? PREPEND : APPEND ](dragNode);
-						}
-					}
-				}
-			},
-
-			_syncPlaceholderUI: function(event) {
-				var instance = this;
-
-				if (instance._alignCondition()) {
-					// firing placeholderAlign event
-					instance.fire(EV_PLACEHOLDER_ALIGN, {
-						drop: instance.activeDrop,
-						originalEvent: event
-					});
-				}
-			},
-
-			_syncPlaceholderSize: function() {
-				var instance = this;
-				var node = instance.activeDrop.get(NODE);
-
-				var placeholder = instance.get(PLACEHOLDER);
-
-				if (placeholder) {
-					placeholder.set(
-						OFFSET_WIDTH,
-						node.get(OFFSET_WIDTH)
-					);
-				}
-			},
-
-			_syncProxyNodeUI: function(event) {
-				var instance = this;
-				var dragNode = DDM.activeDrag.get(DRAG_NODE);
-				var proxyNode = instance.get(PROXY_NODE);
-
-				if (proxyNode && !proxyNode.compareTo(dragNode)) {
-					dragNode.append(proxyNode);
-
-					instance._syncProxyNodeSize();
-				}
-			},
-
-			_syncProxyNodeSize: function() {
-				var instance = this;
-				var node = DDM.activeDrag.get(NODE);
-				var proxyNode = instance.get(PROXY_NODE);
-
-				if (node && proxyNode) {
-					proxyNode.set(
-						OFFSET_HEIGHT,
-						node.get(OFFSET_HEIGHT)
-					);
-
-					proxyNode.set(
-						OFFSET_WIDTH,
-						node.get(OFFSET_WIDTH)
-					);
-				}
-			},
-
-			/*
-			* Listeners
-			*/
-			_afterDragStart: function(event) {
-				var instance = this;
-
-				if (instance.get(PROXY)) {
-					instance._syncProxyNodeUI(event);
-				}
 			},
 
 			_onDragEnd: function(event) {
@@ -681,12 +613,12 @@ var PortalLayout = A.Component.create(
 				instance._syncPlaceholderUI(event);
 
 				instance.activeDrop = DDM.activeDrop;
-
 				instance.lastActiveDrop = DDM.activeDrop;
 			},
 
 			_onDragOver: function(event) {
 				var instance = this;
+
 				var drag = event.drag;
 
 				// prevent drag over bubbling, filtering the top most element
@@ -712,6 +644,37 @@ var PortalLayout = A.Component.create(
 				instance.activeDrop = DDM.activeDrop;
 			},
 
+			_positionNode: function(event) {
+				var instance = this;
+
+				var activeDrop = instance.lastAlignDrop || instance.activeDrop;
+
+				if (activeDrop) {
+					var dragNode = instance.appendNode;
+
+					var dropNode = activeDrop.get(NODE);
+
+					// detects if the activeDrop is a dd target (portlet) or a drop area only (column)
+					// DD.Delegate use the Drop Plugin on its "target" items. Using Drop Plugin a "node.drop" namespace is created.
+					// Using the .drop namespace to detect when the node is also a "target" DD.Delegate node
+					var isTarget = isValue(dropNode.drop);
+					var topQuadrants = (instance.quadrant < 3);
+
+					if (instance._alignCondition()) {
+						if (isTarget) {
+							dropNode[ topQuadrants ? PLACE_BEFORE : PLACE_AFTER ](dragNode);
+						}
+						// interacting with the columns (drop areas only)
+						else {
+							// find the dropContainer of the dropNode, the default DROP_CONTAINER function returns the dropNode
+							var dropContainer = instance.get(DROP_CONTAINER).apply(instance, [dropNode]);
+
+							dropContainer[ topQuadrants ? PREPEND : APPEND ](dragNode);
+						}
+					}
+				}
+			},
+
 			_setDropNodes: function(val) {
 				var instance = this;
 
@@ -720,6 +683,59 @@ var PortalLayout = A.Component.create(
 				}
 
 				return nodeListSetter(val);
+			},
+
+			_syncPlaceholderSize: function() {
+				var instance = this;
+
+				var node = instance.activeDrop.get(NODE);
+
+				var placeholder = instance.get(PLACEHOLDER);
+
+				if (placeholder) {
+					placeholder.set(OFFSET_WIDTH, node.get(OFFSET_WIDTH));
+				}
+			},
+
+			_syncPlaceholderUI: function(event) {
+				var instance = this;
+
+				if (instance._alignCondition()) {
+					// firing placeholderAlign event
+					instance.fire(
+						EV_PLACEHOLDER_ALIGN,
+						{
+							drop: instance.activeDrop,
+							originalEvent: event
+						}
+					);
+				}
+			},
+
+			_syncProxyNodeSize: function() {
+				var instance = this;
+
+				var node = DDM.activeDrag.get(NODE);
+				var proxyNode = instance.get(PROXY_NODE);
+
+				if (node && proxyNode) {
+					proxyNode.set(OFFSET_HEIGHT, node.get(OFFSET_HEIGHT));
+
+					proxyNode.set(OFFSET_WIDTH, node.get(OFFSET_WIDTH));
+				}
+			},
+
+			_syncProxyNodeUI: function(event) {
+				var instance = this;
+
+				var dragNode = DDM.activeDrag.get(DRAG_NODE);
+				var proxyNode = instance.get(PROXY_NODE);
+
+				if (proxyNode && !proxyNode.compareTo(dragNode)) {
+					dragNode.append(proxyNode);
+
+					instance._syncProxyNodeSize();
+				}
 			}
 		}
 	}
