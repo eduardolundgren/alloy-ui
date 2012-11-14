@@ -258,11 +258,11 @@ var PortalLayout = A.Component.create(
 
 				// publishing placeholderAlign event
 				instance.publish(EV_PLACEHOLDER_ALIGN, {
-		            defaultFn: instance._defPlaceholderAlign,
-		            queuable: false,
-		            emitFacade: true,
-		            bubbles: true
-		        });
+					defaultFn: instance._defPlaceholderAlign,
+					queuable: false,
+					emitFacade: true,
+					bubbles: true
+				});
 
 				instance._bindDDEvents();
 				instance._bindDropZones();
@@ -279,8 +279,8 @@ var PortalLayout = A.Component.create(
 				if (!DDM.getDrop(node)) {
 					instance.addDropTarget(
 						// Do not use DropPlugin to create the DropZones on
-                        // this component, the ".drop" namespace is used to check
-                        // for the DD.Delegate target nodes
+						// this component, the ".drop" namespace is used to check
+						// for the DD.Delegate target nodes
 						new A.DD.Drop(
 							A.merge(
 								{
@@ -536,7 +536,8 @@ var PortalLayout = A.Component.create(
 				var activeDrop = instance.lastAlignDrop || instance.activeDrop;
 
 				if (activeDrop) {
-					var dragNode = instance._getAppendNode();
+					var dragNode = instance.appendNode;
+
 					var dropNode = activeDrop.get(NODE);
 
 					// detects if the activeDrop is a dd target (portlet) or a drop area only (column)
@@ -629,8 +630,11 @@ var PortalLayout = A.Component.create(
 
 			_onDragEnd: function(event) {
 				var instance = this;
+
 				var placeholder = instance.get(PLACEHOLDER);
 				var proxyNode = instance.get(PROXY_NODE);
+
+				instance.appendNode = instance._getAppendNode();
 
 				if (!instance.lazyEvents) {
 					instance._positionNode(event);
