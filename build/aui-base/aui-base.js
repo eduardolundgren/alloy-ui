@@ -48,7 +48,7 @@
 						'aui-event': {submodules: {'aui-event-delegate-submit': {requires:['aui-node-base','aui-event-base'], condition: {name: 'aui-event-delegate-submit', trigger: 'event-base-ie', ua: 'ie'}}, 'aui-event-delegate-change': {requires:['aui-node-base','aui-event-base'], condition: {name: 'aui-event-delegate-change', trigger: 'event-base-ie', ua: 'ie'}}, 'aui-event-input': {requires:['aui-base']}, 'aui-event-base': {requires:['event']} }, skinnable:false, use:['aui-event-base','aui-event-input']},
 						'aui-form-builder': {submodules: {'aui-form-builder-field': {requires:['aui-datatype','aui-panel','aui-tooltip'], skinnable:true}, 'aui-form-builder-base': {requires:['aui-base','aui-button-item','aui-data-set','aui-diagram-builder-base','aui-nested-list','aui-tabs'], skinnable:true} }, skinnable:true, use:['aui-form-builder-base','aui-form-builder-field']},
 						'aui-form-validator': {requires:['aui-base','aui-event-input','selector-css3','escape'], skinnable:false},
-						'aui-form': {submodules: {'aui-form-textareabase': {requires:['aui-base'], skinnable:false}, 'aui-form-textfield': {requires:['aui-form-field']}, 'aui-form-textarea': {requires:['aui-form-textfield','aui-form-textareabase'], skinnable:true}, 'aui-form-select': {requires:['aui-form-field']}, 'aui-form-field': {requires:['aui-base','aui-component']}, 'aui-form-combobox': {requires:['aui-form-textarea','aui-toolbar'], skinnable:true}, 'aui-form-base': {requires:['aui-base','aui-data-set','aui-form-field','querystring-parse','io-form']} }, skinnable:false, use:['aui-form-base','aui-form-combobox','aui-form-field','aui-form-select','aui-form-textarea','aui-form-textfield','aui-form-textareabase']},
+						'aui-form': {submodules: {'aui-form-textareabase': {requires:['aui-base','aui-event-input'], skinnable:false}, 'aui-form-textfield': {requires:['aui-form-field']}, 'aui-form-textarea': {requires:['aui-form-textfield','aui-form-textareabase'], skinnable:true}, 'aui-form-select': {requires:['aui-form-field']}, 'aui-form-field': {requires:['aui-base','aui-component']}, 'aui-form-combobox': {requires:['aui-form-textarea','aui-toolbar'], skinnable:true}, 'aui-form-base': {requires:['aui-base','aui-data-set','aui-form-field','querystring-parse','io-form']} }, skinnable:false, use:['aui-form-base','aui-form-combobox','aui-form-field','aui-form-select','aui-form-textarea','aui-form-textfield','aui-form-textareabase']},
 						'aui-image-cropper': {requires:['widget','aui-base','resize','dd-constrain'], skinnable:true},
 						'aui-image-viewer': {submodules: {'aui-media-viewer-plugin': {requires:['aui-image-viewer-base'], skinnable:false}, 'aui-image-viewer-gallery': {requires:['aui-image-viewer-base','aui-paginator','aui-toolbar'], skinnable:true}, 'aui-image-viewer-base': {requires:['anim','aui-overlay-mask'], skinnable:true} }, skinnable:true, use:['aui-image-viewer-base','aui-image-viewer-gallery','aui-media-viewer-plugin']},
 						'aui-io': {submodules: {'aui-io-plugin': {requires:['aui-overlay-base','aui-parse-content','aui-io-request','aui-loading-mask']}, 'aui-io-request': {requires:['aui-base','io-base','json','plugin','querystring-stringify']} }, skinnable:false, use:['aui-io-request','aui-io-plugin']},
@@ -949,36 +949,6 @@ A.mix(
 		},
 
 		_unescapeNode: DOC.createElement('a')
-	}
-);
-
-A.mix(
-	AArray,
-	{
-		/**
-		 * Sorts an object array keeping the order of equal items. ECMA script
-		 * standard does not specify the behaviour when the compare function
-		 * returns the value 0;
-		 */
-		stableSort: function(array, sorter) {
-			var i, len = array.length;
-
-			for (i = 0; i < len; i++) {
-				array[i] = { index: i, value: array[i] };
-			}
-
-			array.sort(
-				function(a, b) {
-					var result = sorter.call(array, a.value, b.value);
-
-					return (result === 0) ? (a.index - b.index) : result;
-				}
-			);
-
-			for (i = 0; i < len; i++) {
-				array[i] = array[i].value;
-			}
-		}
 	}
 );
 
