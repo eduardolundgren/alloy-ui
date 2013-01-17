@@ -72,7 +72,7 @@ A.mix(SchedulerEventSupport.prototype, {
 		events.sort({ silent: true });
 
 		if (filterFn) {
-			events = events.filter(filterFn);
+			events = A.Array.filter(events.toArray(), filterFn);
 		}
 		else {
 			events = events.toArray();

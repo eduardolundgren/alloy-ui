@@ -703,8 +703,7 @@ var SchedulerEvent = A.Component.create({
 					borderWidth: instance.get(BORDER_WIDTH),
 					borderColor: borderColor,
 					backgroundColor: val,
-					borderStyle: instance.get(BORDER_STYLE),
-					color: INHERIT
+					borderStyle: instance.get(BORDER_STYLE)
 				};
 
 				node.setStyles(styles);
