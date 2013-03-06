@@ -254,6 +254,35 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "aui-image-viewer": {
+        "skinnable": true,
+        "use": [
+            "aui-image-viewer-base",
+            "aui-image-viewer-gallery",
+            "aui-media-viewer-plugin"
+        ]
+    },
+    "aui-image-viewer-base": {
+        "requires": [
+            "anim",
+            "aui-event",
+            "aui-node-base",
+            "widget",
+            "widget-modality",
+            "widget-position",
+            "widget-position-align",
+            "widget-stdmod"
+        ],
+        "skinnable": true
+    },
+    "aui-image-viewer-gallery": {
+        "requires": [
+            "aui-image-viewer-base",
+            "aui-pagination",
+            "aui-toolbar"
+        ],
+        "skinnable": true
+    },
     "aui-io": {
         "use": [
             "aui-io-request"
@@ -271,6 +300,14 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-map": {
         "requires": [
             "base-build"
+        ]
+    },
+    "aui-media-viewer-plugin": {
+        "requires": [
+            "aui-image-viewer-base",
+            "aui-pagination",
+            "aui-toolbar",
+            "plugin"
         ]
     },
     "aui-messaging": {
@@ -569,6 +606,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '2790850c0c3694fcf82cd035522b4c07';
+YUI.Env[Y.version].md5 = '7fbc8fdac4f2351b583fa928b6e1b877';
 
 });
