@@ -12,8 +12,7 @@
     },
     "aui-ace-autocomplete-freemarker": {
     	"requires": [
-            "aui-ace-autocomplete-base",
-            "aui-search-tst"
+            "aui-ace-autocomplete-base"
         ]
     },
     "aui-ace-autocomplete-list": {
