@@ -3,10 +3,14 @@ var Lang = A.Lang,
     Do = A.Do,
     ADOM = A.DOM,
 
-    INSERT_TEXT = 'insertText',
     EXEC = 'exec',
+    FILL_MODE = 'fillMode',
     HOST = 'host',
+    INSERT_TEXT = 'insertText',
     PROCESSOR = 'processor',
+
+    FILL_MODE_INSERT = 1,
+    FILL_MODE_OVERWRITE = 0,
 
     STATUS_ERROR = -1,
     STATUS_SUCCESS = 0,
@@ -37,7 +41,24 @@ Base.prototype = {
 
         var data = instance.get(PROCESSOR).getSuggestion(instance._matchParams.match, content);
 
-        editor.insert(data);
+        if (this.get(FILL_MODE) === Base.FILL_MODE_OVERWRITE) {
+            var matchParams = instance._matchParams;
+
+            var startRow = matchParams.row;
+
+            var startColumn = matchParams.column - matchParams.match.content.length;
+
+            var cursorPosition = editor.getCursorPosition();
+
+            var Range = require('ace/range').Range;
+
+            var overwriteRange = new Range(startRow, startColumn, cursorPosition.row, cursorPosition.column);
+
+            editor.getSession().replace(overwriteRange, data);
+        }
+        else {
+            editor.insert(data);
+        }
 
         editor.focus();
 
@@ -77,7 +98,9 @@ Base.prototype = {
             }
         );
 
-        editor.getSelection().on('changeCursor', A.bind(instance._onEditorChangeCursor, instance));
+        instance._onEditorChangeCursorFn = A.bind(instance._onEditorChangeCursor, instance);
+
+        editor.getSelection().on('changeCursor', instance._onEditorChangeCursorFn);
 
         instance.on('destroy', instance._destroyUIACBase, instance);
     },
@@ -110,6 +133,12 @@ Base.prototype = {
 
     _destroyUIACBase: function() {
         var instance = this;
+
+        var editor = instance._getEditor();
+
+        editor.commands.removeCommand('showAutoComplete');
+
+        editor.getSelection().removeListener('changeCursor', instance._onEditorChangeCursorFn);
 
         instance._removeAutoCompleteCommands();
     },
@@ -245,17 +274,29 @@ Base.prototype = {
     _removeAutoCompleteCommands: function() {
         var instance = this;
 
-        AArray.invoke(instance._editorCommands, 'detach');
+        (new A.EventHandle(instance._editorCommands)).detach();
 
         instance._editorCommands.length = 0;
+    },
+
+    _validateFillMode: function(value) {
+        return (value === Base.FILL_MODE_OVERWRITE || value === Base.FILL_MODE_INSERT);
     }
 };
+
+Base.FILL_MODE_INSERT = FILL_MODE_INSERT;
+Base.FILL_MODE_OVERWRITE = FILL_MODE_OVERWRITE;
 
 Base.NAME = NAME;
 
 Base.NS = NAME;
 
 Base.ATTRS = {
+    fillMode: {
+        validator: '_validateFillMode',
+        value: Base.FILL_MODE_OVERWRITE
+    },
+
     processor: {
         validator: function(value) {
             return Lang.isObject(value) || Lang.isFunction(value);
