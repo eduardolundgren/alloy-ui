@@ -1,6 +1,7 @@
 var Lang = A.Lang,
     AArray = A.Array,
     Do = A.Do,
+    ADOM = A.DOM,
 
     INSERT_TEXT = 'insertText',
     EXEC = 'exec',
@@ -76,9 +77,7 @@ Base.prototype = {
             }
         );
 
-        instance._onEditorChangeCursorFn = A.bind(instance._onEditorChangeCursor, instance);
-
-        editor.getSelection().on('changeCursor', instance._onEditorChangeCursorFn);
+        editor.getSelection().on('changeCursor', A.bind(instance._onEditorChangeCursor, instance));
 
         instance.on('destroy', instance._destroyUIACBase, instance);
     },
@@ -111,12 +110,6 @@ Base.prototype = {
 
     _destroyUIACBase: function() {
         var instance = this;
-
-        var editor = instance._getEditor();
-
-        editor.commands.removeCommand('showAutoComplete');
-
-        editor.getSelection().removeListener('changeCursor', instance._onEditorChangeCursorFn);
 
         instance._removeAutoCompleteCommands();
     },
@@ -225,6 +218,9 @@ Base.prototype = {
         if (Lang.isObject(match)) {
             coords = editor.renderer.textToScreenCoordinates(row, column);
 
+            coords.pageX += ADOM.docScrollX();
+            coords.pageY += ADOM.docScrollY();
+
             instance._matchParams = {
                 column: column,
                 match: match,
@@ -249,7 +245,7 @@ Base.prototype = {
     _removeAutoCompleteCommands: function() {
         var instance = this;
 
-        (new A.EventHandle(instance._editorCommands)).detach();
+        AArray.invoke(instance._editorCommands, 'detach');
 
         instance._editorCommands.length = 0;
     }
