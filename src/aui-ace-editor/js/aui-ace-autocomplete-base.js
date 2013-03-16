@@ -37,30 +37,21 @@ Base.prototype = {
     _addSuggestion: function(content) {
         var instance = this;
 
+        instance._lockEditor = true;
+
         var editor = instance._getEditor();
 
         var data = instance.get(PROCESSOR).getSuggestion(instance._matchParams.match, content);
 
         if (this.get(FILL_MODE) === Base.FILL_MODE_OVERWRITE) {
-            var matchParams = instance._matchParams;
-
-            var startRow = matchParams.row;
-
-            var startColumn = matchParams.column - matchParams.match.content.length;
-
-            var cursorPosition = editor.getCursorPosition();
-
-            var Range = require('ace/range').Range;
-
-            var overwriteRange = new Range(startRow, startColumn, cursorPosition.row, cursorPosition.column);
-
-            editor.getSession().replace(overwriteRange, data);
+            editor.removeWordLeft();
         }
-        else {
-            editor.insert(data);
-        }
+
+        editor.insert(data);
 
         editor.focus();
+
+        instance._lockEditor = false;
 
         instance.fire('addSuggestion', data);
 
@@ -166,7 +157,7 @@ Base.prototype = {
 
         var dataAction = data.action;
 
-        if (dataAction === INSERT_TEXT || dataAction === 'removeText') {
+        if (!instance._lockEditor && (dataAction === INSERT_TEXT || dataAction === 'removeText')) {
             var dataRange = data.range;
 
             var column = dataRange.start.column;
