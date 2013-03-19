@@ -1,11 +1,16 @@
 var Lang = A.Lang,
     AArray = A.Array,
     Do = A.Do,
+    ADOM = A.DOM,
 
-    INSERT_TEXT = 'insertText',
     EXEC = 'exec',
+    FILL_MODE = 'fillMode',
     HOST = 'host',
+    INSERT_TEXT = 'insertText',
     PROCESSOR = 'processor',
+
+    FILL_MODE_INSERT = 1,
+    FILL_MODE_OVERWRITE = 0,
 
     STATUS_ERROR = -1,
     STATUS_SUCCESS = 0,
@@ -20,25 +25,49 @@ Base.prototype = {
 
         instance._editorCommands = [];
 
-        A.after(this._bindUIACBase, this, 'renderUI');
+        A.after(instance._bindUIACBase, instance, 'renderUI');
 
         var processor = instance.get(PROCESSOR);
 
         if (processor && !processor.get(HOST)) {
             processor.set(HOST, instance);
         }
+
+        instance._onResultsErrorFn = A.bind('_onResultsError', instance);
+        instance._onResultsSuccessFn = A.bind('_onResultsSuccess', instance);
     },
 
     _addSuggestion: function(content) {
         var instance = this;
 
+        instance._lockEditor = true;
+
         var editor = instance._getEditor();
 
         var data = instance.get(PROCESSOR).getSuggestion(instance._matchParams.match, content);
 
-        editor.insert(data);
+        if (instance.get(FILL_MODE) === Base.FILL_MODE_OVERWRITE) {
+            var matchParams = instance._matchParams;
+
+            var startRow = matchParams.row;
+
+            var startColumn = matchParams.column - matchParams.match.content.length;
+
+            var cursorPosition = editor.getCursorPosition();
+
+            var Range = require('ace/range').Range;
+
+            var overwriteRange = new Range(startRow, startColumn, cursorPosition.row, cursorPosition.column);
+
+            editor.getSession().replace(overwriteRange, data);
+        }
+        else {
+            editor.insert(data);
+        }
 
         editor.focus();
+
+        instance._lockEditor = false;
 
         instance.fire('addSuggestion', data);
 
@@ -57,7 +86,9 @@ Base.prototype = {
 
         var editor = instance._getEditor();
 
-        editor.on('change', A.bind(instance._onEditorChange, instance));
+        instance._onChangeFn = A.bind('_onEditorChange', instance);
+
+        editor.on('change', instance._onChangeFn);
 
         editor.commands.addCommand(
             {
@@ -76,7 +107,9 @@ Base.prototype = {
             }
         );
 
-        editor.getSelection().on('changeCursor', A.bind(instance._onEditorChangeCursor, instance));
+        instance._onEditorChangeCursorFn = A.bind('_onEditorChangeCursor', instance);
+
+        editor.getSelection().on('changeCursor', instance._onEditorChangeCursorFn);
 
         instance.on('destroy', instance._destroyUIACBase, instance);
     },
@@ -96,19 +129,18 @@ Base.prototype = {
         if (row !== matchParams.row || column < matchParams.match.start) {
             instance.fire('cursorOut');
         }
-        else {
-            var line = editor.getSession().getLine(row);
-
-            var subline = line.substring(matchParams.match.start, column);
-
-            if (!instance.get(PROCESSOR).getMatch(subline)) {
-                instance.fire('match');
-            }
-        }
     },
 
     _destroyUIACBase: function() {
         var instance = this;
+
+        var editor = instance._getEditor();
+
+        editor.commands.removeCommand('showAutoComplete');
+
+        editor.removeListener('change', instance._onChangeFn);
+
+        editor.getSelection().removeListener('changeCursor', instance._onEditorChangeCursorFn);
 
         instance._removeAutoCompleteCommands();
     },
@@ -116,7 +148,33 @@ Base.prototype = {
     _getEditor: function() {
         var instance = this;
 
-        return instance.get('host').getEditor();
+        return instance.get(HOST).getEditor();
+    },
+
+    _filterResults: function(content, results) {
+        var instance = this;
+
+        var filters = instance.get('filters');
+
+        for (var i = 0, length = filters.length; i < length; ++i) {
+            results = filters[i].call(instance, content, results.concat());
+
+            if (!results.length) {
+                break;
+            }
+        }
+
+        var sorters = instance.get('sorters');
+
+        for (i = 0, length = sorters.length; i < length; ++i) {
+            results = sorters[i].call(instance, content, results.concat());
+
+            if (!results.length) {
+                break;
+            }
+        }
+
+        return results;
     },
 
     _handleEnter: function(text) {
@@ -136,7 +194,7 @@ Base.prototype = {
 
         var dataAction = data.action;
 
-        if (dataAction === INSERT_TEXT || dataAction === 'removeText') {
+        if (!instance._lockEditor && (dataAction === INSERT_TEXT || dataAction === 'removeText')) {
             var dataRange = data.range;
 
             var column = dataRange.start.column;
@@ -185,15 +243,32 @@ Base.prototype = {
         var commands = editor.commands.commands;
 
         instance._editorCommands.push(
-            Do.before(instance._handleEnter, editor, 'onTextInput', this),
-            Do.before(instance._handleKey, commands['golinedown'], EXEC, this, 40),
-            Do.before(instance._handleKey, commands['golineup'], EXEC, this, 38),
-            Do.before(instance._handleKey, commands['gotoend'], EXEC, this, 35),
-            Do.before(instance._handleKey, commands['gotolineend'], EXEC, this, 35),
-            Do.before(instance._handleKey, commands['gotolinestart'], EXEC, this, 36),
-            Do.before(instance._handleKey, commands['gotopagedown'], EXEC, this, 34),
-            Do.before(instance._handleKey, commands['gotopageup'], EXEC, this, 33),
-            Do.before(instance._handleKey, commands['gotostart'], EXEC, this, 36)
+            Do.before(instance._handleEnter, editor, 'onTextInput', instance),
+            Do.before(instance._handleKey, commands['golinedown'], EXEC, instance, 40),
+            Do.before(instance._handleKey, commands['golineup'], EXEC, instance, 38),
+            Do.before(instance._handleKey, commands['gotoend'], EXEC, instance, 35),
+            Do.before(instance._handleKey, commands['gotolineend'], EXEC, instance, 35),
+            Do.before(instance._handleKey, commands['gotolinestart'], EXEC, instance, 36),
+            Do.before(instance._handleKey, commands['gotopagedown'], EXEC, instance, 34),
+            Do.before(instance._handleKey, commands['gotopageup'], EXEC, instance, 33),
+            Do.before(instance._handleKey, commands['gotostart'], EXEC, instance, 36)
+        );
+    },
+
+    _phraseMatch: function (content, results, caseSensitive) {
+        if (!content) {
+            return results;
+        }
+
+        if (!caseSensitive) {
+            content = content.toLowerCase();
+        }
+
+        return AArray.filter(
+            results,
+            function (result) {
+                return (caseSensitive ? result : result.toLowerCase()).indexOf(content) !== -1;
+            }
         );
     },
 
@@ -217,13 +292,16 @@ Base.prototype = {
         if (Lang.isObject(match)) {
             coords = editor.renderer.textToScreenCoordinates(row, column);
 
+            coords.pageX += ADOM.docScrollX();
+            coords.pageY += ADOM.docScrollY();
+
             instance._matchParams = {
                 column: column,
                 match: match,
                 row: row
             };
 
-            processor.getResults(match, A.bind(instance._onResultsSuccess, instance), A.bind(instance._onResultsError, instance));
+            processor.getResults(match, instance._onResultsSuccessFn, instance._onResultsErrorFn);
         }
 
         instance.fire(
@@ -244,14 +322,69 @@ Base.prototype = {
         (new A.EventHandle(instance._editorCommands)).detach();
 
         instance._editorCommands.length = 0;
+    },
+
+    _sortAscLength: function (content, results, caseSensitive) {
+        return results.sort(
+            function(item1, item2) {
+                var result = 0;
+
+                if (!caseSensitive) {
+                    item1 = item1.toLowerCase();
+
+                    item2 = item2.toLowerCase();
+                }
+
+                var index1 = item1.indexOf(content);
+
+                var index2 = item2.indexOf(content);
+
+                if (index1 === 0 && index2 === 0) {
+                    result = item1.localeCompare(item2);
+                }
+                else if (index1 === 0) {
+                    result = -1;
+                }
+                else if (index2 === 0) {
+                    result = 1;
+                }
+                else {
+                    result = item1.localeCompare(item2);
+                }
+
+                return result;
+            }
+        );
+    },
+
+    _validateFillMode: function(value) {
+        return (value === Base.FILL_MODE_OVERWRITE || value === Base.FILL_MODE_INSERT);
     }
 };
+
+Base.FILL_MODE_INSERT = FILL_MODE_INSERT;
+Base.FILL_MODE_OVERWRITE = FILL_MODE_OVERWRITE;
 
 Base.NAME = NAME;
 
 Base.NS = NAME;
 
 Base.ATTRS = {
+    fillMode: {
+        validator: '_validateFillMode',
+        value: Base.FILL_MODE_OVERWRITE
+    },
+
+    filters: {
+        valueFn: function() {
+            var instance = this;
+
+            return [
+                instance._phraseMatch
+            ];
+        }
+    },
+
     processor: {
         validator: function(value) {
             return Lang.isObject(value) || Lang.isFunction(value);
@@ -263,6 +396,16 @@ Base.ATTRS = {
         value: {
             mac: 'Alt-Space',
             win: 'Ctrl-Space'
+        }
+    },
+
+    sorters: {
+        valueFn: function() {
+            var instance = this;
+
+            return [
+                instance._sortAscLength
+            ];
         }
     }
 };

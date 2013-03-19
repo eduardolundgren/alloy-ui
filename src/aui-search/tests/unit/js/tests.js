@@ -74,10 +74,10 @@ YUI.add('module-tests', function(Y) {
     suite.add(new Y.Test.Case({
         name: 'test tst prefixes',
 
-        assertPrefixEquals: function(prefix, expected) {
+        assertPrefixEquals: function(prefix, expected, caseInsensitive) {
             var instance = this;
 
-            var words = tstree.prefixSearch(prefix);
+            var words = tstree.prefixSearch(prefix, caseInsensitive);
 
             return checkArrays(expected, words);
         },
@@ -110,6 +110,21 @@ YUI.add('module-tests', function(Y) {
             );
 
             Y.Assert.isTrue(result, 'prefix search on: ' + prefix + ' failed');
+        },
+
+        testPrefixSearchCaseInsensitive: function() {
+            var instance = this;
+
+            var prefix = 'EL';
+
+            var result = instance.assertPrefixEquals(
+                prefix,
+                [
+                    'else',
+                    'elseif'
+                ],
+                true
+            );
         }
     }));
 
