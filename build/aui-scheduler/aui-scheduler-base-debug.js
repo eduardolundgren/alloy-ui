@@ -704,8 +704,7 @@ var SchedulerEvent = A.Component.create({
 					borderWidth: instance.get(BORDER_WIDTH),
 					borderColor: borderColor,
 					backgroundColor: val,
-					borderStyle: instance.get(BORDER_STYLE),
-					color: INHERIT
+					borderStyle: instance.get(BORDER_STYLE)
 				};
 
 				node.setStyles(styles);
@@ -952,7 +951,7 @@ A.mix(SchedulerEventSupport.prototype, {
 		events.sort({ silent: true });
 
 		if (filterFn) {
-			events = events.filter(filterFn);
+			events = A.Array.filter(events.toArray(), filterFn);
 		}
 		else {
 			events = events.toArray();
