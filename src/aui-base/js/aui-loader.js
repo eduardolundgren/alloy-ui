@@ -169,7 +169,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-datatable-edit",
             "aui-datatable-highlight",
             "aui-datatable-selection"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-datatable-selection": {
         "requires": [
@@ -183,6 +184,41 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     },
     "aui-debounce": {},
+    "aui-diagram-builder": {
+        "use": [
+            "aui-diagram-builder-base",
+            "aui-diagram-builder-connector",
+            "aui-diagram-builder-impl"
+        ]
+    },
+    "aui-diagram-builder-base": {
+        "requires": [
+            "dd",
+            "collection",
+            "aui-tabview",
+            "aui-datatable-property-list"
+        ],
+        "skinnable": true
+    },
+    "aui-diagram-builder-connector": {
+        "requires": [
+            "arraylist-add",
+            "arraylist-filter",
+            "json",
+            "graphics",
+            "dd"
+        ],
+        "skinnable": true
+    },
+    "aui-diagram-builder-impl": {
+        "requires": [
+            "overlay",
+            "aui-map",
+            "aui-diagram-builder-base",
+            "aui-diagram-builder-connector"
+        ],
+        "skinnable": true
+    },
     "aui-event": {
         "use": [
             "aui-event-base",
@@ -233,6 +269,84 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-event-base",
             "event-delegate",
             "event-synthetic"
+        ]
+    },
+    "aui-form-builder": {
+        "skinnable": true,
+        "use": [
+            "aui-form-builder-base",
+            "aui-form-builder-field-base",
+            "aui-form-builder-field-button",
+            "aui-form-builder-field-checkbox",
+            "aui-form-builder-field-fieldset",
+            "aui-form-builder-field-file-upload",
+            "aui-form-builder-field-multiple-choice",
+            "aui-form-builder-field-radio",
+            "aui-form-builder-field-select",
+            "aui-form-builder-field-text",
+            "aui-form-builder-field-textarea"
+        ]
+    },
+    "aui-form-builder-base": {
+        "requires": [
+            "aui-button",
+            "aui-collection",
+            "aui-diagram-builder-base",
+            "aui-sortable-list",
+            "aui-tabview"
+        ],
+        "skinnable": true
+    },
+    "aui-form-builder-field-base": {
+        "requires": [
+            "panel",
+            "aui-datatype"
+        ],
+        "skinnable": true
+    },
+    "aui-form-builder-field-button": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-checkbox": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-fieldset": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-file-upload": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-multiple-choice": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-radio": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-select": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-text": {
+        "requires": [
+            "aui-form-builder-field-base"
+        ]
+    },
+    "aui-form-builder-field-textarea": {
+        "requires": [
+            "aui-form-builder-field-base"
         ]
     },
     "aui-form-validator": {
@@ -613,6 +727,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'bf1e0e7a829a9a43042e4ba51c9f64c9';
+YUI.Env[Y.version].md5 = '83150b88e800713cd9f39d9b4e35cd8f';
 
 });

@@ -21,6 +21,7 @@ var Lang = A.Lang,
 
     _DOT = '.',
     _EMPTY = '',
+    _SPACE = ' ',
 
     getCN = A.getClassName,
 
@@ -73,6 +74,13 @@ A.Toolbar = A.Component.create({
                 toolbarRenderer = instance.get(TOOLBAR_RENDERER);
 
             boundingBox.insert(toolbarRenderer.render(A.Array(children)), where);
+        },
+
+        clear: function() {
+            var instance = this,
+                boundingBox = instance.get(BOUNDING_BOX);
+
+            boundingBox.get(CHILDREN).remove();
         },
 
         getEnclosingWidget: function(seed) {
@@ -146,6 +154,8 @@ A.Toolbar = A.Component.create({
                 children = instance.get(CHILDREN);
 
             if (children) {
+                instance.clear();
+
                 instance.add(children);
             }
         },
@@ -153,7 +163,7 @@ A.Toolbar = A.Component.create({
         _uiSetChildren: function(val) {
             var instance = this;
 
-            if (!val || !instance.get(RENDERED)) {
+            if (!val) {
                 return;
             }
 
@@ -188,6 +198,11 @@ ToolbarRenderer.prototype = {
             if (value.icon) {
                 buttonNode.appendChild(
                     Lang.sub(instance.TEMPLATES.icon, { cssClass: value.icon }));
+            }
+            if (value.icon && value.label) {
+                value.label = _SPACE + value.label;
+
+                buttonNode.appendChild('&nbsp;');
             }
             if (value.label) {
                 buttonNode.appendChild(value.label);
