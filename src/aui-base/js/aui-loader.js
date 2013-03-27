@@ -633,6 +633,16 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-component"
         ]
     },
+    "aui-text-data-unicode": {
+        "requires": [
+            "text"
+        ]
+    },
+    "aui-text-unicode": {
+        "requires": [
+            "aui-text-data-unicode"
+        ]
+    },
     "aui-timer": {
         "requires": [
             "oop"
@@ -729,6 +739,6 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e511c6a34516e8e2e3e949144b9ade29';
+YUI.Env[Y.version].md5 = 'e204b5fe00707a4d44485ce25955fdde';
 
 });
