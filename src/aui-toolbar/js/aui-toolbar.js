@@ -149,13 +149,11 @@ A.Toolbar = A.Component.create({
                     type = RADIO;
                 }
 
-                if (type) {
-                    new A.ButtonGroup({
-                        boundingBox: groupNode,
-                        type: type,
-                        render: true
-                    });
-                }
+                new A.ButtonGroup({
+                    boundingBox: groupNode,
+                    type: type,
+                    render: true
+                });
             }
         },
 
