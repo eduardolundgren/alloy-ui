@@ -1,23 +1,26 @@
 var Lang = A.Lang,
+    isNumber = Lang.isNumber,
     isString = Lang.isString,
 
-    RIGHT = 'right',
-    SYNC_UI = 'syncUI',
-    CLASS_NAME = 'className',
-    ICON_ALIGN = 'iconAlign',
+    ACTIVE = 'active',
     BOUNDING_BOX = 'boundingBox',
-    ICON = 'icon',
-    LEFT = 'left',
-    WIDGET_CONSTRUCTOR = 'widgetConstructor',
+    BTN = 'btn',
+    BTNGROUP = 'btngroup',
+    CLASS_NAME = 'className',
+    DISABLED = 'disabled',
     GROUP = 'group',
     I = 'i',
-    TOGGLEBTN = 'togglebtn',
-    LABEL = 'label',
-    DISABLED = 'disabled',
-    BTNGROUP = 'btngroup',
-    ACTIVE = 'active',
+    ICON = 'icon',
+    ICON_ALIGN = 'iconAlign',
     ICON_ELEMENT = 'iconElement',
-    BTN = 'btn',
+    LABEL = 'label',
+    LEFT = 'left',
+    RADIO = 'radio',
+    RIGHT = 'right',
+    SYNC_UI = 'syncUI',
+    TOGGLEBTN = 'togglebtn',
+    TYPE = 'type',
+    WIDGET_CONSTRUCTOR = 'widgetConstructor',
 
     getClassName = A.getClassName,
 
@@ -189,3 +192,42 @@ ButtonGroup.prototype.renderUI = (function(original) {
         });
     };
 }(ButtonGroup.prototype.renderUI));
+ButtonGroup.prototype.item = function(index) {
+    var instance = this,
+        buttons = instance.getButtons(),
+        node = buttons.item(index),
+        button = A.Widget.getByNode(node);
+
+    return A.instanceOf(button, Button) ? button : node;
+};
+ButtonGroup.prototype.select = function(items) {
+    var instance = this;
+
+    return instance.toggle(items, true);
+};
+ButtonGroup.prototype.toggle = function(items, state) {
+    var instance = this,
+        buttons = instance.getButtons(),
+        selectedClass = ButtonGroup.CLASS_NAMES.SELECTED;
+
+    items = A.Array(items);
+
+    A.Array.each(items, function(item) {
+        var node = instance.item(item);
+
+        if (A.instanceOf(node, A.Button)) {
+            node = node.get(BOUNDING_BOX);
+        }
+
+        if (instance.get(TYPE) === RADIO) {
+            buttons.removeClass(selectedClass);
+        }
+
+        node.toggleClass(selectedClass, state);
+    });
+};
+ButtonGroup.prototype.unselect = function(items) {
+    var instance = this;
+
+    return instance.toggle(items, false);
+};
