@@ -1,0 +1,17 @@
+{
+    "aui-palette": {
+        "requires": [
+            "base-build",
+            "event-mouseenter",
+            "aui-classnamemanager"
+        ]
+    },
+
+    "aui-color-palette": {
+        "requires": [
+            "aui-palette",
+            "widget"
+        ],
+        "skinnable": true
+    }
+}

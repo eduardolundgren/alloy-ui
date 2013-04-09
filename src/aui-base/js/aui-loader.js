@@ -131,6 +131,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-linkedset"
         ]
     },
+    "aui-color-palette": {
+        "requires": [
+            "aui-palette",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-component": {
         "requires": [
             "aui-classnamemanager",
@@ -504,6 +511,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-htmlparser"
         ]
     },
+    "aui-palette": {
+        "requires": [
+            "base-build",
+            "event-mouseenter",
+            "aui-classnamemanager"
+        ]
+    },
     "aui-parse-content": {
         "requires": [
             "async-queue",
@@ -784,4 +798,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '609bda89faeaa33d4e02f7d27602f52b';
+YUI.Env[Y.version].md5 = 'd0c34a036b828ca937230d28220d3f5f';
