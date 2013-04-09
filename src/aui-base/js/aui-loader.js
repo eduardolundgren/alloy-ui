@@ -796,4 +796,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '19bae4ae7378685fc9b751ec1bd4bd55';
+YUI.Env[Y.version].md5 = '8e77150e473138bfb0f202bfc4695db8';
