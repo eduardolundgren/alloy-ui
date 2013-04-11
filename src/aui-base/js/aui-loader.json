@@ -121,6 +121,15 @@
             "aui-linkedset"
         ]
     },
+    "aui-color-palette": {
+        "requires": [
+            "array-extras",
+            "aui-palette",
+            "color-base",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-component": {
         "requires": [
             "aui-classnamemanager",
@@ -478,6 +487,13 @@
             "aui-node",
             "aui-component",
             "widget-htmlparser"
+        ]
+    },
+    "aui-palette": {
+        "requires": [
+            "base-build",
+            "event-mouseenter",
+            "aui-classnamemanager"
         ]
     },
     "aui-parse-content": {
