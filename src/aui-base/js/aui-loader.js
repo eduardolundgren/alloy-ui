@@ -372,6 +372,18 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-event-input"
         ]
     },
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-classnamemanager",
+            "base-build",
+            "clickable-rail",
+            "color-base",
+            "dd-constrain",
+            "slider",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",
@@ -796,4 +808,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8e77150e473138bfb0f202bfc4695db8';
+YUI.Env[Y.version].md5 = 'faa69925401a07af0d1a6d5fd09f1740';

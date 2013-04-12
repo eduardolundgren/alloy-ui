@@ -12,7 +12,13 @@
 			padding: 10px;
 		}
 
-		#demo {
+		#colorPalette {
+			left: 100px;
+			position: absolute;
+			top: 100px;
+		}
+
+		#hsvaPalette {
 			left: 100px;
 			position: absolute;
 			top: 100px;
@@ -22,20 +28,24 @@
 	<script src="../../build/aui/aui.js"></script>
 </head>
 
-<body>
+<body class="yui3-skin-sam">
 
 <div id="wrapper">
 	<h1>Alloy - ColorPicker Demo</h1>
 
 
-	<div id="demo"></div>
+	<div id="colorPalette"></div>
+
+	<div id="hsvaPalette"></div>
 </div>
 
 <script type="text/javascript" charset="utf-8">
 	YUI({ filter:'raw' }).use(
-		'aui-color-palette',
+		'aui-color-palette', 'aui-hsva-palette',
 		function(A) {
-			var palette = new A.ColorPalette().render('#demo');
+			//var colorPalette = new A.ColorPalette().render('#colorPalette');
+
+			var hsvaPalette = new A.HSVAPalette().render('#hsvaPalette');
 		}
 	);
 

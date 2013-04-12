@@ -357,6 +357,18 @@
             "aui-event-input"
         ]
     },
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-classnamemanager",
+            "base-build",
+            "clickable-rail",
+            "color-base",
+            "dd-constrain",
+            "slider",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",

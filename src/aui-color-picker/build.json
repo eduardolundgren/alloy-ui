@@ -11,6 +11,12 @@
         	"jsfiles": [
                 "js/aui-color-palette.js"
             ]
+        },
+
+        "aui-hsva-palette": {
+            "jsfiles": [
+                "js/aui-hsva-palette.js"
+            ]
         }
     }
 }

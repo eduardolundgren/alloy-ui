@@ -1,0 +1,42 @@
+.aui-hsva-container {
+	border: 1px solid #666;
+}
+
+.aui-hsva-hs-container {
+	background-image: url(h.png);
+	border: 1px solid #666;
+}
+
+.aui-hsva-hs-thumb {
+	background-image: url(thumb.png);
+}
+
+.aui-hsva-value-container, .aui-hsva-alpha-container {
+	border: 1px solid #666;
+}
+
+.aui-hsva-value-canvas {
+	background-image: url(v.png);
+}
+
+.aui-hsva-alpha-canvas {
+	background-image: url(a.png);
+}
+
+.aui-hsva-value-image, .aui-hsva-alpha-image {
+	background-image: url(rails.png);
+}
+
+.aui-hsva-alpha-container {
+	background-image: url(a.png);
+	border: 1px solid #666;
+}
+
+.aui-hsva-result-view {
+	border: 1px solid #666;
+	background-image: url(result.png);
+}
+
+.aui-hsva-result-input {
+	width: 60px;
+}
