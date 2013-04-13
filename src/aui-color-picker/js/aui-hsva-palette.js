@@ -95,23 +95,95 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._createSliders();
     },
 
+    destroy: function() {
+        var instance = this;
+
+        instance._dd.destroy();
+    },
+
     renderUI: function() {
         var instance = this;
 
         instance._renderContainer();
 
         instance.get('contentBox').appendChild(instance._paletteContainer);
+
+        instance._colorThumbGutter = Math.floor(instance._colorThumb.get('offsetHeight') / 2);
+
+        instance._hsContainerWidth = instance._hsContainer.get('clientWidth');
+        instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
+    },
+
+    _afterDragStart: function() {
+        var instance = this;
+
+        instance._hsContainerXY = instance._hsContainer.getXY();
+    },
+
+    _afterPaletteThumbDrag: function(event) {
+        var instance = this;
+
+        var x = (event.pageX - instance._hsContainerXY[0] + instance._colorThumbGutter);
+        var y = (event.pageY - instance._hsContainerXY[1] + instance._colorThumbGutter);
+
+
+        var hue = instance._calculateHue(x);
+        var saturation = instance._calculateSaturation(y);
+
+        console.log('hue: ' + hue);
+        console.log('saturation: ' + saturation);
     },
 
     _bindDD: function() {
         var instance = this;
 
         var dd = new A.DD.Drag({
-            node: instance._thumbContainer
+            node: instance._colorThumb
         }).plug(A.Plugin.DDConstrained, {
             constrain2node: instance._hsContainer,
-            gutter: '-' + instance._thumbContainer.get('offsetHeight') / 2
+            gutter: '-' + instance._colorThumbGutter
         });
+
+        dd.after('start', instance._afterDragStart, instance);
+        dd.after('drag', instance._afterPaletteThumbDrag, instance);
+
+        instance._dd = dd;
+    },
+
+    _calculateHue: function(x) {
+        var instance = this;
+
+        var hue;
+
+        if (x <= 0) {
+            hue = 0;
+        }
+        else if (x >= instance._hsContainerWidth) {
+            hue = 360;
+        }
+        else {
+            hue = x / instance._hsContainerWidth * 360;
+        }
+
+        return hue;
+    },
+
+    _calculateSaturation: function(y) {
+        var instance = this;
+
+        var saturation;
+
+        if (y <= 0) {
+            saturation = 100;
+        }
+        else if (y >= instance._hsContainerHeight) {
+            saturation = 0;
+        }
+        else {
+            saturation = 100 - (y / instance._hsContainerHeight * 100);
+        }
+
+        return saturation;
     },
 
     _createSliders: function() {
@@ -309,7 +381,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     _renderThumb: function() {
         var instance = this;
 
-        instance._thumbContainer = instance._viewContainer.appendChild(
+        instance._colorThumb = instance._viewContainer.appendChild(
             TPL_HS_THUMB
         );
     }
