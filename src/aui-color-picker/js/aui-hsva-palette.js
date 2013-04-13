@@ -85,14 +85,16 @@ var AArray = A.Array,
 var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     initializer: function() {
         var instance = this;
+
+        instance.onceAfter('render', instance._createSliders, instance);
     },
 
     bindUI: function() {
         var instance = this;
 
-        instance._bindDD();
+        instance._hsContainer.after('mousedown', instance._afterPaletteMousedown, instance);
 
-        instance._createSliders();
+        instance._bindDD();
     },
 
     destroy: function() {
@@ -114,24 +116,32 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
     },
 
-    _afterDragStart: function() {
+    _afterPaletteMousedown: function(event) {
         var instance = this;
 
-        instance._hsContainerXY = instance._hsContainer.getXY();
+        instance._updatePaletteThumbPosition([event.pageX, event.pageY]);
+
+        event.target = instance._colorThumb;
+
+        instance._dd.fire('drag:mouseDown', { ev: event });
+    },
+
+    _afterPaletteDragStart: function() {
+        var instance = this;
+
+        instance._setHSContainerXY();
     },
 
     _afterPaletteThumbDrag: function(event) {
         var instance = this;
 
+        console.log('after drag');
+
         var x = (event.pageX - instance._hsContainerXY[0] + instance._colorThumbGutter);
         var y = (event.pageY - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
-
         var hue = instance._calculateHue(x);
         var saturation = instance._calculateSaturation(y);
-
-        console.log('hue: ' + hue);
-        console.log('saturation: ' + saturation);
     },
 
     _bindDD: function() {
@@ -144,7 +154,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             gutter: '-' + instance._colorThumbGutter
         });
 
-        dd.after('start', instance._afterDragStart, instance);
+        dd.after('start', instance._afterPaletteDragStart, instance);
         dd.after('drag', instance._afterPaletteThumbDrag, instance);
 
         instance._dd = dd;
@@ -384,6 +394,18 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._colorThumb = instance._viewContainer.appendChild(
             TPL_HS_THUMB
         );
+    },
+
+    _setHSContainerXY: function() {
+        var instance = this;
+
+        instance._hsContainerXY = instance._hsContainer.getXY();
+    },
+
+    _updatePaletteThumbPosition: function(xy) {
+        var instance = this;
+
+        instance._colorThumb.setXY([xy[0] - instance._colorThumbGutter, xy[1] - instance._colorThumbGutter]);
     }
 }, {
     CSS_PREFIX: getClassName(NAME),
