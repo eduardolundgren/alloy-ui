@@ -19,7 +19,7 @@
 		}
 
 		#hsvaPalette {
-			left: 100px;
+			left: 250px;
 			position: absolute;
 			top: 100px;
 		}
@@ -41,11 +41,20 @@
 
 <script type="text/javascript" charset="utf-8">
 	YUI({ filter:'raw' }).use(
-		'aui-color-palette', 'aui-hsva-palette',
+		'aui-color-palette',
 		function(A) {
-			//var colorPalette = new A.ColorPalette().render('#colorPalette');
+			var colorPalette = new A.ColorPalette().render('#colorPalette');
+		}
+	);
 
+	YUI({ filter:'raw' }).use(
+		'aui-hsva-palette',
+		function(A) {
 			var hsvaPalette = new A.HSVAPalette().render('#hsvaPalette');
+
+			console.log(
+				A.Color.fromArray.toString()
+			);
 		}
 	);
 

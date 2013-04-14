@@ -75,7 +75,7 @@ var AArray = A.Array,
     TPL_LABEL_VALUE =
         '<div class="' + CSS_LABEL_VALUE + '{classSuffix}">' +
             '<label class="' + CSS_LABEL + '">{label}</label>' +
-            '<input class="' + CSS_VALUE + '" type="text" maxlength="{maxlength}">' +
+            '<input class="' + CSS_VALUE + '" type="text" maxlength="{maxlength}" value={value}>' +
             '<label class="' + CSS_LABEL + '">{labelUnit}</label>' +
         '</div>',
 
@@ -116,14 +116,50 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
     },
 
+    _afterHSThumbChange: function(x, y) {
+        var instance = this;
+
+        var hue = instance._calculateHue(x);
+        var saturation = instance._calculateSaturation(y);
+        var value = instance._getFieldValue(instance._vContainer);
+        var alpha = instance._getFieldValue(instance._aContainer);
+
+        var rgbColor = 'rgb(255, 0, 0)';
+
+        if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
+            var hsvaColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
+
+            rgbColor = AColor.toRGB(hsvaColor);
+        }
+
+        var rgbColorArray = AColor.toArray(rgbColor);
+        var hexColor = AColor.toHex(rgbColor);
+
+        instance._setFieldValue(instance._hContainer, Math.round(hue));
+        instance._setFieldValue(instance._sContainer, Math.round(saturation));
+        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+        instance._setFieldValue(instance._hexContainer, hexColor);
+
+        instance._resultContainer.setStyle('backgroundColor', hexColor);
+        instance._valueContainer.setStyle('backgroundColor', hexColor);
+        instance._alphaContainer.setStyle('backgroundColor', hexColor);
+    },
+
     _afterPaletteMousedown: function(event) {
         var instance = this;
 
         instance._updatePaletteThumbPosition([event.pageX, event.pageY]);
 
-        event.target = instance._colorThumb;
+        var hsContainerXY = instance._hsContainer.getXY();
 
-        instance._dd.fire('drag:mouseDown', { ev: event });
+        var thumbXY = instance._colorThumb.getXY();
+
+        var x = (thumbXY[0] - hsContainerXY[0] + instance._colorThumbGutter);
+        var y = (thumbXY[1] - hsContainerXY[1] + instance._colorThumbGutter);
+
+        instance._afterHSThumbChange(x, y);
     },
 
     _afterPaletteDragStart: function() {
@@ -135,13 +171,10 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     _afterPaletteThumbDrag: function(event) {
         var instance = this;
 
-        console.log('after drag');
-
         var x = (event.pageX - instance._hsContainerXY[0] + instance._colorThumbGutter);
         var y = (event.pageY - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
-        var hue = instance._calculateHue(x);
-        var saturation = instance._calculateSaturation(y);
+        instance._afterHSThumbChange(x, y);
     },
 
     _bindDD: function() {
@@ -262,6 +295,12 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._valueSlider = slider;
     },
 
+    _getFieldValue: function(fieldNode) {
+        var instance = this;
+
+        return fieldNode.one(DOT + CSS_VALUE).get('value');
+    },
+
     _renderContainer: function() {
         var instance = this;
 
@@ -298,17 +337,18 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderField: function(container, suffix, label, unit, maxlength) {
+    _renderField: function(container, data) {
         var instance = this;
 
         return container.appendChild(
             Lang.sub(
                 TPL_LABEL_VALUE,
                 {
-                    classSuffix: suffix,
-                    label: label,
-                    labelUnit: unit,
-                    maxlength: maxlength
+                    classSuffix: data.suffix,
+                    label: data.label,
+                    labelUnit: data.unit,
+                    maxlength: data.maxlength,
+                    value: data.value
                 }
             )
         );
@@ -344,16 +384,91 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             )
         );
 
-        instance._hContainer = instance._renderField(labelValueHSVContainer, '-h', instance.get('strings').h, '&#176;', 3);
-        instance._sContainer = instance._renderField(labelValueHSVContainer, '-s', instance.get('strings').s, '%', 2);
-        instance._vContainer = instance._renderField(labelValueHSVContainer, '-v', instance.get('strings').v, '%', 2);
-        instance._aContainer = instance._renderField(labelValueHSVContainer, '-v', instance.get('strings').a, '%', 2);
+        instance._hContainer = instance._renderField(
+            labelValueHSVContainer,
+            {
+                label: instance.get('strings').h,
+                maxlength: 3,
+                suffix: '-h',
+                unit: '&#176;',
+                value: 0
+            }
+        );
 
-        instance._rContainer = instance._renderField(labelValueRGBContainer, '-r', instance.get('strings').r, '', 3);
-        instance._gContainer = instance._renderField(labelValueRGBContainer, '-g', instance.get('strings').g, '', 3);
-        instance._bContainer = instance._renderField(labelValueRGBContainer, '-b', instance.get('strings').b, '', 3);
+        instance._sContainer = instance._renderField(
+            labelValueHSVContainer,
+            {
+                label: instance.get('strings').s,
+                maxlength: 2,
+                suffix: '-s',
+                unit: '%',
+                value: 100
+            }
+        );
 
-        instance._resultContainer = instance._renderField(labelValueHexContainer, '-hex', instance.get('strings').hex, '', 6);
+        instance._vContainer = instance._renderField(
+            labelValueHSVContainer,
+            {
+                label: instance.get('strings').v,
+                maxlength: 2,
+                suffix: '-v',
+                unit: '%',
+                value: 100
+            }
+        );
+
+        instance._aContainer = instance._renderField(
+            labelValueHSVContainer,
+            {
+                label: instance.get('strings').a,
+                maxlength: 2,
+                suffix: '-v',
+                unit: '%',
+                value: 100
+            }
+        );
+
+        instance._rContainer = instance._renderField(
+            labelValueRGBContainer,
+            {
+                label: instance.get('strings').r,
+                maxlength: 3,
+                suffix: '-r',
+                unit: '',
+                value: '255'
+            }
+        );
+
+        instance._gContainer = instance._renderField(
+            labelValueRGBContainer,
+            {
+                label: instance.get('strings').g,
+                maxlength: 3,
+                suffix: '-g',
+                unit: '',
+                value: 0
+            }
+        );
+        instance._bContainer = instance._renderField(
+            labelValueRGBContainer,
+            {
+                label: instance.get('strings').b,
+                maxlength: 3,
+                suffix: '-b',
+                unit: '',
+                value: 0
+            }
+        );
+
+        instance._hexContainer = instance._renderField(
+            labelValueHexContainer, {
+                suffix: '-hex',
+                label: instance.get('strings').hex,
+                unit: '',
+                maxlength: 6,
+                value: 'ff0000'
+            }
+        );
 
         instance._viewContainer.appendChild(labelValueHSVContainer);
         instance._viewContainer.appendChild(labelValueRGBContainer);
@@ -400,6 +515,12 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance._hsContainerXY = instance._hsContainer.getXY();
+    },
+
+    _setFieldValue: function(fieldNode, value) {
+        var instance = this;
+
+        fieldNode.one(DOT + CSS_VALUE).set('value', value);
     },
 
     _updatePaletteThumbPosition: function(xy) {

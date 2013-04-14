@@ -9,6 +9,8 @@
 
 .aui-hsva-hs-thumb {
 	background-image: url(thumb.png);
+	left: 1px;
+	top: 1px;
 }
 
 .aui-hsva-value-container, .aui-hsva-alpha-container {
@@ -32,8 +34,8 @@
 }
 
 .aui-hsva-result-view {
+	background-color: #ff0000;
 	border: 1px solid #666;
-	background-image: url(result.png);
 }
 
 .aui-hsva-result-input {
