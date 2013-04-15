@@ -12,6 +12,9 @@ var AArray = A.Array,
 
     CSS_VIEW_CONTAINER = getClassName('hsva-view-container'),
 
+    CSS_HS_IMAGE_BACKDROP = getClassName('hsva-image-backdrop'),
+    CSS_HS_VIEW_BACKDROP = getClassName('hsva-view-backdrop'),
+
     CSS_HS_CONTAINER = getClassName('hsva-hs-container'),
     CSS_HS_THUMB = getClassName('hsva-hs-thumb'),
 
@@ -46,6 +49,12 @@ var AArray = A.Array,
 
     TPL_VIEW_CONTAINER =
         '<div class="' + CSS_VIEW_CONTAINER + '"><div>',
+
+    TPL_IMAGE_BACKDROP =
+        '<div class="' + CSS_HS_IMAGE_BACKDROP + '"><div>',
+
+    TPL_VIEW_BACKDROP =
+        '<div class="' + CSS_HS_VIEW_BACKDROP + '"><div>',
 
     TPL_HS_CONTAINER =
         '<div class="' + CSS_HS_CONTAINER + '"><div>',
@@ -124,14 +133,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var value = instance._getFieldValue(instance._vContainer);
         var alpha = instance._getFieldValue(instance._aContainer);
 
-        var rgbColor = 'rgb(255, 0, 0)';
-
-        if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
-            var hsvaColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
-
-            rgbColor = AColor.toRGB(hsvaColor);
-        }
-
+        var rgbColor = instance._calculateRGB(hue, saturation, value, alpha);
         var rgbColorArray = AColor.toArray(rgbColor);
         var hexColor = AColor.toHex(rgbColor);
 
@@ -140,9 +142,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
         instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
         instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-        instance._setFieldValue(instance._hexContainer, hexColor);
+        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
 
-        instance._resultContainer.setStyle('backgroundColor', hexColor);
+        instance._resultView.setStyle('backgroundColor', hexColor);
         instance._valueContainer.setStyle('backgroundColor', hexColor);
         instance._alphaContainer.setStyle('backgroundColor', hexColor);
     },
@@ -211,6 +213,18 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         return hue;
     },
 
+    _calculateRGB: function(hue, saturation, value, alpha) {
+        var rgbColor = 'rgb(255, 0, 0)';
+
+        if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
+            var hsvaColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
+
+            rgbColor = AColor.toRGBA(hsvaColor);
+        }
+
+        return rgbColor;
+    },
+
     _calculateSaturation: function(y) {
         var instance = this;
 
@@ -248,7 +262,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             {
                 axis: 'y',
                 min: 0,
-                max: 100
+                max: 255
             }
         );
 
@@ -263,6 +277,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             'length',
             instance._valueContainerHeight + (alphaThumbHeight / 2)
         );
+
+        slider.on('valueChange', instance._onAlphaChange, instance);
 
         instance._alphaSlider = slider;
     },
@@ -292,6 +308,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             instance._valueContainerHeight + (valueThumbHeight / 2)
         );
 
+        slider.on('valueChange', instance._onValueChange, instance);
+
         instance._valueSlider = slider;
     },
 
@@ -299,6 +317,62 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         return fieldNode.one(DOT + CSS_VALUE).get('value');
+    },
+
+    _getHexValue: function(hexColor, alpha) {
+        alpha = parseInt(alpha, 10).toString(16);
+
+        if (alpha.length === 1) {
+            alpha = '0' + alpha;
+        }
+
+        return (hexColor + alpha).substring(1);
+    },
+
+    _onAlphaChange: function(event) {
+        var instance = this;
+
+        var newValue = event.newVal;
+
+        instance._resultView.setStyle('opacity', 1 - (event.newVal / 255));
+
+        instance._setFieldValue(instance._aContainer, 255 - event.newVal);
+
+        var hue = instance._getFieldValue(instance._hContainer);
+        var saturation = instance._getFieldValue(instance._sContainer);
+        var value = instance._getFieldValue(instance._vContainer);
+
+        var rgbColor = instance._calculateRGB(hue, saturation, value, 255 - newValue);
+        var rgbColorArray = AColor.toArray(rgbColor);
+        var hexColor = AColor.toHex(rgbColor);
+
+        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
+    },
+
+    _onValueChange: function(event) {
+        var instance = this;
+
+        var newValue = event.newVal;
+
+        instance._hsContainer.setStyle('opacity', 1 - (newValue / 100));
+
+        instance._setFieldValue(instance._vContainer, 100 - newValue);
+
+        var hue = instance._getFieldValue(instance._hContainer);
+        var saturation = instance._getFieldValue(instance._sContainer);
+        var alpha = instance._getFieldValue(instance._aContainer);
+
+        var rgbColor = instance._calculateRGB(hue, saturation, 100 - newValue, alpha);
+        var rgbColorArray = AColor.toArray(rgbColor);
+        var hexColor = AColor.toHex(rgbColor);
+
+        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
     },
 
     _renderContainer: function() {
@@ -314,6 +388,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._viewContainer = A.Node.create(TPL_VIEW_CONTAINER);
 
+        instance._renderImageBackdrop();
+
         instance._renderHSContainer();
 
         instance._renderThumb();
@@ -321,6 +397,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._renderValueContainer();
 
         instance._renderAlphaContainer();
+
+        instance._renderResultBackdrop();
 
         instance._renderResultView();
 
@@ -423,8 +501,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 label: instance.get('strings').a,
                 maxlength: 2,
                 suffix: '-v',
-                unit: '%',
-                value: 100
+                unit: '',
+                value: 255
             }
         );
 
@@ -465,8 +543,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 suffix: '-hex',
                 label: instance.get('strings').hex,
                 unit: '',
-                maxlength: 6,
-                value: 'ff0000'
+                maxlength: 8,
+                value: 'ff0000ff'
             }
         );
 
@@ -477,6 +555,14 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._labelValueHSVContainer = labelValueHSVContainer;
         instance._labelValueRGBContainer = labelValueRGBContainer;
         instance._labelValueRGBContainer = labelValueHexContainer;
+    },
+
+    _renderImageBackdrop: function() {
+        var instance = this;
+
+        instance._hsImageBackdrop = instance._viewContainer.appendChild(
+            TPL_IMAGE_BACKDROP
+        );
     },
 
     _renderHSContainer: function() {
@@ -495,10 +581,18 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
+    _renderResultBackdrop: function() {
+        var instance = this;
+
+        instance._resultViewBackdrop = instance._viewContainer.appendChild(
+            TPL_VIEW_BACKDROP
+        );
+    },
+
     _renderResultView: function() {
         var instance = this;
 
-        instance._resultContainer = instance._viewContainer.appendChild(
+        instance._resultView = instance._viewContainer.appendChild(
             TPL_RESULT_VIEW
         );
     },

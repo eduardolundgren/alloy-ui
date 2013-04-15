@@ -2,6 +2,10 @@
 	border: 1px solid #666;
 }
 
+.aui-hsva-image-backdrop {
+	background-color: #000;
+}
+
 .aui-hsva-hs-container {
 	background-image: url(sprite.png);
 	border: 1px solid #666;
@@ -15,6 +19,7 @@
 }
 
 .aui-hsva-value-container, .aui-hsva-alpha-container {
+	background-color: #ff0000;
 	border: 1px solid #666;
 }
 
@@ -35,6 +40,12 @@
 
 .aui-hsva-alpha-container {
 	border: 1px solid #666;
+}
+
+.aui-hsva-view-backdrop {
+	background-color: #fff;
+	background-image: url(sprite.png);
+	background-position: -315px 0;
 }
 
 .aui-hsva-result-view {

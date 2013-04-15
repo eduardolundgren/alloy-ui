@@ -1,10 +1,10 @@
 .aui-hsva-view-container {
 	height: 260px;
 	padding: 5px;
-	width: 510px;
+	width: 520px;
 }
 
-.aui-hsva-hs-container {
+.aui-hsva-hs-container, .aui-hsva-image-backdrop {
 	height: 256px;
 	position: absolute;
 	width: 256px;
@@ -52,7 +52,7 @@
 	width: 32px;
 }
 
-.aui-hsva-result-view {
+.aui-hsva-result-view, .aui-hsva-view-backdrop {
 	height: 65px;
 	left: 360px;
 	position: absolute;
@@ -99,7 +99,7 @@
 }
 
 .aui-hsva-label-value-container .aui-hsva-label-value-hex .aui-hsva-value {
-	width: 60px;
+	width: 70px;
 }
 
 .aui-hsva-label-value-container .aui-hsva-value {
