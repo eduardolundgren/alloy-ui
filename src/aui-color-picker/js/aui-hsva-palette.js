@@ -162,6 +162,10 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var y = (thumbXY[1] - hsContainerXY[1] + instance._colorThumbGutter);
 
         instance._afterHSThumbChange(x, y);
+
+        event.target = instance._colorThumb;
+
+        instance._dd._handleMouseDownEvent(event);
     },
 
     _afterPaletteDragStart: function() {
@@ -329,6 +333,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     },
 
     _getHexValue: function(hexColor, alpha) {
+        // YUI don't have toRGBA method, we have to add alpha explicitly
         alpha = parseInt(alpha, 10).toString(16);
 
         if (alpha.length === 1) {
