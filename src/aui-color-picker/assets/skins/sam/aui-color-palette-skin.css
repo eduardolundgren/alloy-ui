@@ -1,0 +1,11 @@
+.aui-palette-item {
+	border: 1px solid #000;
+}
+
+.aui-palette-item-container {
+	border: 1px solid #666;
+}
+
+.aui-palette-item-hover {
+	border: 1px solid #fff;
+}

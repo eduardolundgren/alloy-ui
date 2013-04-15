@@ -1,0 +1,22 @@
+{
+    "name": "aui-color-picker",
+    "builds": {
+        "aui-palette": {
+            "jsfiles": [
+                "js/aui-palette.js"
+            ]
+        },
+
+        "aui-color-palette": {
+        	"jsfiles": [
+                "js/aui-color-palette.js"
+            ]
+        },
+
+        "aui-hsva-palette": {
+            "jsfiles": [
+                "js/aui-hsva-palette.js"
+            ]
+        }
+    }
+}

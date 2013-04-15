@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <style type="text/css" media="screen">
+		body {
+			font-size: 12px;
+		}
+
+		#wrapper {
+			padding: 10px;
+		}
+
+		#colorPalette {
+			left: 100px;
+			position: absolute;
+			top: 100px;
+		}
+
+		#hsvaPalette {
+			left: 250px;
+			position: absolute;
+			top: 100px;
+		}
+	</style>
+
+	<script src="../../build/aui/aui.js"></script>
+</head>
+
+<body class="yui3-skin-sam">
+
+<div id="wrapper">
+	<h1>Alloy - ColorPicker Demo</h1>
+
+
+	<div id="colorPalette"></div>
+
+	<div id="hsvaPalette"></div>
+</div>
+
+<script type="text/javascript" charset="utf-8">
+	YUI({ filter:'raw' }).use(
+		'aui-color-palette',
+		function(A) {
+			var colorPalette = new A.ColorPalette().render('#colorPalette');
+		}
+	);
+
+	YUI({ filter:'raw' }).use(
+		'aui-hsva-palette',
+		function(A) {
+			var hsvaPalette = new A.HSVAPalette().render('#hsvaPalette');
+
+			console.log(
+				A.Color.fromArray.toString()
+			);
+		}
+	);
+
+</script>
+
+</body>
+</html>

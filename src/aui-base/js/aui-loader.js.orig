@@ -381,18 +381,6 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-event-input"
         ]
     },
-    "aui-hsva-palette": {
-        "requires": [
-            "aui-classnamemanager",
-            "base-build",
-            "clickable-rail",
-            "color-hsv",
-            "dd-constrain",
-            "slider",
-            "widget"
-        ],
-        "skinnable": true
-    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",
@@ -824,4 +812,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'c09e69f02a50a0317e992aec1f2f40b1';
+<<<<<<< HEAD
+YUI.Env[Y.version].md5 = '19bae4ae7378685fc9b751ec1bd4bd55';
+=======
+YUI.Env[Y.version].md5 = '8e77150e473138bfb0f202bfc4695db8';
+>>>>>>> ColorPicker Palette - initial load

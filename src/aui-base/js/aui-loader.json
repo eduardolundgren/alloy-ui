@@ -121,6 +121,15 @@
             "aui-linkedset"
         ]
     },
+    "aui-color-palette": {
+        "requires": [
+            "array-extras",
+            "aui-palette",
+            "color-base",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-component": {
         "requires": [
             "aui-classnamemanager",
@@ -348,6 +357,18 @@
             "aui-event-input"
         ]
     },
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-classnamemanager",
+            "base-build",
+            "clickable-rail",
+            "color-hsv",
+            "dd-constrain",
+            "slider",
+            "widget"
+        ],
+        "skinnable": true
+    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",
@@ -478,6 +499,13 @@
             "aui-node",
             "aui-component",
             "widget-htmlparser"
+        ]
+    },
+    "aui-palette": {
+        "requires": [
+            "base-build",
+            "event-mouseenter",
+            "aui-classnamemanager"
         ]
     },
     "aui-parse-content": {
