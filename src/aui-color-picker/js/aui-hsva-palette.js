@@ -214,12 +214,21 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     },
 
     _calculateRGB: function(hue, saturation, value, alpha) {
-        var rgbColor = 'rgb(255, 0, 0)';
+        var rgbColor = 'rgb(255, 0, 0, 0)';
 
         if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
             var hsvaColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
 
             rgbColor = AColor.toRGBA(hsvaColor);
+
+            // fix YUI bug on getting alpha - if it is 0, they return 1
+            if (parseInt(alpha, 10) === 0) {
+                var tmp = AColor.toArray(rgbColor);
+
+                tmp[3] = '0';
+
+                rgbColor = AColor.fromArray(tmp, 'RGBA');
+            }
         }
 
         return rgbColor;
