@@ -384,6 +384,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-hsva-palette": {
         "requires": [
             "aui-classnamemanager",
+            "aui-event-input",
             "base-build",
             "clickable-rail",
             "color-hsv",
@@ -824,4 +825,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'c09e69f02a50a0317e992aec1f2f40b1';
+YUI.Env[Y.version].md5 = 'ee31b35918f8ccd34ad768f2a17902e9';

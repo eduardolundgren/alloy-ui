@@ -2,6 +2,7 @@
 
 var AArray = A.Array,
     AColor = A.Color,
+    AWidget = A.Widget,
     Lang = A.Lang,
 
     getClassName = A.getClassName,
@@ -44,6 +45,25 @@ var AArray = A.Array,
 
     NAME = 'hsva-palette',
 
+    REGEX_HEX_COLOR = /^([a-f0-9]{6}|[a-f0-9]{8}|[a-f0-9]{3})$/i,
+
+    REGEX_RANGE_0_100 = /^([0-9]|[1-9][0-9]|100)$/,
+
+    REGEX_RANGE_0_255 = /^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/,
+
+    REGEX_RANGE_0_360 = /^([0]{0,2}[1-9]|[0]?[1-9][0-9]|[12][0-9][0-9]|3[0-5][0-9]|360)$/,
+
+    MAP_FIELDS_REGEX = {
+        alpha: REGEX_RANGE_0_255,
+        b: REGEX_RANGE_0_255,
+        g: REGEX_RANGE_0_255,
+        hex: REGEX_HEX_COLOR,
+        hue: REGEX_RANGE_0_360,
+        r: REGEX_RANGE_0_255,
+        saturation: REGEX_RANGE_0_100,
+        value: REGEX_RANGE_0_100
+    },
+
     TPL_CONTAINER =
         '<div class="' + CSS_CONTAINER + '"><div>',
 
@@ -82,14 +102,20 @@ var AArray = A.Array,
         '<div class="' + CSS_LABEL_VALUE_CONTAINER + ' {subClass}"></div>',
 
     TPL_LABEL_VALUE =
-        '<div class="' + CSS_LABEL_VALUE + '{classSuffix}">' +
-            '<label class="' + CSS_LABEL + '">{label}</label>' +
-            '<input class="' + CSS_VALUE + '" type="text" maxlength="{maxlength}" value={value}>' +
+        '<div class="aui-control-group ' + CSS_LABEL_VALUE + '{classSuffix}">' +
+            '<label class="control-label ' + CSS_LABEL + '">{label}</label>' +
+            '<div class="controls">' +
+                '<input class="' + CSS_VALUE + '" data-type="{type}" type="text" maxlength="{maxlength}" value="{value}">' +
+            '</div>' +
             '<label class="' + CSS_LABEL + '">{labelUnit}</label>' +
         '</div>',
 
     TPL_INPUT =
-        '<input class="' + CSS_VALUE + '" maxlength="{maxlength}" type="text">';
+        '<div class="aui-control-group">' +
+            '<div class="controls">' +
+                '<input class="' + CSS_VALUE + '" maxlength="{maxlength}" type="text">' +
+            '</div>' +
+        '</div>';
 
 var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     initializer: function() {
@@ -102,6 +128,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance._hsContainer.after('mousedown', instance._afterPaletteMousedown, instance);
+
+        instance._paletteContainer.delegate('input', instance._afterInputChange, '.aui-hsva-value', instance);
 
         instance._bindDD();
     },
@@ -125,28 +153,51 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
     },
 
+    _afterInputChange: function(event) {
+        var instance = this;
+
+        var fieldNode = event.currentTarget;
+
+        var type;
+
+        if (instance._validateFieldValue(fieldNode)) {
+            var value = fieldNode.get('value');
+
+            type = fieldNode.getAttribute('data-type');
+
+            fieldNode.ancestor('.aui-control-group').removeClass('aui-error');
+        }
+        else {
+            fieldNode.ancestor('.aui-control-group').addClass('aui-error');
+        }
+
+        if (!instance._paletteContainer.one('.aui-control-group.aui-error')) {
+            instance._updateViewFromInput(fieldNode);
+        }
+    },
+
     _afterHSThumbChange: function(x, y) {
         var instance = this;
 
         var hue = instance._calculateHue(x);
         var saturation = instance._calculateSaturation(y);
-        var value = instance._getFieldValue(instance._vContainer);
-        var alpha = instance._getFieldValue(instance._aContainer);
+        var value = 100 - instance._valueSlider.get('value');
+        var alpha = 255 - instance._alphaSlider.get('value');
 
         var rgbColor = instance._calculateRGB(hue, saturation, value, alpha);
         var rgbColorArray = AColor.toArray(rgbColor);
-        var hexColor = AColor.toHex(rgbColor);
+        var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
 
         instance._setFieldValue(instance._hContainer, Math.round(hue));
         instance._setFieldValue(instance._sContainer, Math.round(saturation));
         instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
         instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
         instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
+        instance._setFieldValue(instance._hexContainer, hexValue);
 
-        instance._resultView.setStyle('backgroundColor', hexColor);
-        instance._valueContainer.setStyle('backgroundColor', hexColor);
-        instance._alphaContainer.setStyle('backgroundColor', hexColor);
+        instance._resultView.setStyle('backgroundColor', hexValue);
+        instance._valueContainer.setStyle('backgroundColor', hexValue);
+        instance._alphaContainer.setStyle('backgroundColor', hexValue);
     },
 
     _afterPaletteMousedown: function(event) {
@@ -256,6 +307,42 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         return saturation;
     },
 
+    _calculateX: function(hue) {
+        var instance = this;
+
+        var x;
+
+        if (hue <= 0) {
+            x = 0;
+        }
+        else if (hue >= 360) {
+            x = instance._hsContainerWidth;
+        }
+        else {
+            x = hue / 360 * instance._hsContainerWidth;
+        }
+
+        return x;
+    },
+
+    _calculateY: function(saturation) {
+        var instance = this;
+
+        var y;
+
+        if (saturation <= 0) {
+            y = instance._hsContainerHeight;
+        }
+        else if (saturation >= 100) {
+            y = 0;
+        }
+        else {
+            y = instance._hsContainerHeight / 100 * (100 - saturation);
+        }
+
+        return y;
+    },
+
     _createSliders: function() {
         var instance = this;
 
@@ -343,50 +430,74 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         return (hexColor + alpha).substring(1);
     },
 
+    _getXYFromHueSaturation: function(hue, saturation) {
+        var instance = this;
+
+        var x = instance._calculateX(hue);
+
+        var y = instance._calculateY(saturation);
+
+        return [x,y];
+    },
+
     _onAlphaChange: function(event) {
         var instance = this;
 
-        var newValue = event.newVal;
+        if (event.src !== AWidget.UI_SRC) {
+            var newValue = event.newVal;
 
-        instance._resultView.setStyle('opacity', 1 - (event.newVal / 255));
+            instance._resultView.setStyle('opacity', 1 - (event.newVal / 255));
 
-        instance._setFieldValue(instance._aContainer, 255 - event.newVal);
+            instance._setFieldValue(instance._aContainer, 255 - event.newVal);
 
-        var hue = instance._getFieldValue(instance._hContainer);
-        var saturation = instance._getFieldValue(instance._sContainer);
-        var value = instance._getFieldValue(instance._vContainer);
+            var thumbXY = instance._colorThumb.getXY();
 
-        var rgbColor = instance._calculateRGB(hue, saturation, value, 255 - newValue);
-        var rgbColorArray = AColor.toArray(rgbColor);
-        var hexColor = AColor.toHex(rgbColor);
+            var x = (thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
+            var y = (thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
-        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
-        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
-        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
+            var hue = instance._calculateHue(x);
+            var saturation = instance._calculateSaturation(y);
+            var value = 100 - instance._valueSlider.get('value');
+
+            var rgbColor = instance._calculateRGB(hue, saturation, value, 255 - newValue);
+            var rgbColorArray = AColor.toArray(rgbColor);
+            var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
+
+            instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+            instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+            instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+            instance._setFieldValue(instance._hexContainer, hexValue);
+        }
     },
 
     _onValueChange: function(event) {
         var instance = this;
 
-        var newValue = event.newVal;
+        if (event.src !== AWidget.UI_SRC) {
+            var newValue = event.newVal;
 
-        instance._hsContainer.setStyle('opacity', 1 - (newValue / 100));
+            instance._hsContainer.setStyle('opacity', 1 - (newValue / 100));
 
-        instance._setFieldValue(instance._vContainer, 100 - newValue);
+            instance._setFieldValue(instance._vContainer, 100 - newValue);
 
-        var hue = instance._getFieldValue(instance._hContainer);
-        var saturation = instance._getFieldValue(instance._sContainer);
-        var alpha = instance._getFieldValue(instance._aContainer);
+            var thumbXY = instance._colorThumb.getXY();
 
-        var rgbColor = instance._calculateRGB(hue, saturation, 100 - newValue, alpha);
-        var rgbColorArray = AColor.toArray(rgbColor);
-        var hexColor = AColor.toHex(rgbColor);
+            var x = (thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
+            var y = (thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
-        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
-        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
-        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-        instance._setFieldValue(instance._hexContainer, instance._getHexValue(hexColor, rgbColorArray[3]));
+            var hue = instance._calculateHue(x);
+            var saturation = instance._calculateSaturation(y);
+            var alpha = 255 - instance._alphaSlider.get('value');
+
+            var rgbColor = instance._calculateRGB(hue, saturation, 100 - newValue, alpha);
+            var rgbColorArray = AColor.toArray(rgbColor);
+            var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
+
+            instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+            instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+            instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+            instance._setFieldValue(instance._hexContainer, hexValue);
+        }
     },
 
     _renderContainer: function() {
@@ -440,6 +551,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                     label: data.label,
                     labelUnit: data.unit,
                     maxlength: data.maxlength,
+                    type: data.type,
                     value: data.value
                 }
             )
@@ -482,6 +594,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 label: instance.get('strings').h,
                 maxlength: 3,
                 suffix: '-h',
+                type: 'hue',
                 unit: '&#176;',
                 value: 0
             }
@@ -491,8 +604,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             labelValueHSVContainer,
             {
                 label: instance.get('strings').s,
-                maxlength: 2,
+                maxlength: 3,
                 suffix: '-s',
+                type: 'saturation',
                 unit: '%',
                 value: 100
             }
@@ -502,8 +616,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             labelValueHSVContainer,
             {
                 label: instance.get('strings').v,
-                maxlength: 2,
+                maxlength: 3,
                 suffix: '-v',
+                type: 'value',
                 unit: '%',
                 value: 100
             }
@@ -513,8 +628,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             labelValueHSVContainer,
             {
                 label: instance.get('strings').a,
-                maxlength: 2,
+                maxlength: 3,
                 suffix: '-v',
+                type: 'alpha',
                 unit: '',
                 value: 255
             }
@@ -526,6 +642,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 label: instance.get('strings').r,
                 maxlength: 3,
                 suffix: '-r',
+                type: 'r',
                 unit: '',
                 value: '255'
             }
@@ -537,6 +654,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 label: instance.get('strings').g,
                 maxlength: 3,
                 suffix: '-g',
+                type: 'g',
                 unit: '',
                 value: 0
             }
@@ -547,6 +665,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 label: instance.get('strings').b,
                 maxlength: 3,
                 suffix: '-b',
+                type: 'b',
                 unit: '',
                 value: 0
             }
@@ -554,10 +673,11 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._hexContainer = instance._renderField(
             labelValueHexContainer, {
-                suffix: '-hex',
                 label: instance.get('strings').hex,
-                unit: '',
                 maxlength: 8,
+                suffix: '-hex',
+                type: 'hex',
+                unit: '',
                 value: 'ff0000ff'
             }
         );
@@ -635,6 +755,223 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance._colorThumb.setXY([xy[0] - instance._colorThumbGutter, xy[1] - instance._colorThumbGutter]);
+    },
+
+    _updateViewFromInput: function(fieldNode) {
+        var instance = this;
+
+        var type = fieldNode.getAttribute('data-type');
+
+        if (type === 'hue' || type === 'saturation' || type === 'value' || type === 'alpha') {
+            instance._updateViewByHUE();
+        }
+        else if(type === 'r' || type === 'g' || type === 'b') {
+            instance._updateViewByRGB();
+        }
+        else if(type === 'hex') {
+            instance._updateViewByHEX();
+        }
+    },
+
+    _updateViewByHUE: function() {
+        var instance = this;
+
+        var hue = instance._getFieldValue(instance._hContainer);
+        var saturation = instance._getFieldValue(instance._sContainer);
+        var value = instance._getFieldValue(instance._vContainer);
+        var alpha = instance._getFieldValue(instance._aContainer);
+
+        var position = instance._getXYFromHueSaturation(hue, saturation);
+
+        instance._colorThumb.setStyles(
+            {
+                'left': position[0],
+                'top': position[1]
+            }
+        );
+
+        instance._valueSlider.set(
+            'value',
+            100 - value,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance._alphaSlider.set(
+            'value',
+            255 - alpha,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+
+        var rgbColor = instance._calculateRGB(hue, saturation, value, alpha);
+        var rgbColorArray = AColor.toArray(rgbColor);
+        var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
+
+        instance._setFieldValue(instance._hexContainer, hexValue);
+        instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
+        instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
+        instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
+
+        instance._resultView.setStyle('backgroundColor', hexValue);
+        instance._valueContainer.setStyle('backgroundColor', hexValue);
+        instance._alphaContainer.setStyle('backgroundColor', hexValue);
+
+        instance._resultView.setStyle('opacity', alpha / 255);
+    },
+
+    _updateViewByRGB: function(fieldNode) {
+        var instance = this;
+
+        var r = instance._getFieldValue(instance._rContainer);
+        var g = instance._getFieldValue(instance._gContainer);
+        var b = instance._getFieldValue(instance._bContainer);
+        var alpha = instance._getFieldValue(instance._aContainer);
+
+        var rgbaArray = AColor.fromArray([r, g, b, alpha], 'RGBA');
+
+        var hsva = AColor.toHSVA(rgbaArray);
+
+        var hsvaArray = AColor.toArray(hsva, 'HSVA');
+
+        var hue = hsvaArray[0];
+        var saturation = hsvaArray[1];
+        var value = hsvaArray[2];
+
+        instance._setFieldValue(instance._hContainer, hue);
+        instance._setFieldValue(instance._sContainer, saturation);
+        instance._setFieldValue(instance._vContainer, value);
+        instance._setFieldValue(instance._aContainer, alpha);
+
+        var rgbColor = instance._calculateRGB(hue, saturation, value, alpha);
+        var rgbColorArray = AColor.toArray(rgbColor);
+        var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
+
+        var position = instance._getXYFromHueSaturation(hue, saturation);
+
+        instance._colorThumb.setStyles(
+            {
+                'left': position[0],
+                'top': position[1]
+            }
+        );
+
+        instance._valueSlider.set(
+            'value',
+            100 - value,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance._alphaSlider.set(
+            'value',
+            255 - alpha,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance._setFieldValue(instance._hexContainer, hexValue);
+
+        instance._resultView.setStyle('backgroundColor', hexValue);
+        instance._valueContainer.setStyle('backgroundColor', hexValue);
+        instance._alphaContainer.setStyle('backgroundColor', hexValue);
+
+        instance._resultView.setStyle('opacity', alpha / 255);
+    },
+
+    _updateViewByHEX: function(fieldNode) {
+        var instance = this;
+
+        // YUI Code toHSVA from hex + alpha is broken, will remove the alpha
+
+        var hex = instance._getFieldValue(instance._hexContainer);
+
+        if (hex.length === 3) {
+            hex += '00000';
+        }
+
+        var alpha = hex.substr(6, 2);
+
+        var alphaDec = parseInt(alpha, 16);
+
+        hex = hex.substr(0, 6);
+
+        var hsvColor = AColor.toHSV(hex);
+        var hsvColorArray = AColor.toArray(hsvColor, 'HSV');
+
+        var hue = hsvColorArray[0];
+        var saturation = hsvColorArray[1];
+        var value = hsvColorArray[2];
+
+        var rgb = AColor.toRGBA(hsvColor);
+        var rgbColorArray = AColor.toArray(rgb);
+
+        var r = rgbColorArray[0];
+        var g = rgbColorArray[1];
+        var b = rgbColorArray[2];
+
+        var position = instance._getXYFromHueSaturation(hsvColorArray[0], hsvColorArray[1]);
+
+        instance._colorThumb.setStyles(
+            {
+                'left': position[0],
+                'top': position[1]
+            }
+        );
+
+        instance._valueSlider.set(
+            'value',
+            100 - value,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance._alphaSlider.set(
+            'value',
+            255 - alphaDec,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        var hexValue = hsvColor + alpha;
+
+        instance._setFieldValue(instance._hContainer, hue);
+        instance._setFieldValue(instance._sContainer, saturation);
+        instance._setFieldValue(instance._vContainer, value);
+        instance._setFieldValue(instance._aContainer, alphaDec);
+
+        instance._setFieldValue(instance._rContainer, r);
+        instance._setFieldValue(instance._gContainer, g);
+        instance._setFieldValue(instance._bContainer, b);
+
+        instance._resultView.setStyle('backgroundColor', hexValue);
+        instance._valueContainer.setStyle('backgroundColor', hexValue);
+        instance._alphaContainer.setStyle('backgroundColor', hexValue);
+
+        instance._resultView.setStyle('opacity', alphaDec / 255);
+    },
+
+    _validateFieldValue: function(fieldNode) {
+        var instance = this;
+
+        var validator = MAP_FIELDS_REGEX[fieldNode.getAttribute('data-type')];
+
+        var result = false;
+
+        var value = fieldNode.get('value');
+
+        if (validator && validator.test(value)) {
+            result = true;
+        }
+
+        return result;
     }
 }, {
     CSS_PREFIX: getClassName(NAME),

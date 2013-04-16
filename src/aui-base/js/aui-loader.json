@@ -360,6 +360,7 @@
     "aui-hsva-palette": {
         "requires": [
             "aui-classnamemanager",
+            "aui-event-input",
             "base-build",
             "clickable-rail",
             "color-hsv",

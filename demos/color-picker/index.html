@@ -43,7 +43,7 @@
 	YUI({ filter:'raw' }).use(
 		'aui-color-palette',
 		function(A) {
-			var colorPalette = new A.ColorPalette().render('#colorPalette');
+			var colorPalette = new A.ColorPalette({cols: 4}).render('#colorPalette');
 		}
 	);
 

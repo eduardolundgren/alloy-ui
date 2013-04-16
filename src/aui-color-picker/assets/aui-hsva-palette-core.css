@@ -4,6 +4,10 @@
 	width: 520px;
 }
 
+.aui-hsva-view-container .aui-control-group {
+	margin-bottom: 0;
+}
+
 .aui-hsva-hs-container, .aui-hsva-image-backdrop {
 	height: 256px;
 	position: absolute;
@@ -67,6 +71,10 @@
 .aui-hsva-label-value-container {
 	position: absolute;
 	top: 90px;
+}
+
+.aui-hsva-label-value-container .controls {
+	display: inline;
 }
 
 .aui-hsva-label-value-hsv-container {
