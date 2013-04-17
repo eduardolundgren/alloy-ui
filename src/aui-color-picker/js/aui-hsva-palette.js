@@ -388,6 +388,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             instance._valueContainerHeight + (alphaThumbHeight / 2)
         );
 
+        slider.on('slideStart', instance._setHSContainerXY, instance);
+
         slider.on('valueChange', instance._onAlphaChange, instance);
 
         instance._alphaSlider = slider;
@@ -417,6 +419,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             'length',
             instance._valueContainerHeight + (valueThumbHeight / 2)
         );
+
+        slider.on('slideStart', instance._setHSContainerXY, instance);
 
         slider.on('valueChange', instance._onValueChange, instance);
 
@@ -460,8 +464,8 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
             var thumbXY = instance._colorThumb.getXY();
 
-            var x = (thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
-            var y = (thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
+            var x = 150;//(thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
+            var y = 60;//(thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
             var hue = instance._calculateHue(x);
             var saturation = instance._calculateSaturation(y);
