@@ -47,6 +47,8 @@ var AArray = A.Array,
 
     NAME = 'hsva-palette',
 
+    STR_EMPTY = '',
+
     REGEX_HEX_COLOR = /^([a-f0-9]{6}|[a-f0-9]{8}|[a-f0-9]{3})$/i,
 
     REGEX_RANGE_0_100 = /^([0-9]|[1-9][0-9]|100)$/,
@@ -131,9 +133,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._hsContainer.after('mousedown', instance._afterPaletteMousedown, instance);
 
-        if (instance.get('controls')) {
-            instance._paletteContainer.delegate('input', instance._afterInputChange, '.aui-hsva-value', instance);
-        }
+        instance._paletteContainer.delegate('input', instance._afterInputChange, '.aui-hsva-value', instance);
 
         instance._bindDD();
     },
@@ -197,13 +197,14 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._valueContainer.setStyle('backgroundColor', hexColor);
         instance._alphaContainer.setStyle('backgroundColor', hexColor);
 
+        instance._setFieldValue(instance._hexContainer, hexValue);
+
         if (instance.get('controls')) {
             instance._setFieldValue(instance._hContainer, Math.round(hue));
             instance._setFieldValue(instance._sContainer, Math.round(saturation));
             instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
             instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
             instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-            instance._setFieldValue(instance._hexContainer, hexValue);
         }
     },
 
@@ -468,12 +469,13 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             var rgbColorArray = AColor.toArray(rgbColor);
             var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
 
+            instance._setFieldValue(instance._hexContainer, hexValue);
+
             if (instance.get('controls')) {
                 instance._setFieldValue(instance._aContainer, 255 - alpha);
                 instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
                 instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
                 instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-                instance._setFieldValue(instance._hexContainer, hexValue);
             }
         }
     },
@@ -499,12 +501,13 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             var rgbColorArray = AColor.toArray(rgbColor);
             var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
 
+            instance._setFieldValue(instance._hexContainer, hexValue);
+
             if (instance.get('controls')) {
                 instance._setFieldValue(instance._vContainer, 100 - val);
                 instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
                 instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
                 instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
-                instance._setFieldValue(instance._hexContainer, hexValue);
             }
         }
     },
@@ -606,7 +609,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 8,
                 suffix: '-hex',
                 type: 'hex',
-                unit: '',
+                unit: STR_EMPTY,
                 value: 'ff0000ff'
             }
         );
@@ -680,7 +683,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-v',
                 type: 'alpha',
-                unit: '',
+                unit: STR_EMPTY,
                 value: 255
             }
         );
@@ -692,7 +695,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-r',
                 type: 'r',
-                unit: '',
+                unit: STR_EMPTY,
                 value: '255'
             }
         );
@@ -704,7 +707,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-g',
                 type: 'g',
-                unit: '',
+                unit: STR_EMPTY,
                 value: 0
             }
         );
@@ -715,7 +718,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-b',
                 type: 'b',
-                unit: '',
+                unit: STR_EMPTY,
                 value: 0
             }
         );
@@ -854,8 +857,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
         instance._resultView.setStyle('opacity', alpha / 255);
 
+        instance._setFieldValue(instance._hexContainer, hexValue);
+
         if (instance.get('controls')) {
-            instance._setFieldValue(instance._hexContainer, hexValue);
             instance._setFieldValue(instance._rContainer, rgbColorArray[0]);
             instance._setFieldValue(instance._gContainer, rgbColorArray[1]);
             instance._setFieldValue(instance._bContainer, rgbColorArray[2]);
@@ -917,8 +921,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
         instance._resultView.setStyle('opacity', alpha / 255);
 
+        instance._setFieldValue(instance._hexContainer, hexValue);
+
         if (instance.get('controls')) {
-            instance._setFieldValue(instance._hexContainer, hexValue);
             instance._setFieldValue(instance._hContainer, hue);
             instance._setFieldValue(instance._sContainer, saturation);
             instance._setFieldValue(instance._vContainer, value);
