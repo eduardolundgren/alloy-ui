@@ -50,7 +50,12 @@
 	YUI({ filter:'raw' }).use(
 		'aui-hsva-palette',
 		function(A) {
-			var hsvaPalette = new A.HSVAPalette().render('#hsvaPalette');
+			var hsvaPalette = new A.HSVAPalette(
+				{
+					alpha: true,
+					controls: false
+				}
+			).render('#hsvaPalette');
 
 			console.log(
 				A.Color.fromArray.toString()

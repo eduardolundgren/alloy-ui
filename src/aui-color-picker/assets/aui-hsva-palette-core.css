@@ -1,6 +1,10 @@
 .aui-hsva-view-container {
 	height: 260px;
 	padding: 5px;
+	width: 440px;
+}
+
+.aui-hsva-container-controls .aui-hsva-view-container {
 	width: 520px;
 }
 
@@ -86,8 +90,13 @@
 }
 
 .aui-hsva-label-value-hex-container {
-	top: 0;
+	left: 350px;
+	top: 70px;
+}
+
+.aui-hsva-container-controls .aui-hsva-label-value-hex-container {
 	left: 430px;
+	top: 0;
 }
 
 .aui-hsva-label-value-h, .aui-hsva-label-value-s, .aui-hsva-label-value-v,
