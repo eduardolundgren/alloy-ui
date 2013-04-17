@@ -1,10 +1,18 @@
 .aui-hsva-view-container {
 	height: 260px;
 	padding: 5px;	
-	width: 440px;
+	width: 400px;
 }
 
 .aui-hsva-container-controls .aui-hsva-view-container {
+	width: 490px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-view-container {
+	width: 440px;
+}
+
+.aui-hsva-container-controls.aui-hsva-container-alpha .aui-hsva-view-container {
 	width: 520px;
 }
 
@@ -62,9 +70,13 @@
 
 .aui-hsva-result-view, .aui-hsva-view-backdrop {
 	height: 65px;
-	left: 360px;
+	left: 320px;
 	position: absolute;
 	width: 65px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-result-view, .aui-hsva-container-alpha .aui-hsva-view-backdrop {
+	left: 360px;
 }
 
 .aui-hsva-label {
@@ -82,21 +94,38 @@
 }
 
 .aui-hsva-label-value-hsv-container {
+	left: 320px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-label-value-hsv-container {
 	left: 360px;
 }
 
 .aui-hsva-label-value-rgb-container {
+	left: 410px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-label-value-rgb-container {
 	left: 450px;
 }
 
 .aui-hsva-label-value-hex-container {
+	left: 310px;
+	top: 70px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-label-value-hex-container {
 	left: 350px;
 	top: 70px;
 }
 
 .aui-hsva-container-controls .aui-hsva-label-value-hex-container {
-	left: 430px;
+	left: 400px;
 	top: 0;
+}
+
+.aui-hsva-container-controls.aui-hsva-container-alpha .aui-hsva-label-value-hex-container {
+	left: 430px;
 }
 
 .aui-hsva-label-value-h, .aui-hsva-label-value-s, .aui-hsva-label-value-v,

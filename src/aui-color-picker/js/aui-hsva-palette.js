@@ -358,7 +358,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._createValueSlider();
 
-        instance._createAlphaSlider();
+        if (instance.get('alpha')) {
+            instance._createAlphaSlider();
+        }
     },
 
     _createAlphaSlider: function() {
@@ -550,7 +552,9 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._renderValueContainer();
 
-        instance._renderAlphaContainer();
+        if (instance.get('alpha')) {
+            instance._renderAlphaContainer();
+        }
 
         instance._renderResultBackdrop();
 
