@@ -21,13 +21,13 @@ var AArray = A.Array,
     CSS_HS_CONTAINER = getClassName('hsva-hs-container'),
     CSS_HS_THUMB = getClassName('hsva-hs-thumb'),
 
-    CSS_VALUE_CONTAINER = getClassName('hsva-value-container'),
+    CSS_VALUE_SLIDER_CONTAINER = getClassName('hsva-value-slider-container'),
 
     CSS_VALUE_CANVAS = getClassName('hsva-value-canvas'),
     CSS_VALUE_THUMB = getClassName('hsva-value-thumb'),
     CSS_VALUE_THUMB_IMAGE = getClassName('hsva-value-image'),
 
-    CSS_ALPHA_CONTAINER = getClassName('hsva-alpha-container'),
+    CSS_ALPHA_SLIDER_CONTAINER = getClassName('hsva-alpha-slider-container'),
     CSS_ALPHA_CANVAS = getClassName('hsva-alpha-canvas'),
     CSS_ALPHA_THUMB = getClassName('hsva-alpha-thumb'),
     CSS_ALPHA_THUMB_IMAGE = getClassName('hsva-alpha-image'),
@@ -88,15 +88,15 @@ var AArray = A.Array,
     TPL_HS_THUMB =
         '<div class="' + CSS_HS_THUMB + '"><div>',
 
-    TPL_VALUE_CONTAINER =
-        '<div class="' + CSS_VALUE_CONTAINER + '"><div>',
+    TPL_VALUE_SLIDER_CONTAINER =
+        '<div class="' + CSS_VALUE_SLIDER_CONTAINER + '"><div>',
 
     TPL_VALUE_CANVAS = '<span class="' + CSS_VALUE_CANVAS + '"></span>',
 
     TPL_VALUE_THUMB = '<span class="' + CSS_VALUE_THUMB + '"><span class="' + CSS_VALUE_THUMB_IMAGE + '"></span></span>',
 
-    TPL_ALPHA_CONTAINER =
-        '<div class="' + CSS_ALPHA_CONTAINER + '"><div>',
+    TPL_ALPHA_SLIDER_CONTAINER =
+        '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
 
     TPL_ALPHA_CANVAS = '<span class="' + CSS_ALPHA_CANVAS + '"></span>',
 
@@ -216,10 +216,10 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var hexValue = instance._getHexValue(hexColor, alphaValue);
 
         instance._resultView.setStyle('backgroundColor', hexColor);
-        instance._valueContainer.setStyle('backgroundColor', hexColor);
+        instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
         if (useAlpha) {
-            instance._alphaContainer.setStyle('backgroundColor', hexColor);
+            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
         }
 
         instance._setFieldValue(instance._hexContainer, hexValue);
@@ -391,7 +391,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
     _createSliders: function() {
         var instance = this;
 
-        instance._valueContainerHeight = instance._valueContainer.get('offsetHeight');
+        instance._valueSliderContainerHeight = instance._valueSliderContainer.get('offsetHeight');
 
         instance._createValueSlider();
 
@@ -416,13 +416,13 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         slider.RAIL_TEMPLATE = TPL_ALPHA_CANVAS;
         slider.THUMB_TEMPLATE = TPL_ALPHA_THUMB;
 
-        slider.render(instance._alphaContainer);
+        slider.render(instance._alphaSliderContainer);
 
         var alphaThumbHeight = contentBox.one(DOT + CSS_ALPHA_THUMB_IMAGE).get('offsetHeight');
 
         slider.set(
             'length',
-            instance._valueContainerHeight + (alphaThumbHeight / 2)
+            instance._valueSliderContainerHeight + (alphaThumbHeight / 2)
         );
 
         slider.on(['slideStart', 'railMouseDown'], instance._setHSContainerXY, instance);
@@ -448,13 +448,13 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         slider.RAIL_TEMPLATE = TPL_VALUE_CANVAS;
         slider.THUMB_TEMPLATE = TPL_VALUE_THUMB;
 
-        slider.render(instance._valueContainer);
+        slider.render(instance._valueSliderContainer);
 
         var valueThumbHeight = contentBox.one(DOT + CSS_VALUE_THUMB_IMAGE).get('offsetHeight');
 
         slider.set(
             'length',
-            instance._valueContainerHeight + (valueThumbHeight / 2)
+            instance._valueSliderContainerHeight + (valueThumbHeight / 2)
         );
 
         slider.on(['slideStart', 'railMouseDown'], instance._setHSContainerXY, instance);
@@ -615,10 +615,10 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._renderThumb();
 
-        instance._renderValueContainer();
+        instance._renderValueSliderContainer();
 
         if (instance.get('alpha')) {
-            instance._renderAlphaContainer();
+            instance._renderAlphaSliderContainer();
         }
 
         instance._renderResultBackdrop();
@@ -634,11 +634,11 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         instance._paletteContainer.appendChild(instance._viewContainer);
     },
 
-    _renderAlphaContainer: function() {
+    _renderAlphaSliderContainer: function() {
         var instance = this;
 
-        instance._alphaContainer = instance._viewContainer.appendChild(
-            TPL_ALPHA_CONTAINER
+        instance._alphaSliderContainer = instance._viewContainer.appendChild(
+            TPL_ALPHA_SLIDER_CONTAINER
         );
     },
 
@@ -819,11 +819,11 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderValueContainer: function() {
+    _renderValueSliderContainer: function() {
         var instance = this;
 
-        instance._valueContainer = instance._viewContainer.appendChild(
-            TPL_VALUE_CONTAINER
+        instance._valueSliderContainer = instance._viewContainer.appendChild(
+            TPL_VALUE_SLIDER_CONTAINER
         );
     },
 
@@ -942,10 +942,10 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
         var hexValue = instance._getHexValue(hexColor, alphaValue);
 
         instance._resultView.setStyle('backgroundColor', hexColor);
-        instance._valueContainer.setStyle('backgroundColor', hexColor);
+        instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
         if (useAlpha) {
-            instance._alphaContainer.setStyle('backgroundColor', hexColor);
+            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
         }
 
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
@@ -1040,13 +1040,13 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 }
             );
 
-            instance._alphaContainer.setStyle('backgroundColor', hexColor);
+            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
 
             instance._resultView.setStyle('opacity', alpha / 255);
         }
 
         instance._resultView.setStyle('backgroundColor', hexColor);
-        instance._valueContainer.setStyle('backgroundColor', hexColor);
+        instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
 
@@ -1142,11 +1142,11 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
                 }
             );
 
-            instance._alphaContainer.setStyle('backgroundColor', hexColor);
+            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
         }
 
         instance._resultView.setStyle('backgroundColor', hexColor);
-        instance._valueContainer.setStyle('backgroundColor', hexColor);
+        instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
 

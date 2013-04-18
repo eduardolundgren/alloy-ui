@@ -18,7 +18,7 @@
 	top: 1px;
 }
 
-.aui-hsva-value-container, .aui-hsva-alpha-container {
+.aui-hsva-value-slider-container, .aui-hsva-alpha-slider-container {
 	background-color: #ff0000;
 	border: 1px solid #666;
 }
@@ -38,7 +38,7 @@
 	background-position: -315px -69px;
 }
 
-.aui-hsva-alpha-container {
+.aui-hsva-alpha-slider-container {
 	border: 1px solid #666;
 }
 

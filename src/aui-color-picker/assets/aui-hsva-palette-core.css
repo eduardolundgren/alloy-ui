@@ -32,17 +32,17 @@
 	width: 11px;
 }
 
-.aui-hsva-value-container, .aui-hsva-alpha-container {
+.aui-hsva-value-slider-container, .aui-hsva-alpha-slider-container {
 	height: 256px;
 	position: absolute;
 	width: 19px;
 }
 
-.aui-hsva-value-container {
+.aui-hsva-value-slider-container {
 	left: 280px;
 }
 
-.aui-hsva-alpha-container {
+.aui-hsva-alpha-slider-container {
 	left: 320px;
 }
 
