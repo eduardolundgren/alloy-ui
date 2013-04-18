@@ -1,0 +1,58 @@
+.aui-hsva-container {
+	border: 1px solid #666;
+}
+
+.aui-hsva-image-backdrop {
+	background-color: #000;
+}
+
+.aui-hsva-hs-container {
+	background-image: url(sprite.png);
+	border: 1px solid #666;
+}
+
+.aui-hsva-hs-thumb {
+	background-image: url(sprite.png);
+	background-position: -315px -84px;
+	left: 1px;
+	top: 1px;
+}
+
+.aui-hsva-value-slider-container, .aui-hsva-alpha-slider-container {
+	background-color: #ff0000;
+	border: 1px solid #666;
+}
+
+.aui-hsva-value-canvas {
+	background-image: url(sprite.png);
+	background-position: -260px 0;
+}
+
+.aui-hsva-alpha-canvas {
+	background-image: url(sprite.png);
+	background-position: -290px 0;
+}
+
+.aui-hsva-value-image, .aui-hsva-alpha-image {
+	background-image: url(sprite.png);
+	background-position: -315px -69px;
+}
+
+.aui-hsva-alpha-slider-container {
+	border: 1px solid #666;
+}
+
+.aui-hsva-view-backdrop {
+	background-color: #fff;
+	background-image: url(sprite.png);
+	background-position: -315px 0;
+}
+
+.aui-hsva-result-view {
+	background-color: #ff0000;
+	border: 1px solid #666;
+}
+
+.aui-hsva-result-input {
+	width: 60px;
+}

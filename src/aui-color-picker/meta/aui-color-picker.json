@@ -17,7 +17,7 @@
         "skinnable": true
     },
 
-    "aui-hsva-palette": {
+    "aui-hsv-palette": {
         "requires": [
             "aui-classnamemanager",
             "aui-event-input",

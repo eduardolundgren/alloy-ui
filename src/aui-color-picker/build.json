@@ -13,9 +13,9 @@
             ]
         },
 
-        "aui-hsva-palette": {
+        "aui-hsv-palette": {
             "jsfiles": [
-                "js/aui-hsva-palette.js"
+                "js/aui-hsv-palette.js"
             ]
         }
     }
