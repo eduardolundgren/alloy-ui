@@ -779,6 +779,18 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
+    _calculateRGBArray: function(r, g, b) {
+        var instance = this;
+
+        var rgbArray = AColor.fromArray([r, g, b], 'RGB');
+    },
+
+    _getHSVArray: function(hsv) {
+        var instance = this;
+
+        return AColor.toArray(hsv, 'HSV');
+    },
+
     _updateViewByRGB: function(fieldNode) {
         var instance = this;
 
@@ -786,49 +798,19 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         var g = instance._getFieldValue(instance._gContainer);
         var b = instance._getFieldValue(instance._bContainer);
 
-        var useAlpha = instance.get('alpha');
-
-        var alpha;
-        var rgbArray;
-        var hsv;
-        var hsvArray;
-
-        if (useAlpha) {
-            alpha = instance._getFieldValue(instance._aContainer);
-
-            rgbArray = AColor.fromArray([r, g, b, alpha], 'RGBA');
-
-            hsv = AColor.toHSVA(rgbArray);
-
-            hsvArray = AColor.toArray(hsv, 'HSVA');
-        }
-        else {
-            rgbArray = AColor.fromArray([r, g, b], 'RGB');
-
-            hsv = AColor.toHSV(rgbArray);
-
-            hsvArray = AColor.toArray(hsv, 'HSV');
-        }
+        var rgbArray = instance._calculateRGBArray(r, g, b);
+        var hsv = AColor.toHSV(rgbArray);
+        var hsvArray = instance._getHSVArray(hsv);
 
         var hue = hsvArray[0];
         var saturation = hsvArray[1];
         var value = hsvArray[2];
 
-        var rgbColor;
-
-        if (useAlpha) {
-            rgbColor = instance._calculateRGBA(hue, saturation, value, alpha);
-        }
-        else {
-            rgbColor = instance._calculateRGB(hue, saturation, value);
-        }
-
+        var rgbColor = instance._calculateRGBColor(hue, saturation, value);
         var rgbColorArray = AColor.toArray(rgbColor);
+
         var hexColor = AColor.toHex(rgbColor);
-
-        var alphaValue = useAlpha ? rgbColorArray[3] : null;
-
-        var hexValue = instance._getHexValue(hexColor, alphaValue);
+        var hexValue = instance._getHexValue(hexColor, rgbColorArray);
 
         var position = instance._getXYFromHueSaturation(hue, saturation);
 
@@ -847,20 +829,6 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
             }
         );
 
-        if (useAlpha) {
-            instance._alphaSlider.set(
-                'value',
-                255 - alpha,
-                {
-                    src: AWidget.UI_SRC
-                }
-            );
-
-            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
-
-            instance._resultView.setStyle('opacity', alpha / 255);
-        }
-
         instance._resultView.setStyle('backgroundColor', hexColor);
         instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
@@ -872,11 +840,15 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
             instance._setFieldValue(instance._hContainer, hue);
             instance._setFieldValue(instance._sContainer, saturation);
             instance._setFieldValue(instance._vContainer, value);
-
-            if (useAlpha) {
-                instance._setFieldValue(instance._aContainer, alpha);
-            }
         }
+
+        instance.fire(
+            'rgbInputChange',
+            {
+                hexColor: hexColor,
+                node: fieldNode
+            }
+        );
     },
 
     _updateViewByHEX: function(fieldNode) {

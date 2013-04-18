@@ -38,6 +38,7 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
 
         instance.after('hsThumbChange', instance._afterHsThumbChangeFn, instance);
         instance.after('hsvaInputChange', instance._afterHSVAInputChange, instance);
+        instance.after('rgbInputChange', instance._afterRGBInputChange, instance);
     },
 
     _afterHsThumbChangeFn: function(event) {
@@ -62,6 +63,20 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance._alphaSliderContainer.setStyle('backgroundColor', event.hexColor);
 
         instance._resultView.setStyle('opacity', alpha / 255);
+    },
+
+    _afterRGBInputChange: function(event) {
+        var instance = this;
+
+        instance._alphaSliderContainer.setStyle('backgroundColor', event.hexColor);
+    },
+
+    _calculateRGBArray: function(r, g, b) {
+        var instance = this;
+
+        var alpha = 255 - instance._alphaSlider.get('value');
+
+        return AColor.fromArray([r, g, b, alpha], 'RGBA');
     },
 
     _calculateRGBColor: function(hue, saturation, value) {
@@ -114,6 +129,12 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         var result = hexColor + alpha;
 
         return result.substring(1);
+    },
+
+    _getHSVArray: function(hsv) {
+        var instance = this;
+
+        return AColor.toArray(hsv, 'HSVA');
     },
 
     _createAlphaSlider: function() {
