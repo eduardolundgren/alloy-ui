@@ -782,13 +782,23 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
     _calculateRGBArray: function(r, g, b) {
         var instance = this;
 
-        var rgbArray = AColor.fromArray([r, g, b], 'RGB');
+        return AColor.fromArray([r, g, b], 'RGB');
     },
 
     _getHSVArray: function(hsv) {
         var instance = this;
 
         return AColor.toArray(hsv, 'HSV');
+    },
+
+    _normalizeHexValue: function(hex) {
+        var padding = '';
+
+        if (hex.length === 3) {
+            padding = 'fff';
+        }
+
+        return (hex += padding);
     },
 
     _updateViewByRGB: function(fieldNode) {
@@ -854,37 +864,9 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
     _updateViewByHEX: function(fieldNode) {
         var instance = this;
 
-        // YUI Code toHSVA from hex + alpha is broken, will remove the alpha
-
         var hex = instance._getFieldValue(instance._hexContainer);
 
-        var useAlpha = instance.get('alpha');
-
-        var padding = '';
-
-        if (hex.length === 3) {
-            if (useAlpha) {
-                padding = 'fffff';
-            }
-            else {
-                padding = 'fff';
-            }
-        }
-        else if (useAlpha && hex.length === 6) {
-            padding = 'ff';
-        }
-
-        hex += padding;
-
-        var alpha;
-
-        var alphaDec;
-
-        if (useAlpha) {
-            alpha = hex.substr(6, 2);
-
-            alphaDec = parseInt(alpha, 16);
-        }
+        hex = instance._normalizeHexValue(hex);
 
         hex = hex.substr(0, 6);
 
@@ -921,40 +903,28 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
 
         var hexColor = '#' + hex;
 
-        if (useAlpha) {
-            instance._alphaSlider.set(
-                'value',
-                255 - alphaDec,
-                {
-                    src: AWidget.UI_SRC
-                }
-            );
-
-            instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
-        }
-
         instance._resultView.setStyle('backgroundColor', hexColor);
         instance._valueSliderContainer.setStyle('backgroundColor', hexColor);
 
         instance._hsContainer.setStyle('opacity', 1 - ((100 - value) / 100));
-
-        if (useAlpha) {
-            instance._resultView.setStyle('opacity', alphaDec / 255);
-        }
 
         if (instance.get('controls')) {
             instance._setFieldValue(instance._hContainer, hue);
             instance._setFieldValue(instance._sContainer, saturation);
             instance._setFieldValue(instance._vContainer, value);
 
-            if (useAlpha) {
-                instance._setFieldValue(instance._aContainer, alphaDec);
-            }
-
             instance._setFieldValue(instance._rContainer, r);
             instance._setFieldValue(instance._gContainer, g);
             instance._setFieldValue(instance._bContainer, b);
         }
+
+        instance.fire(
+            'hexInputChange',
+            {
+                hexColor: hex,
+                node: fieldNode
+            }
+        );
     },
 
     _validateFieldValue: function(fieldNode) {

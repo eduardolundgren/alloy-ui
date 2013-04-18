@@ -41,6 +41,34 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance.after('rgbInputChange', instance._afterRGBInputChange, instance);
     },
 
+    _afterHexInputChange: function(event) {
+        var instance = this;
+
+        // YUI Code toHSVA from hex + alpha is broken, will remove the alpha value
+
+        var hexColor = event.hexColor;
+
+        var alpha = hexColor.substr(6, 2);
+
+        var alphaDec = parseInt(alpha, 16);
+
+        instance._alphaSlider.set(
+            'value',
+            255 - alphaDec,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance._alphaSliderContainer.setStyle('backgroundColor', hexColor);
+
+        instance._resultView.setStyle('opacity', alphaDec / 255);
+
+        if (instance.get('controls')) {
+            instance._setFieldValue(instance._aContainer, alphaDec);
+        }
+    },
+
     _afterHsThumbChangeFn: function(event) {
         var instance = this;
 
@@ -190,6 +218,19 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         };
     },
 
+    _normalizeHexValue: function(hex) {
+        var padding = '';
+
+        if (hex.length === 3) {
+            padding = 'fffff';
+        }
+        else if (hex.length === 6) {
+            padding = 'ff';
+        }
+
+        return (hex += padding);
+    },
+
     _onAlphaChange: function(event) {
         var instance = this;
 
@@ -209,7 +250,7 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
 
             var rgbColor = instance._calculateRGBA(hue, saturation, value, 255 - alpha);
             var rgbColorArray = AColor.toArray(rgbColor);
-            var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray[3]);
+            var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray);
 
             instance._setFieldValue(instance._hexContainer, hexValue);
 
