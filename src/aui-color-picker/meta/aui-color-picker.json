@@ -29,5 +29,11 @@
             "widget"
         ],
         "skinnable": true
+    },
+
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-hsv-palette"
+        ]
     }
 }

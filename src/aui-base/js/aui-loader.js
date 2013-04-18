@@ -394,6 +394,11 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-hsv-palette"
+        ]
+    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",
@@ -825,4 +830,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e757f0ca053715983d195b292832b641';
+YUI.Env[Y.version].md5 = 'cc1942c7a8eb2c8cc0dd17fcabdab523';

@@ -69,7 +69,7 @@
 	);
 
 	YUI({ filter:'raw' }).use(
-		'aui-hsv-palette',
+		'aui-hsva-palette',
 		function(A) {
 			var hsvPalette;
 
@@ -81,9 +81,14 @@
 					hsvPalette.destroy();
 				}
 
-				hsvPalette = new A.HSVPalette(
+				var hsvClass = A.HSVPalette;
+
+				if (alphaCheckbox.get('checked')) {
+					hsvClass = A.HSVAPalette;
+				}
+
+				hsvPalette = new hsvClass(
 					{
-						alpha: alphaCheckbox.get('checked'),
 						controls: controlsCheckbox.get('checked'),
 					}
 				).render('#hsvPalette');

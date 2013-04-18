@@ -10,7 +10,6 @@ var AArray = A.Array,
     DOT = '.',
 
     CSS_CONTAINER = getClassName('hsv-container'),
-    CSS_CONTAINER_ALPHA = getClassName('hsv-container-alpha'),
     CSS_CONTAINER_CONTROLS = getClassName('hsv-container-controls'),
 
     CSS_VIEW_CONTAINER = getClassName('hsv-view-container'),
@@ -26,11 +25,6 @@ var AArray = A.Array,
     CSS_VALUE_CANVAS = getClassName('hsv-value-canvas'),
     CSS_VALUE_THUMB = getClassName('hsv-value-thumb'),
     CSS_VALUE_THUMB_IMAGE = getClassName('hsv-value-image'),
-
-    CSS_ALPHA_SLIDER_CONTAINER = getClassName('hsv-alpha-slider-container'),
-    CSS_ALPHA_CANVAS = getClassName('hsv-alpha-canvas'),
-    CSS_ALPHA_THUMB = getClassName('hsv-alpha-thumb'),
-    CSS_ALPHA_THUMB_IMAGE = getClassName('hsv-alpha-image'),
 
     CSS_RESULT_VIEW = getClassName('hsv-result-view'),
 
@@ -51,24 +45,11 @@ var AArray = A.Array,
 
     REGEX_HEX_COLOR = /^([a-f0-9]{6}|[a-f0-9]{3})$/i,
 
-    REGEX_HEX_COLOR_ALPHA = /^([a-f0-9]{6}|[a-f0-9]{8}|[a-f0-9]{3})$/i,
-
     REGEX_RANGE_0_100 = /^([0-9]|[1-9][0-9]|100)$/,
 
     REGEX_RANGE_0_255 = /^([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$/,
 
     REGEX_RANGE_0_360 = /^([0]{0,2}[1-9]|[0]?[1-9][0-9]|[12][0-9][0-9]|3[0-5][0-9]|360)$/,
-
-    MAP_FIELDS_REGEX = {
-        alpha: REGEX_RANGE_0_255,
-        b: REGEX_RANGE_0_255,
-        g: REGEX_RANGE_0_255,
-        hex: REGEX_HEX_COLOR,
-        hue: REGEX_RANGE_0_360,
-        r: REGEX_RANGE_0_255,
-        saturation: REGEX_RANGE_0_100,
-        value: REGEX_RANGE_0_100
-    },
 
     TPL_CONTAINER =
         '<div class="' + CSS_CONTAINER + ' {subClass}"><div>',
@@ -94,13 +75,6 @@ var AArray = A.Array,
     TPL_VALUE_CANVAS = '<span class="' + CSS_VALUE_CANVAS + '"></span>',
 
     TPL_VALUE_THUMB = '<span class="' + CSS_VALUE_THUMB + '"><span class="' + CSS_VALUE_THUMB_IMAGE + '"></span></span>',
-
-    TPL_ALPHA_SLIDER_CONTAINER =
-        '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
-
-    TPL_ALPHA_CANVAS = '<span class="' + CSS_ALPHA_CANVAS + '"></span>',
-
-    TPL_ALPHA_THUMB = '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
 
     TPL_RESULT_VIEW = '<div class="' + CSS_RESULT_VIEW + '"></div>',
 
@@ -128,12 +102,6 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance.onceAfter('render', instance._createSliders, instance);
-
-        var useAlpha = instance.get('alpha');
-
-        if (useAlpha) {
-            MAP_FIELDS_REGEX.hex = REGEX_HEX_COLOR_ALPHA;
-        }
     },
 
     bindUI: function() {
@@ -394,42 +362,6 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._valueSliderContainerHeight = instance._valueSliderContainer.get('offsetHeight');
 
         instance._createValueSlider();
-
-        if (instance.get('alpha')) {
-            instance._createAlphaSlider();
-        }
-    },
-
-    _createAlphaSlider: function() {
-        var instance = this;
-
-        var contentBox = instance.get('contentBox');
-
-        var slider = new A.Slider(
-            {
-                axis: 'y',
-                min: 0,
-                max: 255
-            }
-        );
-
-        slider.RAIL_TEMPLATE = TPL_ALPHA_CANVAS;
-        slider.THUMB_TEMPLATE = TPL_ALPHA_THUMB;
-
-        slider.render(instance._alphaSliderContainer);
-
-        var alphaThumbHeight = contentBox.one(DOT + CSS_ALPHA_THUMB_IMAGE).get('offsetHeight');
-
-        slider.set(
-            'length',
-            instance._valueSliderContainerHeight + (alphaThumbHeight / 2)
-        );
-
-        slider.on(['slideStart', 'railMouseDown'], instance._setHSContainerXY, instance);
-
-        slider.on('valueChange', instance._onAlphaChange, instance);
-
-        instance._alphaSlider = slider;
     },
 
     _createValueSlider: function() {
@@ -464,6 +396,18 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._valueSlider = slider;
     },
 
+    _getContainerClassName: function() {
+        var instance = this;
+
+        var className = STR_EMPTY;
+
+        if (instance.get('controls')) {
+            className = CSS_CONTAINER_CONTROLS;
+        }
+
+        return className;
+    },
+
     _getFieldValue: function(fieldNode) {
         var instance = this;
 
@@ -485,6 +429,19 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
 
         return result.substring(1);
+    },
+
+    _getHexContainerConfig: function() {
+        var instance = this;
+
+        return {
+            label: instance.get('strings').hex,
+            maxlength: 6,
+            suffix: '-hex',
+            type: 'hex',
+            unit: STR_EMPTY,
+            value: 'ff0000'
+        };
     },
 
     _getXYFromHueSaturation: function(hue, saturation) {
@@ -582,21 +539,13 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
     _renderContainer: function() {
         var instance = this;
 
-        var subClass = [];
-
-        if (instance.get('controls')) {
-            subClass.push(CSS_CONTAINER_CONTROLS);
-        }
-
-        if (instance.get('alpha')) {
-            subClass.push(CSS_CONTAINER_ALPHA);
-        }
+        var className = instance._getContainerClassName();
 
         instance._paletteContainer = A.Node.create(
             Lang.sub(
                 TPL_CONTAINER,
                 {
-                    subClass: subClass.join(' ')
+                    subClass: className
                 }
             )
         );
@@ -609,6 +558,14 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._viewContainer = A.Node.create(TPL_VIEW_CONTAINER);
 
+        instance._renderViewContainerContent();
+
+        instance._paletteContainer.appendChild(instance._viewContainer);
+    },
+
+    _renderViewContainerContent: function() {
+        var instance = this;
+
         instance._renderImageBackdrop();
 
         instance._renderHSContainer();
@@ -616,10 +573,6 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._renderThumb();
 
         instance._renderValueSliderContainer();
-
-        if (instance.get('alpha')) {
-            instance._renderAlphaSliderContainer();
-        }
 
         instance._renderResultBackdrop();
 
@@ -630,16 +583,6 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
 
         instance._renderHexNode();
-
-        instance._paletteContainer.appendChild(instance._viewContainer);
-    },
-
-    _renderAlphaSliderContainer: function() {
-        var instance = this;
-
-        instance._alphaSliderContainer = instance._viewContainer.appendChild(
-            TPL_ALPHA_SLIDER_CONTAINER
-        );
     },
 
     _renderField: function(container, data) {
@@ -672,18 +615,9 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
             )
         );
 
-        var useAlpha = instance.get('alpha');
+        var hexContainerConfig = instance._getHexContainerConfig();
 
-        instance._hexContainer = instance._renderField(
-            labelValueHexContainer, {
-                label: instance.get('strings').hex,
-                maxlength: useAlpha ? 8 : 6,
-                suffix: '-hex',
-                type: 'hex',
-                unit: STR_EMPTY,
-                value: useAlpha ? 'ff0000ff' : 'ff0000'
-            }
-        );
+        instance._hexContainer = instance._renderField(labelValueHexContainer, hexContainerConfig);
 
         instance._viewContainer.appendChild(labelValueHexContainer);
 
@@ -1172,7 +1106,9 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
     _validateFieldValue: function(fieldNode) {
         var instance = this;
 
-        var validator = MAP_FIELDS_REGEX[fieldNode.getAttribute('data-type')];
+        var fieldValidator = instance.get('fieldValidator');
+
+        var validator = fieldValidator[fieldNode.getAttribute('data-type')];
 
         var result = false;
 
@@ -1198,6 +1134,20 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
             validator: Lang.isBoolean,
             value: true,
             writeOnce: true
+        },
+
+        fieldValidator: {
+            validator: Lang.isObject,
+            value: {
+                alpha: REGEX_RANGE_0_255,
+                b: REGEX_RANGE_0_255,
+                g: REGEX_RANGE_0_255,
+                hex: REGEX_HEX_COLOR,
+                hue: REGEX_RANGE_0_360,
+                r: REGEX_RANGE_0_255,
+                saturation: REGEX_RANGE_0_100,
+                value: REGEX_RANGE_0_100
+            }
         },
 
         strings: {
