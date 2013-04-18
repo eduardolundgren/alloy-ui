@@ -357,7 +357,7 @@
             "aui-event-input"
         ]
     },
-    "aui-hsva-palette": {
+    "aui-hsv-palette": {
         "requires": [
             "aui-classnamemanager",
             "aui-event-input",

@@ -9,43 +9,43 @@ var AArray = A.Array,
 
     DOT = '.',
 
-    CSS_CONTAINER = getClassName('hsva-container'),
-    CSS_CONTAINER_ALPHA = getClassName('hsva-container-alpha'),
-    CSS_CONTAINER_CONTROLS = getClassName('hsva-container-controls'),
+    CSS_CONTAINER = getClassName('hsv-container'),
+    CSS_CONTAINER_ALPHA = getClassName('hsv-container-alpha'),
+    CSS_CONTAINER_CONTROLS = getClassName('hsv-container-controls'),
 
-    CSS_VIEW_CONTAINER = getClassName('hsva-view-container'),
+    CSS_VIEW_CONTAINER = getClassName('hsv-view-container'),
 
-    CSS_HS_IMAGE_BACKDROP = getClassName('hsva-image-backdrop'),
-    CSS_HS_VIEW_BACKDROP = getClassName('hsva-view-backdrop'),
+    CSS_HS_IMAGE_BACKDROP = getClassName('hsv-image-backdrop'),
+    CSS_HS_VIEW_BACKDROP = getClassName('hsv-view-backdrop'),
 
-    CSS_HS_CONTAINER = getClassName('hsva-hs-container'),
-    CSS_HS_THUMB = getClassName('hsva-hs-thumb'),
+    CSS_HS_CONTAINER = getClassName('hsv-hs-container'),
+    CSS_HS_THUMB = getClassName('hsv-hs-thumb'),
 
-    CSS_VALUE_SLIDER_CONTAINER = getClassName('hsva-value-slider-container'),
+    CSS_VALUE_SLIDER_CONTAINER = getClassName('hsv-value-slider-container'),
 
-    CSS_VALUE_CANVAS = getClassName('hsva-value-canvas'),
-    CSS_VALUE_THUMB = getClassName('hsva-value-thumb'),
-    CSS_VALUE_THUMB_IMAGE = getClassName('hsva-value-image'),
+    CSS_VALUE_CANVAS = getClassName('hsv-value-canvas'),
+    CSS_VALUE_THUMB = getClassName('hsv-value-thumb'),
+    CSS_VALUE_THUMB_IMAGE = getClassName('hsv-value-image'),
 
-    CSS_ALPHA_SLIDER_CONTAINER = getClassName('hsva-alpha-slider-container'),
-    CSS_ALPHA_CANVAS = getClassName('hsva-alpha-canvas'),
-    CSS_ALPHA_THUMB = getClassName('hsva-alpha-thumb'),
-    CSS_ALPHA_THUMB_IMAGE = getClassName('hsva-alpha-image'),
+    CSS_ALPHA_SLIDER_CONTAINER = getClassName('hsv-alpha-slider-container'),
+    CSS_ALPHA_CANVAS = getClassName('hsv-alpha-canvas'),
+    CSS_ALPHA_THUMB = getClassName('hsv-alpha-thumb'),
+    CSS_ALPHA_THUMB_IMAGE = getClassName('hsv-alpha-image'),
 
-    CSS_RESULT_VIEW = getClassName('hsva-result-view'),
+    CSS_RESULT_VIEW = getClassName('hsv-result-view'),
 
-    CSS_LABEL_VALUE_CONTAINER = getClassName('hsva-label-value-container'),
-    CSS_LABEL_VALUE_HSV_CONTAINER = getClassName('hsva-label-value-hsv-container'),
-    CSS_LABEL_VALUE_RGB_CONTAINER = getClassName('hsva-label-value-rgb-container'),
-    CSS_LABEL_VALUE_HEX_CONTAINER = getClassName('hsva-label-value-hex-container'),
+    CSS_LABEL_VALUE_CONTAINER = getClassName('hsv-label-value-container'),
+    CSS_LABEL_VALUE_HSV_CONTAINER = getClassName('hsv-label-value-hsv-container'),
+    CSS_LABEL_VALUE_RGB_CONTAINER = getClassName('hsv-label-value-rgb-container'),
+    CSS_LABEL_VALUE_HEX_CONTAINER = getClassName('hsv-label-value-hex-container'),
 
-    CSS_LABEL_VALUE = getClassName('hsva-label-value'),
+    CSS_LABEL_VALUE = getClassName('hsv-label-value'),
 
-    CSS_LABEL = getClassName('hsva-label'),
-    CSS_VALUE = getClassName('hsva-value'),
-    CSS_RESULT_INPUT = getClassName('hsva-result-input'),
+    CSS_LABEL = getClassName('hsv-label'),
+    CSS_VALUE = getClassName('hsv-value'),
+    CSS_RESULT_INPUT = getClassName('hsv-result-input'),
 
-    NAME = 'hsva-palette',
+    NAME = 'hsv-palette',
 
     STR_EMPTY = '',
 
@@ -141,7 +141,7 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
 
         instance._hsContainer.after('mousedown', instance._afterPaletteMousedown, instance);
 
-        instance._paletteContainer.delegate('input', instance._afterInputChange, '.aui-hsva-value', instance);
+        instance._paletteContainer.delegate('input', instance._afterInputChange, '.aui-hsv-value', instance);
 
         instance._bindDD();
     },
@@ -317,9 +317,9 @@ var HSVPalette = A.Base.create(NAME, A.Widget, [], {
         var rgbColor = 'rgb(255, 0, 0, 0)';
 
         if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
-            var hsvaColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
+            var hsvColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
 
-            rgbColor = AColor.toRGBA(hsvaColor);
+            rgbColor = AColor.toRGBA(hsvColor);
 
             // fix YUI bug on getting alpha - if it is 0, they return 1
             if (parseInt(alpha, 10) === 0) {

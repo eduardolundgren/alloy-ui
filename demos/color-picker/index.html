@@ -18,13 +18,13 @@
 			top: 100px;
 		}
 
-		#hsvaPaletteOptions {
+		#hsvPaletteOptions {
 			left: 250px;
 			position: absolute;
 			top: 100px;
 		}
 
-		#hsvaPalette {
+		#hsvPalette {
 			left: 250px;
 			position: absolute;
 			top: 140px;
@@ -52,9 +52,9 @@
 
 	<div id="colorPalette"></div>
 
-	<div id="hsvaPalette"></div>
+	<div id="hsvPalette"></div>
 
-	<div id="hsvaPaletteOptions">
+	<div id="hsvPaletteOptions">
 		<input type="checkbox" checked id="controls"><label class="label-option" for="controls">Controls</label>
 		<input type="checkbox" checked id="alpha"><label class="label-option" for="alpha">Alpha</label>
 	</div>
@@ -69,30 +69,30 @@
 	);
 
 	YUI({ filter:'raw' }).use(
-		'aui-hsva-palette',
+		'aui-hsv-palette',
 		function(A) {
-			var hsvaPalette;
+			var hsvPalette;
 
 			var alphaCheckbox = A.one('#alpha');
 			var controlsCheckbox = A.one('#controls');
 
-			function createHSVAPalette() {
-				if (hsvaPalette) {
-					hsvaPalette.destroy();
+			function createhsvPalette() {
+				if (hsvPalette) {
+					hsvPalette.destroy();
 				}
 
-				hsvaPalette = new A.HSVAPalette(
+				hsvPalette = new A.HSVPalette(
 					{
 						alpha: alphaCheckbox.get('checked'),
 						controls: controlsCheckbox.get('checked'),
 					}
-				).render('#hsvaPalette');
+				).render('#hsvPalette');
 			}
 
-			alphaCheckbox.after('change', createHSVAPalette);
-			controlsCheckbox.after('change', createHSVAPalette);
+			alphaCheckbox.after('change', createhsvPalette);
+			controlsCheckbox.after('change', createhsvPalette);
 
-			createHSVAPalette();
+			createhsvPalette();
 		}
 	);
 
