@@ -425,7 +425,7 @@ var HSVAPalette = A.Base.create(NAME, A.Widget, [], {
             instance._valueContainerHeight + (alphaThumbHeight / 2)
         );
 
-        slider.on('slideStart', instance._setHSContainerXY, instance);
+        slider.on(['slideStart', 'railMouseDown'], instance._setHSContainerXY, instance);
 
         slider.on('valueChange', instance._onAlphaChange, instance);
 
