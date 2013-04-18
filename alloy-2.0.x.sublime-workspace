@@ -1,0 +1,2678 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"_set",
+				"_setHSContainerXY"
+			],
+			[
+				"con",
+				"controls"
+			],
+			[
+				"sub",
+				"subClass"
+			],
+			[
+				"inst",
+				"inst	var_instance"
+			],
+			[
+				"_renderHe",
+				"_renderHexNode"
+			],
+			[
+				"in",
+				"instance"
+			],
+			[
+				"rende",
+				"renderControls"
+			],
+			[
+				"ren",
+				"renderControls"
+			],
+			[
+				"co",
+				"aui-control-group"
+			],
+			[
+				"fi",
+				"field"
+			],
+			[
+				"e",
+				"else"
+			],
+			[
+				"hex",
+				"hexValue"
+			],
+			[
+				"to",
+				"toHSVA"
+			],
+			[
+				"_v",
+				"_valueSlider"
+			],
+			[
+				"from",
+				"fromArray"
+			],
+			[
+				"le",
+				"length"
+			],
+			[
+				"hue",
+				"hue"
+			],
+			[
+				"g",
+				"g"
+			],
+			[
+				"rgbC",
+				"rgbColorArray"
+			],
+			[
+				"hsva",
+				"hsvaColor"
+			],
+			[
+				"he",
+				"hexValue"
+			],
+			[
+				"_upda",
+				"_updateViewByHEX"
+			],
+			[
+				"_updat",
+				"_updateViewByHUE"
+			],
+			[
+				"_valu",
+				"_valueSlider"
+			],
+			[
+				"_th",
+				"_colorThumb"
+			],
+			[
+				"_ca",
+				"_calculateX"
+			],
+			[
+				"MA",
+				"MAP_FIELDS_REGEX"
+			],
+			[
+				"REG",
+				"REGEX_HEX_COLOR"
+			],
+			[
+				"RE",
+				"REGEX_RANGE_0_100"
+			],
+			[
+				"REGEX_",
+				"REGEX_RANGE_0_255"
+			],
+			[
+				"AC",
+				"AColor"
+			],
+			[
+				"rgb",
+				"rgbColor"
+			],
+			[
+				"_get",
+				"_getHexValue"
+			],
+			[
+				"_cal",
+				"_calculateRGB"
+			],
+			[
+				"ne",
+				"newVal"
+			],
+			[
+				"set",
+				"_setFieldValue"
+			],
+			[
+				"back",
+				"background-color"
+			],
+			[
+				"TPL_va",
+				"TPL_VALUE_THUMB"
+			],
+			[
+				"TPL_v",
+				"TPL_VALUE_CANVAS"
+			],
+			[
+				"tp",
+				"TPL_HS_THUMB"
+			],
+			[
+				"bor",
+				"border-left"
+			],
+			[
+				"padd",
+				"padding"
+			],
+			[
+				"ite",
+				"itemIndex"
+			],
+			[
+				"WidgetS",
+				"WidgetStdMod"
+			],
+			[
+				"PA",
+				"Palette"
+			],
+			[
+				"row",
+				"rowIndex"
+			],
+			[
+				"pale",
+				"paletteContainer"
+			],
+			[
+				"body",
+				"bodyNode"
+			],
+			[
+				"B",
+				"BODY"
+			],
+			[
+				"Pa",
+				"Palette"
+			],
+			[
+				"re",
+				"remainder"
+			],
+			[
+				"clas",
+				"className"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"se",
+				"selectLanguageNode"
+			],
+			[
+				"append",
+				"appendChild"
+			],
+			[
+				"app",
+				"appendTo"
+			],
+			[
+				"f",
+				"for	for (…) {…} (Improved Native For-Loop)"
+			],
+			[
+				"res",
+				"result"
+			],
+			[
+				"call",
+				"callback"
+			],
+			[
+				"ex",
+				"expectedValue"
+			],
+			[
+				"match",
+				"matcherAction"
+			],
+			[
+				"instance",
+				"instanceOf"
+			],
+			[
+				"ge",
+				"getKeys"
+			],
+			[
+				"ed",
+				"ed	eval_debugger"
+			],
+			[
+				"ma",
+				"match"
+			],
+			[
+				"va",
+				"value"
+			],
+			[
+				"ins",
+				"instance"
+			],
+			[
+				"close",
+				"closeNoticeTimeout"
+			],
+			[
+				"save",
+				"saveContent"
+			],
+			[
+				"_saveContentT",
+				"_saveContentTaskImpl"
+			],
+			[
+				"_save",
+				"_saveDataTask"
+			],
+			[
+				"_c",
+				"_closeNoticeTask"
+			],
+			[
+				"vocabula",
+				"vocabularyId"
+			],
+			[
+				"_cre",
+				"_createCategoryTreeView"
+			],
+			[
+				"voca",
+				"vocabularyId"
+			],
+			[
+				"_crea",
+				"_createCategoryFlatView"
+			],
+			[
+				"categories",
+				"categories"
+			],
+			[
+				"_sele",
+				"_selectedVocabularyId"
+			],
+			[
+				"is",
+				"isViewTabActive"
+			],
+			[
+				"get",
+				"getFormEditor"
+			],
+			[
+				"s",
+				"sop	system_out_println"
+			],
+			[
+				"op",
+				"openBracketIndex"
+			],
+			[
+				"dial",
+				"dialogName"
+			],
+			[
+				"info",
+				"infoTab"
+			],
+			[
+				"xml",
+				"xmlBeautifier"
+			],
+			[
+				"fom",
+				"formEditor"
+			],
+			[
+				"dis",
+				"displayMessage"
+			],
+			[
+				"ME",
+				"MESSAGE_FAILURE"
+			],
+			[
+				"CSS",
+				"CSS_MESSAGE_ERROR"
+			],
+			[
+				"mes",
+				"messageContainer"
+			],
+			[
+				"hide",
+				"hideMessageTask"
+			],
+			[
+				"on",
+				"onFormBuilderDataSuccess"
+			],
+			[
+				"load",
+				"loadingMask"
+			],
+			[
+				"_h",
+				"_handleTagStart"
+			],
+			[
+				"_hand",
+				"_handleElementEmpty"
+			],
+			[
+				"inde",
+				"indentedResult"
+			],
+			[
+				"line",
+				"lineSeparator"
+			],
+			[
+				"_",
+				"_repeat"
+			],
+			[
+				"ta",
+				"tagSeparator"
+			],
+			[
+				"no",
+				"nodeValue"
+			],
+			[
+				"_pro",
+				"_processData"
+			],
+			[
+				"ch",
+				"childNode"
+			],
+			[
+				"_pr",
+				"_processIndetation"
+			],
+			[
+				"add",
+				"addIndent"
+			],
+			[
+				"a",
+				"attributeIndent"
+			],
+			[
+				"_r",
+				"_processAttributes"
+			],
+			[
+				"i",
+				"instance"
+			],
+			[
+				"chi",
+				"childNode"
+			],
+			[
+				"_proce",
+				"_processStartTag"
+			],
+			[
+				"c",
+				"childNode"
+			],
+			[
+				"node",
+				"nodeName"
+			],
+			[
+				"CK",
+				"CKEDITOR_SUFFIX"
+			],
+			[
+				"cke",
+				"ckeditorPrefix"
+			],
+			[
+				"ED",
+				"EDITOR_NAME"
+			],
+			[
+				"L",
+				"Language"
+			],
+			[
+				"max",
+				"maxEntries"
+			],
+			[
+				"text",
+				"text-decoration"
+			],
+			[
+				"conte",
+				"contentNode"
+			],
+			[
+				"noti",
+				"noticeClass"
+			],
+			[
+				"deta",
+				"detachEventHandles"
+			],
+			[
+				"focus",
+				"focusManager"
+			],
+			[
+				"tag",
+				"tags"
+			],
+			[
+				"TAG",
+				"TAG_LIST_ITEM"
+			],
+			[
+				"ty",
+				"typeLevel"
+			],
+			[
+				"_has",
+				"_hasParentNode"
+			],
+			[
+				"exte",
+				"externalScript"
+			],
+			[
+				"sc",
+				"scriptContent"
+			],
+			[
+				"enti",
+				"entitiesValues"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "src/aui-color-picker/js/aui-hsva-palette.js",
+			"settings":
+			{
+				"buffer_size": 31222,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/aui-color-picker/assets/aui-hsva-palette-core.css",
+			"settings":
+			{
+				"buffer_size": 2757,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/aui-color-picker/assets/skins/sam/aui-hsva-palette-skin.css",
+			"settings":
+			{
+				"buffer_size": 1036,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "demos/color-picker/index.html",
+			"settings":
+			{
+				"buffer_size": 1068,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/aui-color-picker/assets/skins/sam/aui-color-palette-skin.css",
+			"settings":
+			{
+				"buffer_size": 158,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/aui-color-picker/js/aui-color-palette.js",
+			"settings":
+			{
+				"buffer_size": 1385,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/aui-color-picker/js/aui-palette.js",
+			"settings":
+			{
+				"buffer_size": 4769,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/alloy_component-2.0.x.sublime-build",
+	"command_palette":
+	{
+		"height": 117.0,
+		"selected_items":
+		[
+			[
+				"javascr",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"java",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"javascrit",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"javascri",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"c++",
+				"Set Syntax: C++"
+			],
+			[
+				"Snippet: ",
+				"Snippet: Prototype"
+			],
+			[
+				"Package Control: inst",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: in",
+				"Package Control: Install Package"
+			],
+			[
+				"javasc",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"plain",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"pla",
+				"Set Syntax: Plain Text"
+			],
+			[
+				"jsp",
+				"Set Syntax: Java Server Page (JSP)"
+			],
+			[
+				"javas",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"ja",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"jas",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			],
+			[
+				"jps",
+				"Set Syntax: Java Server Page (JSP)"
+			],
+			[
+				"Package Control: insta",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: li",
+				"Package Control: List Packages"
+			],
+			[
+				"Package Control: rem",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: remve",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: re",
+				"Package Control: Remove Package"
+			],
+			[
+				"Package Control: list",
+				"Package Control: List Packages"
+			],
+			[
+				"",
+				"Closure Linter: Fix JavaScript Style"
+			],
+			[
+				"Package Control:",
+				"Package Control: List Packages"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 309.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-tree/js/aui-tree-view.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/meta/aui-color-picker.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-event/js/aui-event-input.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/build.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-color-palette.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-datatable/js/aui-datatable-edit.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-palette.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-hsv-palette.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/color-picker/hsva_palette.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/color-picker/index.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/assets/aui-color-palette-core.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/assets/skins/sam/aui-color-palette-skin.css",
+		"/home/iliyan/Desktop/color-picker.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/meta/aui-ace-editor.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-autocomplete-list.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/assets/skins/sam/aui-palette-skin.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/assets/aui-palette-core.css",
+		"/home/iliyan/projects/liferay/alloy/src/aui-color-picker/js/aui-color-picker-base.js",
+		"/home/iliyan/.config/sublime-text-2/Packages/User/alloy_component-2.0.x.sublime-build",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/build/aui-palette/assets/skins/sam/aui-palette.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-tree/meta/aui-tree.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/build/aui-base-core/aui-base-core-coverage.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-modal/meta/aui-modal.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-modal/docs/index.mustache",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-modal/docs/component.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-modal/js/aui-modal.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/assets/skins/sam/aui-color-picker-grid-plugin-skin.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-modal/build.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/build/aui-palette/aui-palette.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/build/aui-color-picker/aui-color-picker.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-audio/js/aui-audio.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-button/js/aui-button-core.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-collection/build.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-collection/meta/aui-collection.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-color-picker-grid-plugin.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/build.properties",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-color-picker.js",
+		"/home/iliyan/Desktop/from_nate.txt",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/build.aui-color-picker-base.properties",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/char-counter/index.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-form-validator/js/aui-form-validator.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/build/aui/aui.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-char-counter/js/aui-char-counter.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/README.md",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-base/js/aui-loader.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/meta/aui-component.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-form-builder/meta/aui-form-builder.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/HISTORY.md",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/README.md",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-form-builder/js/aui-form-builder-base.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-color-picker/js/aui-color-picker-base.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-autocomplete-base.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/build.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/ace-editor/autocomplete_freemarker.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/ace-editor/autocomplete_velocity.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/scripts/build.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/scripts/postbuild.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-autocomplete-templateprocessor.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-autocomplete-velocity.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-base/js/aui-base.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-autocomplete-freemarker.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-search/tests/unit/js/tests.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/tests/unit/js/tests.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/tests/unit/index.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-search/tests/unit/index.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-search/js/aui-search-ternary-search-tree.js",
+		"/home/iliyan/.config/sublime-text-2/Packages/Default/Preferences.sublime-settings",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/alloy-2.0.x.sublime-project",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/js/aui-ace-editor.js",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/ace-editor/index.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/demos/ace-editor/autocomplete.html",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/assets/aui-ace-autocomplete-list-core.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-ace-editor/assets/skins/sam/aui-ace-autocomplete-list-skin.css",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-carousel/meta/aui-carousel.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-button/meta/aui-button.json",
+		"/home/iliyan/projects/liferay/alloy-2.0.x/src/aui-button/build.json",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/layouts_admin/look_and_feel_themes.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/document_library/edit_file_entry.jsp",
+		"/home/iliyan/projects/liferay/alloy/demos/form-validator/index.html",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/form_navigator.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-form-validator/aui-form-validator.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/search/facets/modified.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-form-validator/aui-form-validator-debug.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/asset_categories_selector.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/aui/translation_manager/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/dynamic_data_lists/edit_record.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/events.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/dockbar.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/editor/ckeditor.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/asset_category_admin/js/main.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/social_activity/js/main.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/liferay.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/ui/input_localized/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/asset_tags_selector.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/ui/asset_categories_selector/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/common/themes/top_js.jspf",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete-freemarker.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-search-ternary-search-tree/aui-search-ternary-search-tree.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template_display.jspf",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-autocomplete/aui-autocomplete.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-textboxlist/aui-textboxlist.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/ui/categorization_filter/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/util.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/third-party/build/aui-ace-autocomplete/aui-ace-autocomplete.js",
+		"/home/iliyan/projects/liferay/portal/portal-impl/src/portal-ext.properties",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/ui/discussion/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree/aui-tree-node.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree/aui-tree-data.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/asset_category_admin/view_category.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/asset_category_admin/view.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/util_window.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/layout_exporter.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/app_view_folders.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-dialog/aui-dialog-debug.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree/aui-tree-view.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree/aui-tree-paginator.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/liferay/progress.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/taglib/ui/progress/page.jsp",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/admin/server.jspf",
+		"/home/iliyan/Desktop/test.html",
+		"/home/iliyan/projects/liferay/portal/portal-service/src/com/liferay/portal/kernel/util/HtmlUtil.java",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree/aui-tree-io.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-paginator/aui-paginator.js",
+		"/home/iliyan/projects/liferay/portal/portal-web/build.xml",
+		"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-resize-iframe/aui-resize-iframe.js",
+		"/home/iliyan/projects/yui/yui3/build/loader/loader.js"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"*.js",
+			"*",
+			"*.js*",
+			"*.js",
+			"*.js*",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/asset_category_Admin",
+			"*.js*",
+			"*.js",
+			"*.js*",
+			"*.js",
+			"*.css*",
+			"*.js*",
+			"*.jsp",
+			"*.js*",
+			"*.css",
+			"*.jsp",
+			"*.js*",
+			"*.js",
+			"",
+			"*.jsp*",
+			"*.js*",
+			"*",
+			"*.css",
+			"*",
+			"*.js*",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/document_library",
+			"*.js*",
+			"*.js",
+			"*",
+			"*.js*",
+			"",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/document_library",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/document_library;*.jsp",
+			"*.jsp*",
+			"*.sjp&",
+			"*",
+			"*.js*",
+			"*.jsp*",
+			"*.jsp",
+			"*.java",
+			"*.jsp*",
+			"*.jsp",
+			"*.css*",
+			"*.js*",
+			"*.css",
+			"*.js*",
+			"*.css*",
+			"*.js*",
+			"*.j*",
+			"*.js*",
+			"*.jsp",
+			"*.js*",
+			"*.jsp",
+			"*",
+			"*.js*",
+			"*",
+			"*.js",
+			"*.xml",
+			"*.tld",
+			"*.js",
+			"*",
+			"*.jsp*",
+			"*.css",
+			"",
+			"/home/iliyan/projects/liferay/portal,/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/dynamic_data_mapping",
+			"*.js*",
+			"*.jsp",
+			"*",
+			"*.js*",
+			"*.jsp",
+			"*.java",
+			"*.js*",
+			"*.js",
+			"*.java",
+			"*.jsp",
+			"*.java",
+			"*.js",
+			"*",
+			"*.j*",
+			"*.js*",
+			"*.java",
+			"*",
+			"*.js*",
+			"*.j*",
+			"*.ja*",
+			"*.js*",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/site_map",
+			"<project>,",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/aui/aui-tree",
+			"",
+			"/home/iliyan/projects/liferay/portal/portal-web/docroot/html/js/editor/ckeditor",
+			"*.js*",
+			"*.css*",
+			"*.js*",
+			"*.html",
+			"*.js",
+			"*.js*",
+			"*.js",
+			"*",
+			"*.",
+			"*.js*",
+			"*",
+			"*.js*",
+			"*.java",
+			"*.java,/home/iliyan/projects/liferay/portal/portal-web/docroot/html/portlet/asset_tag_admin",
+			"*",
+			"*.java",
+			"*.js*",
+			"*.js",
+			"*.jsp",
+			"*.js*",
+			"*.js",
+			"*.jsp",
+			"*",
+			"*.js",
+			"*",
+			"*.css*",
+			"*.js*",
+			"*",
+			"*.jsp",
+			"*",
+			"*.css",
+			"*.js",
+			"*",
+			"*.js*",
+			"*",
+			"*.jsp",
+			"*"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"console",
+			"_onAlphaChange",
+			"instance._hsContainerXY",
+			"_hsContainerXY",
+			"aui-hsva-label-value-hsv-container",
+			"controls",
+			"aui-hsva-result-view",
+			"_createAlphaSlider",
+			"_onAlphaChange",
+			"_afterPaletteDragStart",
+			"_setHSContainerXY",
+			"instance._hsContainerXY = ",
+			"_setHSContainerXY",
+			"_hsContainerXY =",
+			"_hsContainerXY",
+			"render",
+			"_updateViewByHEX",
+			"yui",
+			"_getHexValue",
+			"yui",
+			"hex",
+			"_afterInputChange",
+			"'controls",
+			"STR_EMPTY",
+			"''",
+			".aui-hsva-label-value-hex",
+			"controls",
+			"aui-hsva-label-value-hex-container",
+			"className",
+			"CSS_CONTAINER_CONTROLS",
+			"'renderControls'",
+			"TPL_CONTAINER",
+			"CSS_CONTAINER",
+			"TPL_CONTAINER",
+			"_renderHexNode",
+			"_renderFields",
+			"_renderField",
+			"instance._hexContainer",
+			"_renderHexContainer",
+			"labelValueHexContainer",
+			"_renderFields",
+			"_renderResultView",
+			"_renderFields",
+			"renderContr",
+			"rendercon",
+			"instance._setFieldValue",
+			"newValue",
+			"event.newVal",
+			"setfieldvalue",
+			"_renderViewContainer",
+			"_renderContainer",
+			"instance._fieldsErrors",
+			"_markFieldsValid",
+			"_onValueChange",
+			"'valueChange'",
+			"_onAlphaChange",
+			"_afterHSThumbChange",
+			"after",
+			"_markFieldsValid",
+			"mark",
+			"_fieldsErrors",
+			"A.each(",
+			"fieldserr",
+			"maxlength",
+			"data-type",
+			"instance._fieldsErrors",
+			"caclicatex",
+			"after",
+			"resultView",
+			"'#' +",
+			"hexColor",
+			"alphaHex",
+			"render",
+			"100 - instance._alphaSlider.get('value');",
+			"alphaslider",
+			"_afterHSThumbChange",
+			"calculate",
+			"_afterHSThumbChange",
+			"calculatehue",
+			"var value =",
+			"var value - ",
+			"var alpha = instance._getFieldValue(instance._aContainer);",
+			"_afterHSThumbChange",
+			"sub",
+			"toHSVA",
+			"_updateViewByHEX",
+			"instance._setFieldValue(instance._hexContainer",
+			"fromArray",
+			"_updateViewByValues",
+			"alphach",
+			"valuechange",
+			"instance._resultView.setStyle('backgroundColor', ",
+			"var rgbColorArray = AColor.toArray(rgbColor);",
+			"instance._resultView.setStyle('backgroundColor'",
+			"instance._resultView",
+			"_renderResultView",
+			" var hexColor = AColor.toHex(rgbColor);",
+			"_getXYFromHueSaturation",
+			"_calculateY",
+			"saturation",
+			"_getXYFromHueSaturation",
+			"_calculateY",
+			"_updateViewByValues",
+			"onalphach",
+			"onvaluecha",
+			"src !==",
+			"_onValueChange",
+			"valuecha",
+			"_afterInputChange",
+			"_afterValueChange",
+			"valuechange",
+			"AWidget",
+			"slider",
+			"_updateViewByValues",
+			"_updateViewByColor",
+			"instance._colorThumb",
+			"_updatePaletteThumbPosition",
+			"instance._colorThumb",
+			"_getXYFromHueSaturation",
+			"_calculateY",
+			"saturation",
+			"_getXYFromHueSaturation",
+			"_calculateY",
+			"calculatehue",
+			"_calculateHue",
+			"calculate",
+			"else",
+			"control-group"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"STR_EMPTY",
+			"'controls'",
+			"255 - instance._alphaSlider.get('value');",
+			"aui-control-group",
+			"NAME",
+			"'",
+			"aui-button-comment",
+			"",
+			"instance.resetDirty();",
+			"A.getBody()",
+			"ID",
+			"]]",
+			"[CDATA[",
+			"if (",
+			"this._createShiftArr",
+			"content",
+			"",
+			"ALIGN",
+			"VISIBLE",
+			"NOTICE_INSTANCE",
+			"SELECTOR_NOTICE_INLINE_EDIT",
+			"EDITOR_NAME",
+			"BODY_SCROLL_LISTENER",
+			"CSS_NOTICE_INLINE_EDIT_ERROR",
+			"SELECTOR_NOTICE_INLINE_EDIT_TEXT",
+			"CSS_NOTICE_INLINE_EDIT_TEXT",
+			"BOUNDING_BOX",
+			"EDITOR",
+			"asset.categories.selector.max.entries",
+			"ASSET_CATEGORIES_SELECTOR_MAX_ENTRIES",
+			"\n\nASSET_CATEGORIES_SELECTOR_MAX_ENTRIES",
+			"",
+			"\\",
+			"'",
+			"ckeditor-dev-47aec1a.zip",
+			"http://twitter.github.com/bootstrap/",
+			"DISPLAY_STYLE_TOOLBAR",
+			"STR_DISPLAY_STYLE",
+			"'",
+			"STR_RIGHT",
+			"instance",
+			"appViewMove",
+			"AppViewMove",
+			"instance._appViewPaginator.set('paginatorData', paginatorData);",
+			"STR_SELECTED_FOLDER",
+			"app-view-move",
+			"displayStyleClass",
+			"STR_DISPLAY_STYLE",
+			"PARAM_DISPLAY_STYLE",
+			"STR_STRUTS_ACTION",
+			"PARAM_STRUTS_ACTION",
+			"STR_NODE",
+			"unicode=\"<%= true %>\"",
+			":",
+			"STR_FORM",
+			"STR_ACTIONS",
+			"selectNavigation",
+			"CSS",
+			"pageNavigation",
+			"AppViewPageNavigation",
+			"AppViewPagingNavigation",
+			"app-view-page-navigation",
+			"AppViewPagingNavigation",
+			"AppViewFoldersNavigation",
+			"AppViewSelectNavigation",
+			"app-view-select-navigation",
+			"liferayappviewfoldersnavigation",
+			"liferayappviewfoldernavigation",
+			"app-view-folders-navigation",
+			"PagingNavigation",
+			"pagingNavigation",
+			"app-view-paging",
+			"app-view-paging-navigation",
+			"app-view-dd-navigation",
+			"-",
+			"-app-view-folder-navigation",
+			"app-view-folder-navigation",
+			"app-view-dd-navigation",
+			"'",
+			"state-convert",
+			"stateconvert",
+			"StateConvertIOBase",
+			"convert",
+			"Convert",
+			"\\\"",
+			".text",
+			"instance._eventHandles.push(",
+			"categorySelector",
+			"category-item",
+			"_onCategorySearchClick",
+			"TPL_CATEGORY_ITEM",
+			"_createCategoryTree",
+			"_createCategoryFlatView",
+			"_createCategoryView",
+			"categoriesContainer",
+			"categories-container",
+			"_categoriesContainer",
+			"MODE_RENDER_FLAT",
+			"_buildCategoryTreeView",
+			"STR_EMPTY",
+			"vocabularyList",
+			"_vocabularyListSelector",
+			"_showCateroryMessage",
+			"_buildTreeview",
+			"STR_PARENT_CATEGORY_ID",
+			"_filterCategories",
+			"progressId",
+			"ProcessProgress",
+			"UploadProgress",
+			"_findRootCategoryId",
+			"rootCategory",
+			"STR_PORTLET_MSG_PROGRESS",
+			"'",
+			"CLOSE",
+			"value",
+			"Dialog",
+			"dialog",
+			"oialog",
+			"Dialog",
+			"dialog",
+			"CONSTRAIN",
+			"Drag",
+			"drag",
+			"_validateDragConfig",
+			"AUTO",
+			"A."
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "src/aui-color-picker/js/aui-hsva-palette.js",
+					"settings":
+					{
+						"buffer_size": 31222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8670,
+								8670
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3785.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/aui-color-picker/assets/aui-hsva-palette-core.css",
+					"settings":
+					{
+						"buffer_size": 2757,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2083,
+								2083
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1592.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/aui-color-picker/assets/skins/sam/aui-hsva-palette-skin.css",
+					"settings":
+					{
+						"buffer_size": 1036,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								516,
+								516
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 306.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "demos/color-picker/index.html",
+					"settings":
+					{
+						"buffer_size": 1068,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1026,
+								1026
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 408.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/aui-color-picker/assets/skins/sam/aui-color-palette-skin.css",
+					"settings":
+					{
+						"buffer_size": 158,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								158,
+								158
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/CSS/CSS.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/aui-color-picker/js/aui-color-palette.js",
+					"settings":
+					{
+						"buffer_size": 1385,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								800,
+								800
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/aui-color-picker/js/aui-palette.js",
+					"settings":
+					{
+						"buffer_size": 4769,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4263,
+								4263
+							]
+						],
+						"settings":
+						{
+							"annotations":
+							[
+								"TODO",
+								"README",
+								"FIXME"
+							],
+							"csslint_options":
+							{
+								"adjoining-classes": "warning",
+								"box-model": true,
+								"box-sizing": "warning",
+								"compatible-vendor-prefixes": "warning",
+								"display-property-grouping": true,
+								"duplicate-background-images": "warning",
+								"duplicate-properties": true,
+								"empty-rules": true,
+								"errors": true,
+								"fallback-colors": "warning",
+								"floats": "warning",
+								"font-faces": "warning",
+								"font-sizes": "warning",
+								"gradients": "warning",
+								"ids": "warning",
+								"import": "warning",
+								"important": "warning",
+								"known-properties": true,
+								"outline-none": "warning",
+								"overqualified-elements": "warning",
+								"qualified-headings": "warning",
+								"regex-selectors": "warning",
+								"rules-count": "warning",
+								"shorthand": "warning",
+								"star-property-hack": "warning",
+								"text-indent": "warning",
+								"underscore-property-hack": "warning",
+								"unique-headings": "warning",
+								"universal-selector": "warning",
+								"vendor-prefix": true,
+								"zero-units": "warning"
+							},
+							"gjslint_ignore":
+							[
+								110
+							],
+							"gjslint_options":
+							[
+							],
+							"javascript_linter": "jshint",
+							"jshint_options":
+							{
+								"browser": true,
+								"curly": true,
+								"evil": false,
+								"forin": true,
+								"global": "A,AUI,Liferay",
+								"regexdash": true,
+								"sub": true,
+								"trailing": true,
+								"undef": true,
+								"wsh": true
+							},
+							"pep8": true,
+							"pep8_ignore":
+							[
+								"E501"
+							],
+							"perl_linter": "perlcritic",
+							"pyflakes_ignore":
+							[
+							],
+							"pyflakes_ignore_import_*": true,
+							"sublimelinter": true,
+							"sublimelinter_delay": 2,
+							"sublimelinter_disable":
+							[
+							],
+							"sublimelinter_executable_map":
+							{
+							},
+							"sublimelinter_fill_outlines": false,
+							"sublimelinter_gutter_marks": false,
+							"sublimelinter_mark_style": "outline",
+							"sublimelinter_notes": false,
+							"sublimelinter_objj_check_ascii": false,
+							"sublimelinter_popup_errors_on_save": false,
+							"sublimelinter_syntax_map":
+							{
+								"C++": "c",
+								"Python Django": "python",
+								"Ruby on Rails": "ruby"
+							},
+							"sublimelinter_wrap_find": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2499.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 260.0
+	},
+	"output.git":
+	{
+		"height": 118.0
+	},
+	"output.gjslint_result_view":
+	{
+		"height": 124.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"treeview",
+				"src/aui-tree/js/aui-tree-view.js"
+			],
+			[
+				"aui-inpu",
+				"src/aui-event/js/aui-event-input.js"
+			],
+			[
+				"color/inde",
+				"demos/color-picker/index.html"
+			],
+			[
+				"aui-form.js",
+				"src/aui-form-validator/js/aui-form-validator.js"
+			],
+			[
+				"ace-autoc",
+				"src/aui-ace-editor/js/aui-ace-autocomplete-base.js"
+			],
+			[
+				"aui-terna",
+				"src/aui-search/js/aui-search-ternary-search-tree.js"
+			],
+			[
+				"autocomplete-base",
+				"src/aui-ace-editor/js/aui-ace-autocomplete-base.js"
+			],
+			[
+				"ternary",
+				"src/aui-search/js/aui-search-ternary-search-tree.js"
+			],
+			[
+				"look_and_feel_themes.jsp",
+				"portal-web/docroot/html/portlet/layouts_admin/look_and_feel_themes.jsp"
+			],
+			[
+				"aui-formval",
+				"portal-web/docroot/html/js/aui/aui-form-validator/aui-form-validator.js"
+			],
+			[
+				"edit_file_entry.jsp",
+				"portal-web/docroot/html/portlet/document_library/edit_file_entry.jsp"
+			],
+			[
+				"form-val",
+				"portal-web/docroot/html/js/aui/aui-form-validator/aui-form-validator.js"
+			],
+			[
+				"formvalidator",
+				"portal-web/docroot/html/js/aui/aui-form-validator/aui-form-validator.js"
+			],
+			[
+				"facets/modified.",
+				"portal-web/docroot/html/portlet/search/facets/modified.jsp"
+			],
+			[
+				"asset_ta",
+				"portal-web/docroot/html/js/liferay/asset_tags_selector.js"
+			],
+			[
+				"asset_categories_selector.js",
+				"portal-web/docroot/html/js/liferay/asset_categories_selector.js"
+			],
+			[
+				"liferay/form_navigator.js",
+				"portal-web/docroot/html/js/liferay/form_navigator.js"
+			],
+			[
+				"top_js",
+				"portal-web/docroot/html/common/themes/top_js.jspf"
+			],
+			[
+				"main.js",
+				"portal-web/docroot/html/portlet/asset_category_admin/js/main.js"
+			],
+			[
+				"-freemarker.",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete-freemarker.js"
+			],
+			[
+				"aui-freema",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete-freemarker.js"
+			],
+			[
+				"aui-search-te",
+				"portal-web/docroot/html/js/aui/aui-search-ternary-search-tree/aui-search-ternary-search-tree.js"
+			],
+			[
+				"aui-acautocomplete",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete.js"
+			],
+			[
+				"aui-autocom",
+				"portal-web/docroot/html/js/aui/aui-autocomplete/aui-autocomplete.js"
+			],
+			[
+				"edit_template",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template_display.jspf"
+			],
+			[
+				"textbox",
+				"portal-web/docroot/html/js/aui/aui-textboxlist/aui-textboxlist.js"
+			],
+			[
+				"asset_cate",
+				"portal-web/docroot/html/js/liferay/asset_categories_selector.js"
+			],
+			[
+				"form_navigator.js",
+				"portal-web/docroot/html/js/liferay/form_navigator.js"
+			],
+			[
+				"portal-ext",
+				"portal-impl/src/portal-ext.properties"
+			],
+			[
+				"util.js",
+				"portal-web/docroot/html/js/liferay/util.js"
+			],
+			[
+				"taglib/ui/discussion/page.jsp",
+				"portal-web/docroot/html/taglib/ui/discussion/page.jsp"
+			],
+			[
+				"aui-tree-data",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-data.js"
+			],
+			[
+				"aui-tree-node",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-node.js"
+			],
+			[
+				"htmlutil",
+				"portal-service/src/com/liferay/portal/kernel/util/HtmlUtil.java"
+			],
+			[
+				"paginator",
+				"portal-web/docroot/html/js/aui/aui-paginator/aui-paginator.js"
+			],
+			[
+				"aui-tree",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-view.js"
+			],
+			[
+				"ui/discussion/page.",
+				"portal-web/docroot/html/taglib/ui/discussion/page.jsp"
+			],
+			[
+				"aui-iframe-resize.js",
+				"portal-web/docroot/html/js/aui/aui-resize-iframe/aui-resize-iframe.js"
+			],
+			[
+				"aui-treev",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-view.js"
+			],
+			[
+				"tree-paginator",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-paginator.js"
+			],
+			[
+				"aui-treeview",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-view.js"
+			],
+			[
+				"html/portlet/layouts_admin/look_and_feel_themes.jsp",
+				"portal-web/docroot/html/portlet/layouts_admin/look_and_feel_themes.jsp"
+			],
+			[
+				"discussion/page",
+				"portal-web/docroot/html/taglib/ui/discussion/page.jsp"
+			],
+			[
+				"bbcode.js",
+				"portal-web/docroot/html/js/editor/ckeditor/plugins/bbcode/bbcode_data_processor.js"
+			],
+			[
+				"htmlbbcodetranslatorimpl",
+				"portal-impl/src/com/liferay/portal/parsers/bbcode/HtmlBBCodeTranslatorImpl.java"
+			],
+			[
+				"portlet.js",
+				"portal-web/docroot/html/js/liferay/portlet.js"
+			],
+			[
+				"poller.js",
+				"portal-web/docroot/html/js/liferay/poller.js"
+			],
+			[
+				"chat.js",
+				"portal-web/docroot/html/js/aui/aui-chart/aui-chart.js"
+			],
+			[
+				"ckconfig.jsp",
+				"portal-web/docroot/html/js/editor/ckeditor/ckconfig.jsp"
+			],
+			[
+				"edit_template_dis",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template_display.jspf"
+			],
+			[
+				"users_admin/se",
+				"portal-web/docroot/html/portlet/users_admin/select_organization.jsp"
+			],
+			[
+				"xsltempla",
+				"portal-impl/src/com/liferay/portal/xsl/XSLTemplate.java"
+			],
+			[
+				"aui-ace-",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete.js"
+			],
+			[
+				"ckeditor_di/main.js",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/main.js"
+			],
+			[
+				"facets/asset_tags.jsp",
+				"portal-web/docroot/html/portlet/search/facets/asset_tags.jsp"
+			],
+			[
+				"aui-ace-autoco",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete.js"
+			],
+			[
+				"aui-ace",
+				"portal-web/docroot/html/js/aui/aui-ace-autocomplete/aui-ace-autocomplete.js"
+			],
+			[
+				"ckconfig",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/ckconfig.jsp"
+			],
+			[
+				"ajaxsave/",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/plugins/ajaxsave/plugin.js"
+			],
+			[
+				"ckedit/main.js",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/main.js"
+			],
+			[
+				"inline_editor_base",
+				"portal-web/docroot/html/js/liferay/inline_editor_base.js"
+			],
+			[
+				"users_admin/orgi/deta",
+				"portal-web/docroot/html/portlet/users_admin/organization/details.jsp"
+			],
+			[
+				"recent_blo/confi",
+				"portal-web/docroot/html/portlet/recent_bloggers/configuration.jsp"
+			],
+			[
+				"blogs_aggrega/co",
+				"portal-web/docroot/html/portlet/blogs_aggregator/configuration.jsp"
+			],
+			[
+				"app_view.js",
+				"portal-web/docroot/html/js/liferay/app_view_folders.js"
+			],
+			[
+				"util_window",
+				"portal-web/docroot/html/js/liferay/util_window.js"
+			],
+			[
+				"/html/portlet/layouts_admin/edit_layout_set.jsp",
+				"portal-web/docroot/html/portlet/layouts_admin/edit_layout_set.jsp"
+			],
+			[
+				"sass",
+				"portal-impl/src/com/liferay/portal/tools/SassToCssBuilder.java"
+			],
+			[
+				"portal-ext.",
+				"portal-impl/src/portal-ext.properties"
+			],
+			[
+				"user_admin/organization/de",
+				"portal-web/docroot/html/portlet/users_admin/organization/details.jsp"
+			],
+			[
+				"organization/details",
+				"portal-web/docroot/html/portlet/directory/organization/details.jsp"
+			],
+			[
+				"util-taglib/src/com/liferay/taglib/ui/searchformtag.java",
+				"util-taglib/src/com/liferay/taglib/ui/SearchFormTag.java"
+			],
+			[
+				"elect_organization.jsp",
+				"portal-web/docroot/html/portlet/users_admin/select_organization.jsp"
+			],
+			[
+				"/html/taglib/ui/toggle_area/start.jsp",
+				"portal-web/docroot/html/taglib/ui/toggle_area/start.jsp"
+			],
+			[
+				"/html/taglib/ui/toggle/page.jsp",
+				"portal-web/docroot/html/taglib/ui/toggle/page.jsp"
+			],
+			[
+				"toggle",
+				"util-taglib/src/com/liferay/taglib/ui/ToggleTag.java"
+			],
+			[
+				"portal-web/",
+				"portal-web/build.xml"
+			],
+			[
+				"creole_data",
+				"portal-web/docroot/html/js/editor/ckeditor/plugins/creole/creole_data_processor.js"
+			],
+			[
+				"creole_date",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/plugins/creole/creole_data_processor.js"
+			],
+			[
+				"edit_cat",
+				"portal-web/docroot/html/portlet/asset_category_admin/edit_category.jsp"
+			],
+			[
+				"aui-treepaginator",
+				"portal-web/docroot/html/js/aui/aui-tree/aui-tree-paginator.js"
+			],
+			[
+				"edit_catego",
+				"portal-web/docroot/html/portlet/asset_category_admin/edit_category.jsp"
+			],
+			[
+				"asset_tag_selector",
+				"portal-web/docroot/html/js/liferay/asset_tags_selector.js"
+			],
+			[
+				"asset_tags_selector.js",
+				"portal-web/docroot/html/js/liferay/asset_tags_selector.js"
+			],
+			[
+				"portlet.css",
+				"portal-web/docroot/html/themes/_styled/css/portlet.css"
+			],
+			[
+				"/portlet/blogs/view_entry_content.jsp",
+				"portal-web/docroot/html/portlet/blogs/view_entry_content.jsp"
+			],
+			[
+				"asset_category_admin/js/main.j",
+				"portal-web/docroot/html/portlet/asset_category_admin/js/main.js"
+			],
+			[
+				"liferay/inline_editor_base.j",
+				"portal-web/docroot/html/js/liferay/inline_editor_base.js"
+			],
+			[
+				"ckeditor_diffs/main.js",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/main.js"
+			],
+			[
+				"livesea",
+				"portal-web/docroot/html/js/aui/aui-live-search/aui-live-search.js"
+			],
+			[
+				"creole.js",
+				"portal-web/docroot/html/js/editor/ckeditor/ckconfig_creole.jsp"
+			],
+			[
+				"creole_data_",
+				"portal-web/docroot/html/js/editor/ckeditor/plugins/creole/creole_data_processor.js"
+			],
+			[
+				".ftl",
+				"portal-impl/classes/com/liferay/portlet/dynamicdatalists/dependencies/error.ftl"
+			],
+			[
+				"creole_data_processor.js",
+				"portal-web/docroot/html/js/editor/ckeditor/plugins/creole/creole_data_processor.js"
+			],
+			[
+				"modules.js",
+				"portal-web/docroot/html/js/liferay/modules.js"
+			],
+			[
+				"ckeditor",
+				"portal-web/docroot/html/js/editor/ckeditor.jsp"
+			],
+			[
+				"ckeditor.jsp",
+				"portal-web/docroot/html/js/editor/ckeditor.jsp"
+			],
+			[
+				"-ext.prop",
+				"portal-impl/src/portal-ext.properties"
+			],
+			[
+				"ckcon",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/ckconfig.jsp"
+			],
+			[
+				"assets/ckeditor.css",
+				"portal-web/docroot/html/js/editor/ckeditor/assets/ckeditor.css"
+			],
+			[
+				"ckeconfig.jsp",
+				"portal-web/docroot/html/js/editor/ckeditor/ckconfig.jsp"
+			],
+			[
+				"portal-web/docroot/html/portal/render_portlet.jsp",
+				"portal-web/docroot/html/portal/render_portlet.jsp"
+			],
+			[
+				"view_entry_content.jsp",
+				"portal-web/docroot/html/portlet/blogs/view_entry_content.jsp"
+			],
+			[
+				"render_portlet.",
+				"portal-web/docroot/html/portal/render_portlet.jsp"
+			],
+			[
+				"editarticleac",
+				"portal-impl/src/com/liferay/portlet/journal/action/EditArticleAction.java"
+			],
+			[
+				"ckeditor_diffs/ma",
+				"portal-web/docroot/html/js/editor/ckeditor_diffs/main.js"
+			],
+			[
+				"render_portlet.jsp",
+				"portal-web/docroot/html/portal/render_portlet.jsp"
+			],
+			[
+				"editarticleaction",
+				"portal-impl/src/com/liferay/portlet/journal/action/EditArticleAction.java"
+			],
+			[
+				"portal-web/build.xml",
+				"portal-web/build.xml"
+			],
+			[
+				"asset_categorselect.js",
+				"portal-web/docroot/html/js/liferay/asset_categories_selector.js"
+			],
+			[
+				"language.pro",
+				"portal-impl/src/content/Language.properties"
+			],
+			[
+				"progress",
+				"portal-web/docroot/html/js/liferay/progress.js"
+			],
+			[
+				"edit_category.jsp",
+				"portal-web/docroot/html/portlet/asset_category_admin/edit_category.jsp"
+			],
+			[
+				"portal.properties",
+				"portal-impl/src/portal.properties"
+			],
+			[
+				"app_view.css",
+				"portal-web/docroot/html/css/taglib/app_view_entry.css"
+			],
+			[
+				"app_view_mo",
+				"portal-web/docroot/html/js/liferay/app_view_move.js"
+			],
+			[
+				"language.properties",
+				"portal-impl/src/content/Language.properties"
+			],
+			[
+				"edit_cate",
+				"portal-web/docroot/html/portlet/asset_category_admin/edit_category.jsp"
+			],
+			[
+				"app_view_sele",
+				"portal-web/docroot/html/js/liferay/app_view_select.js"
+			],
+			[
+				"session.js",
+				"portal-web/docroot/html/js/liferay/session.js"
+			],
+			[
+				"portal-ext.propert",
+				"portal-impl/src/portal-ext.properties"
+			],
+			[
+				"main_sear",
+				"portal-web/docroot/html/portlet/search/main_search_document_form.jsp"
+			],
+			[
+				"portal-ext.pro",
+				"portal-impl/src/portal-ext.properties"
+			],
+			[
+				"edit_template.",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template_form.jspf"
+			],
+			[
+				"edit_template_fo",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template_form.jspf"
+			],
+			[
+				"/html/portlet/dynamic_data_mapping/edit_template.jsp",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/edit_template.jsp"
+			],
+			[
+				"edittemplate",
+				"portal-impl/src/com/liferay/portlet/dynamicdatamapping/action/EditTemplateAction.java"
+			],
+			[
+				"form_builder",
+				"portal-web/docroot/html/portlet/dynamic_data_mapping/form_builder.jspf"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 262.0,
+	"status_bar_visible": true
+}

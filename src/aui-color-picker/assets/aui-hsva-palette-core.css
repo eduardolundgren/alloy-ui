@@ -145,6 +145,10 @@
 }
 
 .aui-hsva-label-value-container .aui-hsva-label-value-hex .aui-hsva-value {
+	width: 50px;
+}
+
+.aui-hsva-container-alpha .aui-hsva-label-value-container .aui-hsva-label-value-hex .aui-hsva-value {
 	width: 70px;
 }
 
