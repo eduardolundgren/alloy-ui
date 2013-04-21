@@ -27,10 +27,9 @@ var Lang = A.Lang,
     TPL_ALPHA_SLIDER_CONTAINER =
         '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
 
-    TPL_ALPHA_THUMB = '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>';
+    TPL_ALPHA_THUMB = '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
 
-
-var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
+HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     initializer: function() {
         var instance = this;
 
@@ -42,15 +41,11 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _afterHexInputChange: function(event) {
-        var instance = this;
-
         // YUI Code toHSVA from hex + alpha is broken, will remove the alpha value
-
-        var hexColor = event.hexColor;
-
-        var alpha = hexColor.substr(6, 2);
-
-        var alphaDec = parseInt(alpha, 16);
+        var instance = this,
+            hexColor = event.hexColor,
+            alpha = hexColor.substr(6, 2),
+            alphaDec = parseInt(alpha, 16);
 
         instance._alphaSlider.set(
             'value',
@@ -76,9 +71,8 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _afterHSVAInputChange: function(event) {
-        var instance = this;
-
-        var alpha = instance._getFieldValue(instance._aContainer);
+        var instance = this,
+            alpha = instance._getFieldValue(instance._aContainer);
 
         instance._alphaSlider.set(
             'value',
@@ -100,32 +94,34 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _calculateRGBArray: function(r, g, b) {
-        var instance = this;
+        var instance = this,
+            alpha;
 
-        var alpha = 255 - instance._alphaSlider.get('value');
+        alpha = 255 - instance._alphaSlider.get('value');
 
         return AColor.fromArray([r, g, b, alpha], 'RGBA');
     },
 
     _calculateRGBColor: function(hue, saturation, value) {
-        var instance = this;
-
-        var alpha = 255 - instance._alphaSlider.get('value');
+        var instance = this,
+            alpha = 255 - instance._alphaSlider.get('value');
 
         return instance._calculateRGBA(hue, saturation, value, alpha);
     },
 
     _calculateRGBA: function(hue, saturation, value, alpha) {
-        var rgbColor = 'rgb(255, 0, 0, 0)';
+        var rgbColor = 'rgb(255, 0, 0, 0)',
+            hsvColor,
+            tmp;
 
         if (hue !== 360 || parseInt(saturation, 10) !== 100 || parseInt(value, 10) !== 100) {
-            var hsvColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
+            hsvColor = 'hsva(' + (hue === 360 ? 359 : hue) + ', ' + saturation + '%, ' + value + '%, ' + alpha + ')';
 
             rgbColor = AColor.toRGBA(hsvColor);
 
             // fix YUI bug on getting alpha - if it is 0, they return 1
             if (parseInt(alpha, 10) === 0) {
-                var tmp = AColor.toArray(rgbColor);
+                tmp = AColor.toArray(rgbColor);
 
                 tmp[3] = '0';
 
@@ -137,9 +133,10 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _getContainerClassName: function() {
-        var instance = this;
+        var instance = this,
+            className;
 
-        var className = A.HSVAPalette.superclass._getContainerClassName.call(instance);
+        className = A.HSVAPalette.superclass._getContainerClassName.call(instance);
 
         className += SPACE + CSS_CONTAINER_ALPHA;
 
@@ -148,13 +145,16 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
 
     _getHexValue: function(hexColor, rgbColorArray) {
         // YUI doesn't have toRGBA method, we have to add alpha explicitly
-        var alpha = parseInt(rgbColorArray[3], 10).toString(16);
+        var alpha,
+            result;
+
+        alpha = parseInt(rgbColorArray[3], 10).toString(16);
 
         if (alpha.length === 1) {
             alpha = '0' + alpha;
         }
 
-        var result = hexColor + alpha;
+        result = hexColor + alpha;
 
         return result.substring(1);
     },
@@ -166,11 +166,14 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _createAlphaSlider: function() {
-        var instance = this;
+        var instance = this,
+            alphaThumbHeight,
+            contentBox,
+            slider;
 
-        var contentBox = instance.get('contentBox');
+        contentBox = instance.get('contentBox'),
 
-        var slider = new A.Slider(
+        slider = new A.Slider(
             {
                 axis: 'y',
                 min: 0,
@@ -183,7 +186,7 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
 
         slider.render(instance._alphaSliderContainer);
 
-        var alphaThumbHeight = contentBox.one(DOT + CSS_ALPHA_THUMB_IMAGE).get('offsetHeight');
+        alphaThumbHeight = contentBox.one(DOT + CSS_ALPHA_THUMB_IMAGE).get('offsetHeight');
 
         slider.set(
             'length',
@@ -232,25 +235,36 @@ var HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
     },
 
     _onAlphaChange: function(event) {
-        var instance = this;
+        var instance = this,
+            alpha,
+            thumbXY,
+            x,
+            y,
+            hue,
+            saturation,
+            value,
+            rgbColor,
+            rgbColorArray,
+            hexValue;
+
 
         if (event.src !== AWidget.UI_SRC) {
-            var alpha = event.newVal;
+            alpha = event.newVal;
 
             instance._resultView.setStyle('opacity', 1 - (alpha / 255));
 
-            var thumbXY = instance._colorThumb.getXY();
+            thumbXY = instance._colorThumb.getXY();
 
-            var x = (thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
-            var y = (thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
+            x = (thumbXY[0] - instance._hsContainerXY[0] + instance._colorThumbGutter);
+            y = (thumbXY[1] - instance._hsContainerXY[1] + instance._colorThumbGutter);
 
-            var hue = instance._calculateHue(x);
-            var saturation = instance._calculateSaturation(y);
-            var value = 100 - instance._valueSlider.get('value');
+            hue = instance._calculateHue(x);
+            saturation = instance._calculateSaturation(y);
+            value = 100 - instance._valueSlider.get('value');
 
-            var rgbColor = instance._calculateRGBA(hue, saturation, value, 255 - alpha);
-            var rgbColorArray = AColor.toArray(rgbColor);
-            var hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray);
+            rgbColor = instance._calculateRGBA(hue, saturation, value, 255 - alpha);
+            rgbColorArray = AColor.toArray(rgbColor);
+            hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray);
 
             instance._setFieldValue(instance._hexContainer, hexValue);
 

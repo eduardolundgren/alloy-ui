@@ -12,15 +12,14 @@ var AArray = A.Array,
 
     TPL_PALETTE_ITEM =
         '<div class="' + CSS_PALETTE_ITEM + '" data-color="{color}" data-index={index} style="background-color:{color}" title="{title}">' +
-        '</div>';
+        '</div>',
 
-var ColorPalette = A.Base.create(NAME, A.Widget, [
+ColorPalette = A.Base.create(NAME, A.Widget, [
     A.Palette
 ], {
     _getPaletteItemContent: function(items, itemIndex, rowIndex, columnIndex) {
-        var instance = this;
-
-        var item = items[itemIndex];
+        var instance = this,
+            item = items[itemIndex];
 
         return Lang.sub(
             TPL_PALETTE_ITEM,
@@ -36,10 +35,11 @@ var ColorPalette = A.Base.create(NAME, A.Widget, [
         var result = AArray.map(
             value,
             function(item, index) {
-                var tmp = item;
+                var tmp = item,
+                    color;
 
                 if (Lang.isString(item)) {
-                    var color = AColor.toHex(item);
+                    color = AColor.toHex(item);
 
                     tmp = {
                         name: color,

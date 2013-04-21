@@ -48,11 +48,13 @@ Palette.prototype = {
     },
 
     _bindUIPalette: function() {
-        var instance = this;
+        var instance = this,
+            bodyNode,
+            paletteItemSelector;
 
-        var bodyNode = instance.get('contentBox');
+        bodyNode = instance.get('contentBox');
 
-        var paletteItemSelector = DOT + CSS_PALETTE_ITEM;
+        paletteItemSelector = DOT + CSS_PALETTE_ITEM;
 
         bodyNode.delegate(EVENT_CLICK, instance._onItemClick, paletteItemSelector, instance);
 
@@ -85,18 +87,19 @@ Palette.prototype = {
     },
 
     _generateContent: function(items, itemsPerRow) {
-        var instance = this;
+        var instance = this,
+            i,
+            itemsLength,
+            j,
+            result = EMPTY,
+            rowContent,
+            rowIndex = 0;
 
-        var result = EMPTY;
 
-        var rowContent;
-
-        var rowIndex = 0;
-
-        for(var i = 0, itemsLength = items.length; i < itemsLength;) {
+        for(i = 0, itemsLength = items.length; i < itemsLength;) {
             rowContent = EMPTY;
 
-            for(var j = 0; j < itemsPerRow && i < itemsLength; j++, i++) {
+            for(j = 0; j < itemsPerRow && i < itemsLength; j++, i++) {
                 rowContent += Lang.sub(
                     TPL_PALETTE_ITEM_WRAPPER,
                     {
@@ -120,13 +123,15 @@ Palette.prototype = {
     },
 
     _renderItems: function() {
-        var instance = this;
+        var instance = this,
+            items,
+            itemsPerRow,
+            result,
+            width;
 
-        var width = instance.get(WIDTH);
+        width = instance.get(WIDTH);
 
-        var items = instance.get('data');
-
-        var itemsPerRow;
+        items = instance.get('data');
 
         if (width) {
             itemsPerRow = items.length;
@@ -135,7 +140,7 @@ Palette.prototype = {
             itemsPerRow = instance.get('cols');
         }
 
-        var result = instance._generateContent(items, itemsPerRow);
+        result = instance._generateContent(items, itemsPerRow);
 
         instance.get('contentBox').setHTML(result);
     },

@@ -19,7 +19,7 @@
 }
 
 .aui-hsv-value-slider-container, .aui-hsv-alpha-slider-container {
-	background-color: #ff0000;
+	background-color: #FF0000;
 	border: 1px solid #666;
 }
 
@@ -43,13 +43,13 @@
 }
 
 .aui-hsv-view-backdrop {
-	background-color: #fff;
+	background-color: #FFF;
 	background-image: url(sprite.png);
 	background-position: -315px 0;
 }
 
 .aui-hsv-result-view {
-	background-color: #ff0000;
+	background-color: #FF0000;
 	border: 1px solid #666;
 }
 
