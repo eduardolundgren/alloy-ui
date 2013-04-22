@@ -18,6 +18,7 @@ var Lang = A.Lang,
     CSS_PALETTE_ITEM_CONTAINER = getClassName('palette-item-container'),
     CSS_PALETTE_ITEMS_CONTAINER = getClassName('palette-items-container'),
     CSS_PALETTE_ITEM = getClassName('palette-item'),
+    CSS_PALETTE_ITEM_SELECTED = getClassName('palette-item-selected'),
     CSS_PALETTE_ITEM_HOVER = getClassName('palette-item-hover'),
 
     TPL_PALETTE_CONTAINER =
@@ -150,12 +151,37 @@ Palette.prototype = {
     },
 
     _onItemClick: function(event) {
-        var instance = this;
+        var instance = this,
+            index,
+            itemNode;
+
+        itemNode = event.currentTarget;
+
+        if (instance._selectedItem) {
+            instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
+        }
+
+        if (itemNode === instance._selectedItem) {
+            instance._selectedItem = null;
+
+            index = -1;
+        }
+        else {
+            index = parseInt(itemNode.getAttribute('data-index'), 10);
+
+            itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
+
+            instance._selectedItem = itemNode;
+        }
+
+        instance.set('selected', index);
 
         instance.fire(
             'select',
             {
-                item: event.currentTarget
+                item: itemNode,
+                index: index,
+                color: itemNode.getAttribute('data-color')
             }
         );
     },
@@ -194,6 +220,10 @@ Palette.ATTRS = {
             '#DBADFF',
             '#E1E1E1'
         ]
+    },
+
+    selected: {
+        validator: '_validateSelected'
     }
 };
 
