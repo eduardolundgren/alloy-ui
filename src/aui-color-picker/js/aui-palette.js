@@ -152,8 +152,10 @@ Palette.prototype = {
 
     _onItemClick: function(event) {
         var instance = this,
+            eventName,
             index,
-            itemNode;
+            itemNode,
+            selectedIndex;
 
         itemNode = event.currentTarget;
 
@@ -161,23 +163,29 @@ Palette.prototype = {
             instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
         }
 
+        index = parseInt(itemNode.getAttribute('data-index'), 10);
+
         if (itemNode === instance._selectedItem) {
             instance._selectedItem = null;
 
-            index = -1;
+            eventName = 'unselect';
+
+            selectedIndex = -1;
         }
         else {
-            index = parseInt(itemNode.getAttribute('data-index'), 10);
-
             itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
+
+            eventName = 'unselect';
+
+            selectedIndex = index;
 
             instance._selectedItem = itemNode;
         }
 
-        instance.set('selected', index);
+        instance.set('selected', selectedIndex);
 
         instance.fire(
-            'select',
+            eventName,
             {
                 item: itemNode,
                 index: index,
@@ -223,7 +231,7 @@ Palette.ATTRS = {
     },
 
     selected: {
-        validator: '_validateSelected'
+        validator: Lang.isNumber
     }
 };
 
