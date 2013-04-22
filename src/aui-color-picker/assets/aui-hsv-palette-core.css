@@ -1,158 +1,159 @@
-.aui-hsv-view-container {
-	height: 260px;
-	padding: 5px;	
-	width: 400px;
+.aui-hsv-container {
+    height: 260px;
+    padding: 5px;
+    position: relative;
+    width: 400px;
 }
 
-.aui-hsv-container-controls .aui-hsv-view-container {
-	width: 490px;
+.aui-hsv-container-controls {
+    width: 490px;
 }
 
-.aui-hsv-container-alpha .aui-hsv-view-container {
-	width: 440px;
+.aui-hsv-container-alpha {
+    width: 440px;
 }
 
-.aui-hsv-container-controls.aui-hsv-container-alpha .aui-hsv-view-container {
-	width: 520px;
+.aui-hsv-container-controls.aui-hsv-container-alpha {
+    width: 520px;
 }
 
 .aui-hsv-view-container .aui-control-group {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .aui-hsv-hs-container, .aui-hsv-image-backdrop {
-	height: 256px;
-	position: absolute;
-	width: 256px;
+    height: 256px;
+    position: absolute;
+    width: 256px;
 }
 
 .aui-hsv-hs-thumb {
-	height: 11px;
-	position: absolute;
-	width: 11px;
+    height: 11px;
+    position: absolute;
+    width: 11px;
 }
 
 .aui-hsv-value-slider-container, .aui-hsv-alpha-slider-container {
-	height: 256px;
-	position: absolute;
-	width: 19px;
+    height: 256px;
+    position: absolute;
+    width: 19px;
 }
 
 .aui-hsv-value-slider-container {
-	left: 280px;
+    left: 280px;
 }
 
 .aui-hsv-alpha-slider-container {
-	left: 320px;
+    left: 320px;
 }
 
 .aui-hsv-value-canvas, .aui-hsv-alpha-canvas {
-	display: inline-block;
-	height: 256px;
-	position: relative;
-	width: 19px;
+    display: inline-block;
+    height: 256px;
+    position: relative;
+    width: 19px;
 }
 
 .aui-hsv-value-thumb, .aui-hsv-alpha-thumb {
-	cursor: default;
-	height: 7px;
-	position: absolute;
-	width: 18px;
+    cursor: default;
+    height: 7px;
+    position: absolute;
+    width: 18px;
 }
 
 .aui-hsv-value-image, .aui-hsv-alpha-image {
-	display: block;
-	height: 11px;
-	margin-left: -7px;
-	margin-top: -6px;
-	width: 32px;
+    display: block;
+    height: 11px;
+    margin-left: -7px;
+    margin-top: -6px;
+    width: 32px;
 }
 
 .aui-hsv-result-view, .aui-hsv-view-backdrop {
-	height: 65px;
-	left: 320px;
-	position: absolute;
-	width: 65px;
+    height: 65px;
+    left: 320px;
+    position: absolute;
+    width: 65px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-result-view, .aui-hsv-container-alpha .aui-hsv-view-backdrop {
-	left: 360px;
+    left: 360px;
 }
 
 .aui-hsv-label {
-	display: inline;
-	margin-right: 5px;
+    display: inline;
+    margin-right: 5px;
 }
 
 .aui-hsv-label-value-container {
-	position: absolute;
-	top: 90px;
+    position: absolute;
+    top: 90px;
 }
 
 .aui-hsv-label-value-container .controls {
-	display: inline;
+    display: inline;
 }
 
 .aui-hsv-label-value-hsv-container {
-	left: 320px;
+    left: 320px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-hsv-container {
-	left: 360px;
+    left: 360px;
 }
 
 .aui-hsv-label-value-rgb-container {
-	left: 410px;
+    left: 410px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-rgb-container {
-	left: 450px;
+    left: 450px;
 }
 
 .aui-hsv-label-value-hex-container {
-	left: 310px;
-	top: 70px;
+    left: 310px;
+    top: 70px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-hex-container {
-	left: 350px;
-	top: 70px;
+    left: 350px;
+    top: 70px;
 }
 
 .aui-hsv-container-controls .aui-hsv-label-value-hex-container {
-	left: 400px;
-	top: 0;
+    left: 400px;
+    top: 0;
 }
 
 .aui-hsv-container-controls.aui-hsv-container-alpha .aui-hsv-label-value-hex-container {
-	left: 430px;
+    left: 430px;
 }
 
 .aui-hsv-label-value-h, .aui-hsv-label-value-s, .aui-hsv-label-value-v,
 .aui-hsv-label-value-r, .aui-hsv-label-value-g, .aui-hsv-label-value-b,
 .aui-hsv-label-value-a {
-	margin-top: 2px;
+    margin-top: 2px;
 }
 
 .aui-hsv-label-value-hex {
-	position: absolute;
-	top: 10px;
-	left: 10px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
 
 .aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-label {
-	display: block;
+    display: block;
 }
 
 .aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-value {
-	width: 50px;
+    width: 50px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-value {
-	width: 70px;
+    width: 70px;
 }
 
 .aui-hsv-label-value-container .aui-hsv-value {
-	margin-right: 2px;
-	width: 30px;
+    margin-right: 2px;
+    width: 30px;
 }

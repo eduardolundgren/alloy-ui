@@ -50,16 +50,16 @@ Palette.prototype = {
     _bindUIPalette: function() {
         var instance = this,
             bodyNode,
-            paletteItemSelector;
+            paletteItemContainerSelector;
 
         bodyNode = instance.get('contentBox');
 
-        paletteItemSelector = DOT + CSS_PALETTE_ITEM;
+        paletteItemContainerSelector = DOT + CSS_PALETTE_ITEM_CONTAINER;
 
-        bodyNode.delegate(EVENT_CLICK, instance._onItemClick, paletteItemSelector, instance);
+        bodyNode.delegate(EVENT_CLICK, instance._onItemClick, DOT + CSS_PALETTE_ITEM, instance);
 
-        bodyNode.delegate(EVENT_MOUSEENTER, instance._onItemMouseEnter, paletteItemSelector, instance);
-        bodyNode.delegate(EVENT_MOUSELEAVE, instance._onItemMouseLeave, paletteItemSelector, instance);
+        bodyNode.delegate(EVENT_MOUSEENTER, instance._onItemMouseEnter, paletteItemContainerSelector, instance);
+        bodyNode.delegate(EVENT_MOUSELEAVE, instance._onItemMouseLeave, paletteItemContainerSelector, instance);
     },
 
     _getPaletteContent: function(items, rowIndex, content) {
@@ -138,6 +138,10 @@ Palette.prototype = {
         }
         else {
             itemsPerRow = instance.get('cols');
+
+            if (itemsPerRow === -1) {
+                itemsPerRow = items.length;
+            }
         }
 
         result = instance._generateContent(items, itemsPerRow);
@@ -172,29 +176,23 @@ Palette.NS = NAME;
 Palette.ATTRS = {
     cols: {
         validator: Lang.isNumber,
-        value: 4
+        value: -1
     },
 
     data: {
         setter: '_setData',
         validator: Lang.isArray,
         value: [
-            '#000000',
-            '#C0C0C0',
-            '#808080',
-            '#FFFFFF',
-            '#800000',
-            '#FF0000',
-            '#800080',
-            '#FF00FF',
-            '#008000',
-            '#00FF00',
-            '#808000',
-            '#FFFF00',
-            '#000080',
-            '#0000FF',
-            '#008080',
-            '#00FFFF'
+            '#9FC6E7',
+            '#5484ED',
+            '#A4BDFC',
+            '#51B749',
+            '#FBD75B',
+            '#FFB878',
+            '#FF887C',
+            '#DC2127',
+            '#DBADFF',
+            '#E1E1E1'
         ]
     }
 };

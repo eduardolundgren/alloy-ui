@@ -2,104 +2,92 @@
 
 <html>
 <head>
-	<link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
     <style type="text/css" media="screen">
-		body {
-			font-size: 12px;
-		}
+        body {
+            font-size: 12px;
+        }
 
-		#wrapper {
-			padding: 10px;
-		}
+        #wrapper {
+            padding: 3em;
+        }
 
-		#colorPalette {
-			left: 100px;
-			position: absolute;
-			top: 100px;
-		}
+        .label-option {
+            display: inline;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
 
-		#hsvPaletteOptions {
-			left: 250px;
-			position: absolute;
-			top: 100px;
-		}
+        #hsvPaletteOptions {
+            margin-bottom: 1em;
+        }
 
-		#hsvPalette {
-			left: 250px;
-			position: absolute;
-			top: 140px;
-		}
+        #alpha {
+            margin-left: 1em;
+        }
+    </style>
 
-		.label-option {
-			display: inline;
-			vertical-align: middle;
-			margin-left: 5px;
-		}
-
-		#alpha {
-			margin-left: 1em;
-		}
-	</style>
-
-	<script src="../../build/aui/aui.js"></script>
+    <script src="../../build/aui/aui.js"></script>
 </head>
 
 <body class="yui3-skin-sam">
 
 <div id="wrapper">
-	<h1>Alloy - ColorPicker Demo</h1>
+    <h1>Alloy - ColorPicker Demo</h1>
 
+    <h3>Color palette</h3>
+    <div id="colorPalette"></div>
 
-	<div id="colorPalette"></div>
+    <h3>HSV palette</h3>
+    
+    <div id="hsvPaletteOptions">
+        <input type="checkbox" checked id="controls"><label class="label-option" for="controls">Controls</label>
+        <input type="checkbox" checked id="alpha"><label class="label-option" for="alpha">Alpha</label>
+    </div>
 
-	<div id="hsvPalette"></div>
-
-	<div id="hsvPaletteOptions">
-		<input type="checkbox" checked id="controls"><label class="label-option" for="controls">Controls</label>
-		<input type="checkbox" checked id="alpha"><label class="label-option" for="alpha">Alpha</label>
-	</div>
+    <div id="hsvPalette"></div>
 </div>
 
 <script type="text/javascript" charset="utf-8">
-	YUI({ filter:'raw' }).use(
-		'aui-color-palette',
-		function(A) {
-			var colorPalette = new A.ColorPalette({cols: 4}).render('#colorPalette');
-		}
-	);
+    YUI({ filter:'raw' }).use(
+        'aui-color-palette',
+        function(A) {
+            var colorPalette = new A.ColorPalette().render('#colorPalette');
+        }
+    );
 
-	YUI({ filter:'raw' }).use(
-		'aui-hsva-palette',
-		function(A) {
-			var hsvPalette;
+    YUI({ filter:'raw' }).use(
+        'aui-hsva-palette',
+        function(A) {
+            var hsvPalette;
 
-			var alphaCheckbox = A.one('#alpha');
-			var controlsCheckbox = A.one('#controls');
+            var alphaCheckbox = A.one('#alpha');
+            var controlsCheckbox = A.one('#controls');
 
-			function createhsvPalette() {
-				if (hsvPalette) {
-					hsvPalette.destroy();
-				}
+            function createhsvPalette() {
+                if (hsvPalette) {
+                    hsvPalette.destroy();
+                }
 
-				var hsvClass = A.HSVPalette;
+                var hsvClass = A.HSVPalette;
 
-				if (alphaCheckbox.get('checked')) {
-					hsvClass = A.HSVAPalette;
-				}
+                if (alphaCheckbox.get('checked')) {
+                    hsvClass = A.HSVAPalette;
+                }
 
-				hsvPalette = new hsvClass(
-					{
-						controls: controlsCheckbox.get('checked'),
-					}
-				).render('#hsvPalette');
-			}
+                hsvPalette = new hsvClass(
+                    {
+                        controls: controlsCheckbox.get('checked'),
+                    }
+                ).render('#hsvPalette');
+            }
 
-			alphaCheckbox.after('change', createhsvPalette);
-			controlsCheckbox.after('change', createhsvPalette);
+            alphaCheckbox.after('change', createhsvPalette);
+            controlsCheckbox.after('change', createhsvPalette);
 
-			createhsvPalette();
-		}
-	);
+            createhsvPalette();
+        }
+    );
 
 </script>
 

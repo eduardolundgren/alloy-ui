@@ -1,8 +1,13 @@
+.aui-palette-container {
+    border-collapse: separate;
+    border-spacing: 4px;
+}
+
 .aui-palette-item {
-	height: 16px;
-	width: 16px;
+    height: 16px;
+    width: 16px;
 }
 
 .aui-palette-item-container {
-	padding: 0;
+    padding: 0;
 }
