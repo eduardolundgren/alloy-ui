@@ -36,19 +36,19 @@ var Lang = A.Lang,
 function Palette() {}
 
 Palette.prototype = {
-    initializer: function() {
+    initializer: function () {
         var instance = this;
 
         A.after(instance._bindUIPalette, instance, 'renderUI');
     },
 
-    renderUI: function() {
+    renderUI: function () {
         var instance = this;
 
         instance._renderItems();
     },
 
-    _bindUIPalette: function() {
+    _bindUIPalette: function () {
         var instance = this,
             bodyNode,
             paletteItemContainerSelector;
@@ -63,7 +63,7 @@ Palette.prototype = {
         bodyNode.delegate(EVENT_MOUSELEAVE, instance._onItemMouseLeave, paletteItemContainerSelector, instance);
     },
 
-    _getPaletteContent: function(items, rowIndex, content) {
+    _getPaletteContent: function (items, rowIndex, content) {
         return Lang.sub(
             TPL_PALETTE_CONTAINER,
             {
@@ -73,11 +73,11 @@ Palette.prototype = {
         );
     },
 
-    _getPaletteItemContent: function(items, itemIndex, rowIndex, columnIndex) {
+    _getPaletteItemContent: function (items, itemIndex, rowIndex, columnIndex) {
         return TPL_PALETTE_ITEM;
     },
 
-    _getPaletteItemsContent: function(items, rowIndex, rowContent) {
+    _getPaletteItemsContent: function (items, rowIndex, rowContent) {
         return Lang.sub(
             TPL_PALETTE_ITEMS_CONTAINER,
             {
@@ -87,7 +87,7 @@ Palette.prototype = {
         );
     },
 
-    _generateContent: function(items, itemsPerRow) {
+    _generateContent: function (items, itemsPerRow) {
         var instance = this,
             i,
             itemsLength,
@@ -119,11 +119,11 @@ Palette.prototype = {
         return result;
     },
 
-    _setData: function(value) {
+    _setColors: function (value) {
         return value;
     },
 
-    _renderItems: function() {
+    _renderItems: function () {
         var instance = this,
             items,
             itemsPerRow,
@@ -132,13 +132,13 @@ Palette.prototype = {
 
         width = instance.get(WIDTH);
 
-        items = instance.get('data');
+        items = instance.get('colors');
 
         if (width) {
             itemsPerRow = items.length;
         }
         else {
-            itemsPerRow = instance.get('cols');
+            itemsPerRow = instance.get('columns');
 
             if (itemsPerRow === -1) {
                 itemsPerRow = items.length;
@@ -150,7 +150,7 @@ Palette.prototype = {
         instance.get('contentBox').setHTML(result);
     },
 
-    _onItemClick: function(event) {
+    _onItemClick: function (event) {
         var instance = this,
             eventName,
             index,
@@ -194,11 +194,11 @@ Palette.prototype = {
         );
     },
 
-    _onItemMouseEnter: function(event) {
+    _onItemMouseEnter: function (event) {
         event.currentTarget.addClass(CSS_PALETTE_ITEM_HOVER);
     },
 
-    _onItemMouseLeave: function(event) {
+    _onItemMouseLeave: function (event) {
         event.currentTarget.removeClass(CSS_PALETTE_ITEM_HOVER);
     }
 };
@@ -208,13 +208,13 @@ Palette.NAME = NAME;
 Palette.NS = NAME;
 
 Palette.ATTRS = {
-    cols: {
+    columns: {
         validator: Lang.isNumber,
         value: -1
     },
 
-    data: {
-        setter: '_setData',
+    colors: {
+        setter: '_setColors',
         validator: Lang.isArray,
         value: [
             '#9FC6E7',

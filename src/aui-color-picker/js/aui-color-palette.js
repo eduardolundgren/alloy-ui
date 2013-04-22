@@ -17,7 +17,7 @@ var AArray = A.Array,
 ColorPalette = A.Base.create(NAME, A.Widget, [
     A.Palette
 ], {
-    _getPaletteItemContent: function(items, itemIndex, rowIndex, columnIndex) {
+    _getPaletteItemContent: function (items, itemIndex, rowIndex, columnIndex) {
         var instance = this,
             item = items[itemIndex];
 
@@ -31,10 +31,10 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
         );
     },
 
-    _setData: function(value) {
+    _setColors: function (value) {
         var result = AArray.map(
             value,
-            function(item, index) {
+            function (item, index) {
                 var tmp = item,
                     color;
 

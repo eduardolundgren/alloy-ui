@@ -30,7 +30,7 @@ var Lang = A.Lang,
     TPL_ALPHA_THUMB = '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
 
 HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
-    initializer: function() {
+    initializer: function () {
         var instance = this;
 
         instance.set('fieldValidator.hex', REGEX_HEX_COLOR_ALPHA);
@@ -40,7 +40,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance.after('rgbInputChange', instance._afterRGBInputChange, instance);
     },
 
-    _afterHexInputChange: function(event) {
+    _afterHexInputChange: function (event) {
         // YUI Code toHSVA from hex + alpha is broken, will remove the alpha value
         var instance = this,
             hexColor = event.hexColor,
@@ -64,13 +64,13 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         }
     },
 
-    _afterHsThumbChangeFn: function(event) {
+    _afterHsThumbChangeFn: function (event) {
         var instance = this;
 
         instance._alphaSliderContainer.setStyle('backgroundColor', event.hexColor);
     },
 
-    _afterHSVAInputChange: function(event) {
+    _afterHSVAInputChange: function (event) {
         var instance = this,
             alpha = instance._getFieldValue(instance._aContainer);
 
@@ -87,13 +87,13 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance._resultView.setStyle('opacity', alpha / 255);
     },
 
-    _afterRGBInputChange: function(event) {
+    _afterRGBInputChange: function (event) {
         var instance = this;
 
         instance._alphaSliderContainer.setStyle('backgroundColor', event.hexColor);
     },
 
-    _calculateRGBArray: function(r, g, b) {
+    _calculateRGBArray: function (r, g, b) {
         var instance = this,
             alpha;
 
@@ -102,14 +102,14 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return AColor.fromArray([r, g, b, alpha], 'RGBA');
     },
 
-    _calculateRGBColor: function(hue, saturation, value) {
+    _calculateRGBColor: function (hue, saturation, value) {
         var instance = this,
             alpha = 255 - instance._alphaSlider.get('value');
 
         return instance._calculateRGBA(hue, saturation, value, alpha);
     },
 
-    _calculateRGBA: function(hue, saturation, value, alpha) {
+    _calculateRGBA: function (hue, saturation, value, alpha) {
         var rgbColor = 'rgb(255, 0, 0, 0)',
             hsvColor,
             tmp;
@@ -132,7 +132,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return rgbColor;
     },
 
-    _getContainerClassName: function() {
+    _getContainerClassName: function () {
         var instance = this,
             className;
 
@@ -143,7 +143,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return className;
     },
 
-    _getHexValue: function(hexColor, rgbColorArray) {
+    _getHexValue: function (hexColor, rgbColorArray) {
         // YUI doesn't have toRGBA method, we have to add alpha explicitly
         var alpha,
             result;
@@ -159,13 +159,13 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return result.substring(1);
     },
 
-    _getHSVArray: function(hsv) {
+    _getHSVArray: function (hsv) {
         var instance = this;
 
         return AColor.toArray(hsv, 'HSVA');
     },
 
-    _createAlphaSlider: function() {
+    _createAlphaSlider: function () {
         var instance = this,
             alphaThumbHeight,
             contentBox,
@@ -200,7 +200,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance._alphaSlider = slider;
     },
 
-    _createSliders: function() {
+    _createSliders: function () {
         var instance = this;
 
         A.HSVAPalette.superclass._createSliders.call(instance);
@@ -208,7 +208,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         instance._createAlphaSlider();
     },
 
-    _getHexContainerConfig: function() {
+    _getHexContainerConfig: function () {
         var instance = this;
 
         return {
@@ -221,7 +221,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         };
     },
 
-    _normalizeHexValue: function(hex) {
+    _normalizeHexValue: function (hex) {
         var padding = '';
 
         if (hex.length === 3) {
@@ -234,7 +234,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return (hex += padding);
     },
 
-    _onAlphaChange: function(event) {
+    _onAlphaChange: function (event) {
         var instance = this,
             alpha,
             thumbXY,
@@ -277,7 +277,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         }
     },
 
-    _renderAlphaSliderContainer: function() {
+    _renderAlphaSliderContainer: function () {
         var instance = this;
 
         instance._alphaSliderContainer = instance._viewContainer.appendChild(
@@ -285,7 +285,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         );
     },
 
-    _renderFields: function() {
+    _renderFields: function () {
         var instance = this;
 
         A.HSVAPalette.superclass._renderFields.call(instance);
@@ -303,7 +303,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         );
     },
 
-    _renderViewContainerContent: function() {
+    _renderViewContainerContent: function () {
         var instance = this;
 
         A.HSVAPalette.superclass._renderViewContainerContent.call(instance);

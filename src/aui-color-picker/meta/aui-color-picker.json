@@ -11,7 +11,7 @@
         "requires": [
             "array-extras",
             "aui-palette",
-            "color-base",
+            "color-hsv",
             "widget"
         ],
         "skinnable": true
@@ -34,6 +34,23 @@
     "aui-hsva-palette": {
         "requires": [
             "aui-hsv-palette"
-        ]
+        ],
+        "skinnable": true
+    },
+
+    "aui-hsva-palette-modal": {
+        "requires": [
+            "aui-hsva-palette",
+            "aui-modal"
+        ],
+        "skinnable": true
+    },
+
+    "aui-color-picker": {
+        "requires": [
+            "aui-color-palette",
+            "aui-hsva-palette-modal"
+        ],
+        "skinnable": true
     }
 }

@@ -23,6 +23,18 @@
             "jsfiles": [
                 "js/aui-hsva-palette.js"
             ]
+        },
+
+        "aui-hsva-palette-modal": {
+            "jsfiles": [
+                "js/aui-hsva-palette-modal.js"
+            ]
+        },
+
+        "aui-color-picker": {
+            "jsfiles": [
+                "js/aui-color-picker.js"
+            ]
         }
     }
 }

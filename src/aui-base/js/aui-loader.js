@@ -135,8 +135,15 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "array-extras",
             "aui-palette",
-            "color-base",
+            "color-hsv",
             "widget"
+        ],
+        "skinnable": true
+    },
+    "aui-color-picker": {
+        "requires": [
+            "aui-color-palette",
+            "aui-hsva-palette-modal"
         ],
         "skinnable": true
     },
@@ -397,7 +404,15 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-hsva-palette": {
         "requires": [
             "aui-hsv-palette"
-        ]
+        ],
+        "skinnable": true
+    },
+    "aui-hsva-palette-modal": {
+        "requires": [
+            "aui-hsva-palette",
+            "aui-modal"
+        ],
+        "skinnable": true
     },
     "aui-image-cropper": {
         "requires": [
@@ -830,4 +845,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'cc1942c7a8eb2c8cc0dd17fcabdab523';
+YUI.Env[Y.version].md5 = '4fd926420e2c7e6d34d28e83f4114fb6';

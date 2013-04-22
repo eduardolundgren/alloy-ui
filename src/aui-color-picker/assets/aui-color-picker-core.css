@@ -1,0 +1,7 @@
+.aui-hsv-trigger-container {
+    position: relative;
+}
+
+.aui-hsv-trigger {
+    cursor: pointer;
+}
