@@ -10,8 +10,15 @@ var AArray = A.Array,
     NAME = 'hsv-palette-modal',
 
 HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
-    renderUI: function () {
+    initializer: function () {
+        var instance = this;
+
+        instance.after('render', instance._renderHSVAPalette, instance);
+    },
+
+    _renderHSVAPalette: function () {
         var instance = this,
+            body,
             contentBox,
             hsvClass,
             hsvOptions,
@@ -29,11 +36,15 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
             hsvClass = A.HSVAPalette;
         }
 
-        contentBox = instance.get('contentBox');
-
         contentBox.addClass(CSS_HSV_PALETTE_MODAL);
 
-        instance._hsvPalette = new hsvClass(hsvOptions).render(contentBox);
+        body = instance.getStdModNode(A.WidgetStdMod.BODY);
+
+        instance._hsvPalette = new hsvClass(hsvOptions).render(body);
+
+        if (instance.get('centered')) {
+            instance.align();
+        }
     }
 }, {
     ATTRS: {

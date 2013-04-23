@@ -66,6 +66,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
             instance._hsvPalette = new A.HSVAPaletteModal(
                 {
+                    centered: true,
                     headerContent: Lang.sub(
                         TPL_HEADER_CONTENT,
                         {
@@ -74,27 +75,29 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
                     ),
                     hsv: instance.get('hsv'),
                     modal: true,
-                    toolbars: [
-                        {
-                            label: strings.cancel,
-                            on: {
-                                click: function() {
-                                    instance._hsvPalette.hide();
-                                }
-                            }
-                        },
-                        {
-                            label: strings.ok,
-                            on: {
-                                click: function() {
-                                    instance._hsvPalette.hide();
-                                }
-                            },
-                            primary: true
-                        }
-                    ]
+                    resisable: false
                 }
             ).render();
+
+            instance._hsvPalette.addToolbar([
+                {
+                    label: strings.cancel,
+                    on: {
+                        click: function() {
+                            instance._hsvPalette.hide();
+                        }
+                    }
+                },
+                {
+                    label: strings.ok,
+                    on: {
+                        click: function() {
+                            instance._hsvPalette.hide();
+                        }
+                    },
+                    primary: true
+                }
+            ]);
         }
 
         return instance._hsvPalette;
@@ -157,7 +160,8 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         hsv: {
             validator: Lang.isObject,
             value: {
-                alpha: false
+                alpha: false,
+                controls: false
             }
         },
 
