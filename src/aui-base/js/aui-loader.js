@@ -131,6 +131,22 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-linkedset"
         ]
     },
+    "aui-color-palette": {
+        "requires": [
+            "array-extras",
+            "aui-palette",
+            "color-hsv",
+            "widget"
+        ],
+        "skinnable": true
+    },
+    "aui-color-picker": {
+        "requires": [
+            "aui-color-palette",
+            "aui-hsva-palette-modal"
+        ],
+        "skinnable": true
+    },
     "aui-component": {
         "requires": [
             "aui-classnamemanager",
@@ -372,6 +388,32 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-event-input"
         ]
     },
+    "aui-hsv-palette": {
+        "requires": [
+            "aui-classnamemanager",
+            "aui-event-input",
+            "base-build",
+            "clickable-rail",
+            "color-hsv",
+            "dd-constrain",
+            "slider",
+            "widget"
+        ],
+        "skinnable": true
+    },
+    "aui-hsva-palette": {
+        "requires": [
+            "aui-hsv-palette"
+        ],
+        "skinnable": true
+    },
+    "aui-hsva-palette-modal": {
+        "requires": [
+            "aui-hsva-palette",
+            "aui-modal"
+        ],
+        "skinnable": true
+    },
     "aui-image-cropper": {
         "requires": [
             "resize-base",
@@ -502,6 +544,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-node",
             "aui-component",
             "widget-htmlparser"
+        ]
+    },
+    "aui-palette": {
+        "requires": [
+            "base-build",
+            "event-mouseenter",
+            "aui-classnamemanager"
         ]
     },
     "aui-parse-content": {
@@ -808,4 +857,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'f97e82b55594e52c573e0c09ca6baa75';
+YUI.Env[Y.version].md5 = '4a757fbfb0b83d5fa823721f4314828b';
