@@ -5,3 +5,7 @@
 .aui-hsv-trigger {
     cursor: pointer;
 }
+
+.aui-palette-items-container-0, .aui-palette-items-container-1 {
+	margin-bottom: 0.5em;
+}

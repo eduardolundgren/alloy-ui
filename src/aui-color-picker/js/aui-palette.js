@@ -16,7 +16,7 @@ var Lang = A.Lang,
 
     CSS_PALETTE_CONTAINER = getClassName('palette-container'),
     CSS_PALETTE_ITEM_CONTAINER = getClassName('palette-item-container'),
-    CSS_PALETTE_ITEMS_CONTAINER = getClassName('palette-items-container'),
+    CSS_PALETTE_ITEMS_CONTAINER_INDEX = getClassName('palette-items-container-{index}'),
     CSS_PALETTE_ITEM = getClassName('palette-item'),
     CSS_PALETTE_ITEM_SELECTED = getClassName('palette-item-selected'),
     CSS_PALETTE_ITEM_HOVER = getClassName('palette-item-hover'),
@@ -25,7 +25,7 @@ var Lang = A.Lang,
         '<table class="' + CSS_PALETTE_CONTAINER + '">{content}</table>',
 
     TPL_PALETTE_ITEMS_CONTAINER =
-        '<tr class="' + CSS_PALETTE_ITEMS_CONTAINER + '">{content}</tr>',
+        '<tr class="' + CSS_PALETTE_ITEMS_CONTAINER_INDEX + '">{content}</tr>',
 
     TPL_PALETTE_ITEM_WRAPPER = '<td class="' + CSS_PALETTE_ITEM_CONTAINER + '">{content}</td>',
 
@@ -81,8 +81,9 @@ Palette.prototype = {
         return Lang.sub(
             TPL_PALETTE_ITEMS_CONTAINER,
             {
-                className: CSS_PALETTE_ITEMS_CONTAINER,
-                content: rowContent
+                className: CSS_PALETTE_ITEMS_CONTAINER_INDEX,
+                content: rowContent,
+                index: rowIndex
             }
         );
     },
