@@ -39,7 +39,7 @@ var AColor = A.Color,
 
     NAME = 'hsv-palette',
 
-    STR_EMPTY = '',
+    EMPTY = '',
 
     REGEX_HEX_COLOR = /^([a-f0-9]{6}|[a-f0-9]{3})$/i,
 
@@ -189,6 +189,8 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 hexColor: hexColor
             }
         );
+
+        instance.set('selected', hexValue);
     },
 
     _afterPaletteMousedown: function (event) {
@@ -380,7 +382,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
 
     _getContainerClassName: function () {
         var instance = this,
-            className = STR_EMPTY;
+            className = EMPTY;
 
         if (instance.get('controls')) {
             className = CSS_CONTAINER_CONTROLS;
@@ -407,7 +409,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             maxlength: 6,
             suffix: '-hex',
             type: 'hex',
-            unit: STR_EMPTY,
+            unit: EMPTY,
             value: 'ff0000'
         };
     },
@@ -473,6 +475,8 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                     hexColor: hexColor
                 }
             );
+
+            instance.set('selected', hexValue);
         }
     },
 
@@ -633,7 +637,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-r',
                 type: 'r',
-                unit: STR_EMPTY,
+                unit: EMPTY,
                 value: '255'
             }
         );
@@ -645,7 +649,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-g',
                 type: 'g',
-                unit: STR_EMPTY,
+                unit: EMPTY,
                 value: 0
             }
         );
@@ -656,7 +660,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 maxlength: 3,
                 suffix: '-b',
                 type: 'b',
-                unit: STR_EMPTY,
+                unit: EMPTY,
                 value: 0
             }
         );
@@ -808,6 +812,8 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 node: fieldNode
             }
         );
+
+        instance.set('selected', hexValue);
     },
 
     _calculateRGBArray: function (r, g, b) {
@@ -904,6 +910,8 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 node: fieldNode
             }
         );
+
+        instance.set('selected', hexValue);
     },
 
     _updateViewByHEX: function (fieldNode) {
@@ -1028,6 +1036,11 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 saturation: REGEX_RANGE_0_100,
                 value: REGEX_RANGE_0_100
             }
+        },
+
+        selected: {
+            validator: Lang.isString,
+            value: EMPTY
         },
 
         strings: {

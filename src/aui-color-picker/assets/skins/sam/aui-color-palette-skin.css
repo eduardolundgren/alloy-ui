@@ -1,3 +1,7 @@
 .aui-palette-color-item-container {
 	border: 1px solid transparent;
 }
+
+.aui-hsv-trigger {
+	font-weight: bold;
+}

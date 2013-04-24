@@ -54,17 +54,43 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
+    _defaultValueRecentColors: function () {
+        var instance = this,
+            defaultColor;
+
+        defaultColor = {
+            name: instance.get('strings').noColor,
+            color: '#FFF'
+        };
+
+        return {
+            columns: 10,
+            colors: [
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor,
+                defaultColor
+            ]
+        };
+    },
+
     _getHSVPalette: function () {
         var instance = this,
             contentBox,
             strings;
 
-        if (!instance._hsvPalette) {
+        if (!instance._hsvPaletteModal) {
             contentBox = instance.get('contentBox');
 
             strings = instance.get('strings');
 
-            instance._hsvPalette = new A.HSVAPaletteModal(
+            instance._hsvPaletteModal = new A.HSVAPaletteModal(
                 {
                     centered: true,
                     headerContent: Lang.sub(
@@ -79,12 +105,12 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
                 }
             ).render();
 
-            instance._hsvPalette.addToolbar([
+            instance._hsvPaletteModal.addToolbar([
                 {
                     label: strings.cancel,
                     on: {
                         click: function() {
-                            instance._hsvPalette.hide();
+                            instance._hsvPaletteModal.hide();
                         }
                     }
                 },
@@ -92,7 +118,11 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
                     label: strings.ok,
                     on: {
                         click: function() {
-                            instance._hsvPalette.hide();
+                            var color = instance._hsvPaletteModal.get('selected');
+
+                            console.log(color);
+
+                            instance._hsvPaletteModal.hide();
                         }
                     },
                     primary: true
@@ -100,12 +130,32 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             ]);
         }
 
-        return instance._hsvPalette;
+        return instance._hsvPaletteModal;
     },
 
     _onHSVTriggerClick: function() {
         var instance = this,
             hsvPalette;
+
+        hsvPalette = instance._getHSVPalette();
+
+        hsvPalette.show();
+    },
+
+    _onRecentColorClick: function(event) {
+        var instance = this,
+            color,
+            hsvPalette,
+            index,
+            node;
+
+        node = event.node;
+
+        color = node.getAttribute('data-color');
+
+        instance._currentRecentColorIndex = node.getAttribute('data-index');
+
+        event.preventDefault();
 
         hsvPalette = instance._getHSVPalette();
 
@@ -144,9 +194,20 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
     },
 
     _renderRecentColors: function () {
-        var instance = this;
+        var instance = this,
+            contentBox,
+            recentColorsOptions,
+            recentColorsPalette;
 
-        
+        contentBox = instance.get('contentBox');
+
+        recentColorsOptions = instance.get('recentColorsOptions');
+
+        recentColorsPalette = new A.ColorPalette(recentColorsOptions).render(contentBox);
+
+        recentColorsPalette.on('itemClick', instance._onRecentColorClick, instance);
+
+        instance._recentColorsPalette = recentColorsPalette;
     }
 }, {
     ATTRS: {
@@ -256,12 +317,18 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             }
         },
 
+        recentColorsOptions: {
+            validator: Lang.isObject,
+            valueFn: '_defaultValueRecentColors'
+        },
+
         strings: {
             value: {
                 cancel: 'Cancel',
                 custom: 'More colors...',
                 header: 'Choose custom color',
-                ok: 'Ok'
+                ok: 'Ok',
+                noColor: 'No color'
             }
         }
     },

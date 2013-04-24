@@ -9,11 +9,19 @@ var AArray = A.Array,
 
     NAME = 'hsv-palette-modal',
 
+    EMPTY = '',
+
 HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
     initializer: function () {
         var instance = this;
 
         instance.after('render', instance._renderHSVAPalette, instance);
+    },
+
+    _getSelected: function () {
+        var instance = this;
+
+        return instance._hsvPalette.get('selected');
     },
 
     _renderHSVAPalette: function () {
@@ -45,6 +53,19 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
         if (instance.get('centered')) {
             instance.align();
         }
+
+        instance._hsvPalette.after(
+            'selectedChange',
+            function (event) {
+                instance.set('selected', event.newVal);
+            }
+        );
+    },
+
+    _setSelected: function (value) {
+        var instance = this;
+
+        return instance._hsvPalette.set('selected', value);
     }
 }, {
     ATTRS: {
@@ -53,6 +74,13 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
             value: {
                 alpha: false
             }
+        },
+
+        selected: {
+            getter: '_getSelected',
+            setter: '_setSelected',
+            validator: Lang.isString,
+            value: EMPTY
         }
     },
 

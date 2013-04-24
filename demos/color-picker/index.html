@@ -90,6 +90,12 @@
                         controls: controlsCheckbox.get('checked'),
                     }
                 ).render('#hsvPalette');
+
+                hsvPalette.on('selectedChange', function (event) {
+                    console.log('via selected: ' + hsvPalette.get('selected'));
+
+                    console.log('via new val: ' +event.newVal);
+                });
             }
 
             alphaCheckbox.after('change', createhsvPalette);

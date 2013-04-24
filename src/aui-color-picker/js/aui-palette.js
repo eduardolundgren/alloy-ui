@@ -1,6 +1,7 @@
 /* global A*/
 
 var Lang = A.Lang,
+    AWidget = A.Widget,
 
     getClassName = A.getClassName,
 
@@ -32,12 +33,19 @@ var Lang = A.Lang,
     TPL_PALETTE_ITEM_WRAPPER = '<td class="' + CSS_PALETTE_ITEM_CONTAINER + '">{content}</td>',
 
     TPL_PALETTE_ITEM =
-        '<div class="' + CSS_PALETTE_ITEM + '">' +
+        '<div class="' + CSS_PALETTE_ITEM + ' {selectedClassName}">' +
         '</div>',
 
 Palette = A.Base.create(NAME, A.Widget, [], {
     initializer: function () {
         var instance = this;
+
+        instance.publish(
+            'itemClick',
+            {
+                defaultFn: instance._defaultItemClickFn
+            }
+        );
 
         A.after(instance._bindUIPalette, instance, 'renderUI');
     },
@@ -46,6 +54,14 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance._renderItems();
+    },
+
+    _afterSelectedChange: function (event) {
+        var instance = this;
+
+        if (event.src !== AWidget.UI_SRC) {
+            instance._selectItem(event.newVal);
+        }
     },
 
     _bindUIPalette: function () {
@@ -61,6 +77,58 @@ Palette = A.Base.create(NAME, A.Widget, [], {
 
         bodyNode.delegate(EVENT_MOUSEENTER, instance._onItemMouseEnter, paletteItemContainerSelector, instance);
         bodyNode.delegate(EVENT_MOUSELEAVE, instance._onItemMouseLeave, paletteItemContainerSelector, instance);
+
+        instance.after('selectedChange', instance._afterSelectedChange, instance);
+    },
+
+    _defaultItemClickFn: function (event) {
+        var instance = this,
+            eventName,
+            index,
+            itemNode,
+            selectedIndex;
+
+        itemNode = event.node;
+
+        if (instance._selectedItem) {
+            instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
+        }
+
+        index = parseInt(itemNode.getAttribute('data-index'), 10);
+
+        if (itemNode === instance._selectedItem) {
+            instance._selectedItem = null;
+
+            eventName = 'unselect';
+
+            selectedIndex = -1;
+        }
+        else {
+            itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
+
+            eventName = 'unselect';
+
+            selectedIndex = index;
+
+            instance._selectedItem = itemNode;
+        }
+
+        instance.set(
+            'selected',
+            selectedIndex,
+            {
+                src: AWidget.UI_SRC
+            }
+        );
+
+        instance.fire(
+            eventName,
+            {
+                item: itemNode,
+                index: index,
+                color: itemNode.getAttribute('data-color')
+            }
+        );
     },
 
     _getPaletteContent: function (items, rowIndex, content) {
@@ -73,8 +141,13 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _getPaletteItemContent: function (items, itemIndex, rowIndex, columnIndex) {
-        return TPL_PALETTE_ITEM;
+    _getPaletteItemContent: function (items, itemIndex, rowIndex, columnIndex, selected) {
+        return Lang.sub(
+            TPL_PALETTE_ITEM,
+            {
+                selectedClassName: selected ? CSS_PALETTE_ITEM_SELECTED : EMPTY
+            }
+        );
     },
 
     _getPaletteItemsContent: function (items, rowIndex, rowContent) {
@@ -88,6 +161,12 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
+    _getSelectedItem: function () {
+        var instance = this;
+
+        return instance._selectedItem;
+    },
+
     _generateContent: function (items, itemsPerRow) {
         var instance = this,
             i,
@@ -95,8 +174,10 @@ Palette = A.Base.create(NAME, A.Widget, [], {
             j,
             result = EMPTY,
             rowContent,
-            rowIndex = 0;
+            rowIndex = 0,
+            selectedIndex;
 
+        selectedIndex = instance.get('selected');
 
         for(i = 0, itemsLength = items.length; i < itemsLength;) {
             rowContent = EMPTY;
@@ -105,7 +186,7 @@ Palette = A.Base.create(NAME, A.Widget, [], {
                 rowContent += Lang.sub(
                     TPL_PALETTE_ITEM_WRAPPER,
                     {
-                        content: instance._getPaletteItemContent(items, i, rowIndex, j)
+                        content: instance._getPaletteItemContent(items, i, rowIndex, j, (selectedIndex === i))
                     }
                 );
             }
@@ -120,8 +201,23 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         return result;
     },
 
-    _setColors: function (value) {
-        return value;
+    _onItemClick: function(event) {
+        var instance = this;
+
+        instance.fire(
+            'itemClick',
+            {
+                node: event.currentTarget
+            }
+        );
+    },
+
+    _onItemMouseEnter: function (event) {
+        event.currentTarget.addClass(CSS_PALETTE_ITEM_HOVER);
+    },
+
+    _onItemMouseLeave: function (event) {
+        event.currentTarget.removeClass(CSS_PALETTE_ITEM_HOVER);
     },
 
     _renderItems: function () {
@@ -151,56 +247,27 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         instance.get('contentBox').setHTML(result);
     },
 
-    _onItemClick: function (event) {
+    _selectItem: function (selectedIndex) {
         var instance = this,
-            eventName,
-            index,
-            itemNode,
-            selectedIndex;
-
-        itemNode = event.currentTarget;
+            itemNode;
 
         if (instance._selectedItem) {
             instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
-        }
 
-        index = parseInt(itemNode.getAttribute('data-index'), 10);
-
-        if (itemNode === instance._selectedItem) {
             instance._selectedItem = null;
-
-            eventName = 'unselect';
-
-            selectedIndex = -1;
         }
-        else {
+
+        if (selectedIndex !== -1) {
+            itemNode = instance.get('contentBox').one('[data-index=' + selectedIndex + ']');
+
             itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
-
-            eventName = 'unselect';
-
-            selectedIndex = index;
 
             instance._selectedItem = itemNode;
         }
-
-        instance.set('selected', selectedIndex);
-
-        instance.fire(
-            eventName,
-            {
-                item: itemNode,
-                index: index,
-                color: itemNode.getAttribute('data-color')
-            }
-        );
     },
 
-    _onItemMouseEnter: function (event) {
-        event.currentTarget.addClass(CSS_PALETTE_ITEM_HOVER);
-    },
-
-    _onItemMouseLeave: function (event) {
-        event.currentTarget.removeClass(CSS_PALETTE_ITEM_HOVER);
+    _setColors: function (value) {
+        return value;
     }
 }, {
     CSS_PREFIX: getClassName(NAME),
@@ -229,7 +296,13 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         },
 
         selected: {
+            setter: '_setSelected',
             validator: Lang.isNumber
+        },
+
+        selectedItem: {
+            getter: '_getSelectedItem',
+            readOnly: true
         }
     },
 
