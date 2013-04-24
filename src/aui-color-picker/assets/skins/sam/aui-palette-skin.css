@@ -1,0 +1,16 @@
+.aui-palette-item {
+	border: 1px solid #666;
+}
+
+.aui-palette-item-container {
+	border: 1px solid transparent;
+}
+
+.aui-palette-item-selected {
+	background-image: url(sprite.png);
+	background-position: -315px -96px;
+}
+
+.aui-palette-item-hover {
+	border: 1px solid #000;
+}

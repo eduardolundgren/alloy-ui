@@ -33,11 +33,9 @@ var Lang = A.Lang,
 
     TPL_PALETTE_ITEM =
         '<div class="' + CSS_PALETTE_ITEM + '">' +
-        '</div>';
+        '</div>',
 
-function Palette() {}
-
-Palette.prototype = {
+Palette = A.Base.create(NAME, A.Widget, [], {
     initializer: function () {
         var instance = this;
 
@@ -204,38 +202,40 @@ Palette.prototype = {
     _onItemMouseLeave: function (event) {
         event.currentTarget.removeClass(CSS_PALETTE_ITEM_HOVER);
     }
-};
+}, {
+    CSS_PREFIX: getClassName(NAME),
 
-Palette.NAME = NAME;
+    ATTRS: {
+        columns: {
+            validator: Lang.isNumber,
+            value: -1
+        },
 
-Palette.NS = NAME;
+        colors: {
+            setter: '_setColors',
+            validator: Lang.isArray,
+            value: [
+                '#9FC6E7',
+                '#5484ED',
+                '#A4BDFC',
+                '#51B749',
+                '#FBD75B',
+                '#FFB878',
+                '#FF887C',
+                '#DC2127',
+                '#DBADFF',
+                '#E1E1E1'
+            ]
+        },
 
-Palette.ATTRS = {
-    columns: {
-        validator: Lang.isNumber,
-        value: -1
+        selected: {
+            validator: Lang.isNumber
+        }
     },
 
-    colors: {
-        setter: '_setColors',
-        validator: Lang.isArray,
-        value: [
-            '#9FC6E7',
-            '#5484ED',
-            '#A4BDFC',
-            '#51B749',
-            '#FBD75B',
-            '#FFB878',
-            '#FF887C',
-            '#DC2127',
-            '#DBADFF',
-            '#E1E1E1'
-        ]
-    },
+    NAME: NAME,
 
-    selected: {
-        validator: Lang.isNumber
-    }
-};
+    NS: NAME
+});
 
 A.Palette = Palette;

@@ -135,8 +135,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "array-extras",
             "aui-palette",
-            "color-hsv",
-            "widget"
+            "color-base",
+            "node-core"
         ],
         "skinnable": true
     },
@@ -550,8 +550,10 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base-build",
             "event-mouseenter",
-            "aui-classnamemanager"
-        ]
+            "aui-classnamemanager",
+            "widget"
+        ],
+        "skinnable": true
     },
     "aui-parse-content": {
         "requires": [
@@ -857,4 +859,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '4a757fbfb0b83d5fa823721f4314828b';
+YUI.Env[Y.version].md5 = 'c67de0dc4f45411097596532942febfb';

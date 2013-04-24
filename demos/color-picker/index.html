@@ -35,6 +35,9 @@
 <div id="wrapper">
     <h1>Alloy - ColorPicker Palettes Demo</h1>
 
+    <h3>Palette</h3>
+    <div id="palette"></div>
+
     <h3>Color palette</h3>
     <div id="colorPalette"></div>
 
@@ -50,6 +53,13 @@
 
 <script type="text/javascript" charset="utf-8">
     YUI({ filter:'raw' }).use(
+        'aui-palette',
+        function(A) {
+            var palette = new A.Palette().render('#palette');
+        }
+    );
+
+    YUI({ filter:'raw' }).use(
         'aui-color-palette',
         function(A) {
             var colorPalette = new A.ColorPalette().render('#colorPalette');
@@ -57,7 +67,7 @@
     );
 
     YUI({ filter:'raw' }).use(
-        'aui-hsva-palette',
+        'aui-color-picker',
         function(A) {
             var hsvPalette;
 

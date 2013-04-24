@@ -49,9 +49,9 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         if (renderHSVPalette) {
             instance._renderHSVTrigger();
-        }
 
-        instance._renderRecentColors();
+            instance._renderRecentColors();
+        }
     },
 
     _getHSVPalette: function () {
@@ -146,6 +146,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
     _renderRecentColors: function () {
         var instance = this;
 
+        
     }
 }, {
     ATTRS: {

@@ -3,16 +3,18 @@
         "requires": [
             "base-build",
             "event-mouseenter",
-            "aui-classnamemanager"
-        ]
+            "aui-classnamemanager",
+            "widget"
+        ],
+        "skinnable": true
     },
 
     "aui-color-palette": {
         "requires": [
             "array-extras",
             "aui-palette",
-            "color-hsv",
-            "widget"
+            "color-base",
+            "node-core"
         ],
         "skinnable": true
     },
