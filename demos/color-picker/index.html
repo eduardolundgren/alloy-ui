@@ -42,7 +42,7 @@
     <div id="colorPalette"></div>
 
     <h3>HSV palette</h3>
-    
+
     <div id="hsvPaletteOptions">
         <input type="checkbox" checked id="controls"><label class="label-option" for="controls">Controls</label>
         <input type="checkbox" checked id="alpha"><label class="label-option" for="alpha">Alpha</label>
@@ -62,7 +62,22 @@
     YUI({ filter:'raw' }).use(
         'aui-color-palette',
         function(A) {
-            var colorPalette = new A.ColorPalette().render('#colorPalette');
+            var colorPalette = new A.ColorPalette({
+                on: {
+                    enter: function(event) {
+                        console.log(event.type);
+                    },
+                    leave: function(event) {
+                        console.log(event.type);
+                    },
+                    select: function(event) {
+                        console.log(event.type);
+                    },
+                    unselect: function(event) {
+                        console.log(event.type);
+                    }
+                }
+            }).render('#colorPalette');
         }
     );
 
