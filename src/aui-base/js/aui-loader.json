@@ -525,9 +525,10 @@
     "aui-palette": {
         "requires": [
             "base-build",
-            "event-mouseenter",
+            "event-hover",
+            "widget",
             "aui-classnamemanager",
-            "widget"
+            "aui-base"
         ],
         "skinnable": true
     },

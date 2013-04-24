@@ -1,20 +1,29 @@
 /* global A*/
 
 var Lang = A.Lang,
-    AWidget = A.Widget,
 
-    getClassName = A.getClassName,
+    _NAME = 'palette',
+    _DOT = '.',
+    _EMPTY = '',
+    _SPACE = ' ',
 
-    NAME = 'palette',
-
-    DOT = '.',
-    EMPTY = '',
-    SPACE = ' ',
+    BOUNDING_BOX = 'boundingBox',
+    CLICK = 'click',
+    COLUMNS = 'columns',
+    CONTENT_BOX = 'contentBox',
+    ENTER = 'enter',
+    FORMATTER = 'formatter',
+    HOVER = 'hover',
+    ITEMS = 'items',
+    LEAVE = 'leave',
+    RENDER_UI = 'renderUI',
+    SELECT = 'select',
+    SELECTED = 'selected',
+    TOGGLE_SELECTION = 'toggleSelection',
+    UNSELECT = 'unselect',
     WIDTH = 'width',
 
-    EVENT_CLICK = 'click',
-    EVENT_MOUSEENTER = 'mouseenter',
-    EVENT_MOUSELEAVE = 'mouseleave',
+    getClassName = A.getClassName,
 
     CSS_PALETTE_CONTAINER = getClassName('palette-container'),
     CSS_PALETTE_ITEM_CONTAINER = getClassName('palette-item-container'),
@@ -22,118 +31,160 @@ var Lang = A.Lang,
     CSS_PALETTE_ITEMS_CONTAINER_INDEX = getClassName('palette-items-container-{index}'),
     CSS_PALETTE_ITEM = getClassName('palette-item'),
     CSS_PALETTE_ITEM_SELECTED = getClassName('palette-item-selected'),
-    CSS_PALETTE_ITEM_HOVER = getClassName('palette-item-hover'),
+    CSS_PALETTE_ITEM_HOVER = getClassName('palette-item-hover');
 
-    TPL_PALETTE_CONTAINER =
-        '<table class="' + CSS_PALETTE_CONTAINER + '">{content}</table>',
+var Palette = A.Base.create(_NAME, A.Widget, [], {
+    CONTAINER_TEMPLATE: '<table class="' + CSS_PALETTE_CONTAINER + '">{content}</table>',
 
-    TPL_PALETTE_ITEMS_CONTAINER =
-        '<tr class="' + CSS_PALETTE_ITEMS_CONTAINER + SPACE + CSS_PALETTE_ITEMS_CONTAINER_INDEX + '">{content}</tr>',
+    ITEMS_CONTAINER_TEMPLATE: '<tr class="' + CSS_PALETTE_ITEMS_CONTAINER + _SPACE + CSS_PALETTE_ITEMS_CONTAINER_INDEX + '">{content}</tr>',
 
-    TPL_PALETTE_ITEM_WRAPPER = '<td class="' + CSS_PALETTE_ITEM_CONTAINER + '">{content}</td>',
+    ITEM_WRAPPER_TEMPLATE: '<td class="' + CSS_PALETTE_ITEM_CONTAINER + '" data-column={column} data-index={index} data-row={row}>{content}</td>',
 
-    TPL_PALETTE_ITEM =
-        '<div class="' + CSS_PALETTE_ITEM + ' {selectedClassName}">' +
-        '</div>',
+    ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + '" data-value="{value}" onclick="return false;"></a>',
 
-Palette = A.Base.create(NAME, A.Widget, [], {
-    initializer: function () {
+    _items: null,
+
+    initializer: function() {
         var instance = this;
 
-        instance.publish(
-            'itemClick',
-            {
-                defaultFn: instance._defaultItemClickFn
-            }
-        );
+        A.after(instance._bindUIPalette, instance, RENDER_UI);
 
-        A.after(instance._bindUIPalette, instance, 'renderUI');
+        instance.publish({
+            enter: { defaultFn: instance._defEnterFn },
+            leave: { defaultFn: instance._defLeaveFn },
+            select: { defaultFn: instance._defSelectFn },
+            unselect: { defaultFn: instance._defUnselectFn }
+        });
     },
 
-    renderUI: function () {
+    renderUI: function() {
         var instance = this;
 
         instance._renderItems();
     },
 
-    _afterSelectedChange: function (event) {
+    getItem: function(row, col) {
         var instance = this;
 
-        if (event.src !== AWidget.UI_SRC) {
-            instance._selectItem(event.newVal);
-        }
+        return instance.getItemByIndex(
+                row*instance.get(COLUMNS) + col);
     },
 
-    _bindUIPalette: function () {
+    getItemByIndex: function(index) {
+        var instance = this;
+
+        instance._indexItemsIfNeeded();
+
+        return instance._items.item(index);
+    },
+
+    _bindUIPalette: function() {
         var instance = this,
-            bodyNode,
-            paletteItemContainerSelector;
+            boundingBox = instance.get(BOUNDING_BOX);
 
-        bodyNode = instance.get('contentBox');
-
-        paletteItemContainerSelector = DOT + CSS_PALETTE_ITEM_CONTAINER;
-
-        bodyNode.delegate(EVENT_CLICK, instance._onItemClick, DOT + CSS_PALETTE_ITEM, instance);
-
-        bodyNode.delegate(EVENT_MOUSEENTER, instance._onItemMouseEnter, paletteItemContainerSelector, instance);
-        bodyNode.delegate(EVENT_MOUSELEAVE, instance._onItemMouseLeave, paletteItemContainerSelector, instance);
-
-        instance.after('selectedChange', instance._afterSelectedChange, instance);
+        boundingBox.delegate(CLICK, instance._onItemClick, _DOT+CSS_PALETTE_ITEM_CONTAINER, instance);
+        boundingBox.delegate(HOVER, instance._onItemMouseEnter, instance._onItemMouseLeave, _DOT+CSS_PALETTE_ITEM_CONTAINER, instance);
     },
 
-    _defaultItemClickFn: function (event) {
+    _defEnterFn: function(event) {
+        event.item.addClass(CSS_PALETTE_ITEM_HOVER);
+    },
+
+    _defLeaveFn: function(event) {
+        event.item.removeClass(CSS_PALETTE_ITEM_HOVER);
+    },
+
+    _defSelectFn: function(event) {
         var instance = this,
-            eventName,
-            index,
-            itemNode,
-            selectedIndex;
+            selected = instance.get(SELECTED),
+            selectedItem = instance.getItemByIndex(selected);
 
-        itemNode = event.node;
-
-        if (instance._selectedItem) {
-            instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
+        if (selectedItem) {
+            selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
         }
 
-        index = parseInt(itemNode.getAttribute('data-index'), 10);
+        instance.set(SELECTED, event.index);
 
-        if (itemNode === instance._selectedItem) {
-            instance._selectedItem = null;
-
-            eventName = 'unselect';
-
-            selectedIndex = -1;
-        }
-        else {
-            itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
-
-            eventName = 'unselect';
-
-            selectedIndex = index;
-
-            instance._selectedItem = itemNode;
-        }
-
-        instance.set(
-            'selected',
-            selectedIndex,
-            {
-                src: AWidget.UI_SRC
-            }
-        );
-
-        instance.fire(
-            eventName,
-            {
-                item: itemNode,
-                index: index,
-                color: itemNode.getAttribute('data-color')
-            }
-        );
+        event.item.addClass(CSS_PALETTE_ITEM_SELECTED);
     },
 
-    _getPaletteContent: function (items, rowIndex, content) {
+    _defUnselectFn: function(event) {
+        var instance = this;
+
+        instance.set(SELECTED, -1);
+
+        event.item.removeClass(CSS_PALETTE_ITEM_SELECTED);
+    },
+
+    _getCellContent: function(items, index, row, column, content) {
+        var instance = this;
+
         return Lang.sub(
-            TPL_PALETTE_CONTAINER,
+            instance.ITEM_WRAPPER_TEMPLATE,
+            {
+                column: column,
+                content: content,
+                index: index,
+                row: row,
+                value: items[index]
+            }
+        );
+    },
+
+    _getContent: function(items, columns) {
+        var instance = this,
+            formatter = instance.get(FORMATTER),
+            column,
+            content,
+            index = 0,
+            result = _EMPTY,
+            total = items.length,
+            row,
+            rows = Math.ceil(total/columns);
+
+        for (row = 0; row < rows; row++) {
+            content = _EMPTY;
+
+            for (column = 0; column < columns; column++) {
+                index = (row*columns + column);
+
+                if (index >= total) {
+                    break;
+                }
+
+                content += instance._getCellContent(
+                            items, index, row, column,
+                            formatter.call(instance, items, index, row, column));
+            }
+
+            result += instance._getRowContent(items, index, row, content);
+        }
+
+        return instance._getPaletteContent(items, result);
+    },
+
+    _getEventsPayload: function(event) {
+        var instance = this,
+            items = instance.get(ITEMS),
+            index,
+            itemNode = event.currentTarget;
+
+        index = Lang.toInt(itemNode.getAttribute('data-index'));
+
+        return {
+            column: Lang.toInt(itemNode.getAttribute('data-column')),
+            item: itemNode,
+            index: index,
+            row: Lang.toInt(itemNode.getAttribute('data-row')),
+            value: items[index]
+        };
+    },
+
+    _getPaletteContent: function(items, content) {
+        var instance = this;
+
+        return Lang.sub(
+            instance.CONTAINER_TEMPLATE,
             {
                 className: CSS_PALETTE_CONTAINER,
                 content: content
@@ -141,174 +192,125 @@ Palette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _getPaletteItemContent: function (items, itemIndex, rowIndex, columnIndex, selected) {
-        return Lang.sub(
-            TPL_PALETTE_ITEM,
-            {
-                selectedClassName: selected ? CSS_PALETTE_ITEM_SELECTED : EMPTY
-            }
-        );
-    },
-
-    _getPaletteItemsContent: function (items, rowIndex, rowContent) {
-        return Lang.sub(
-            TPL_PALETTE_ITEMS_CONTAINER,
-            {
-                className: CSS_PALETTE_ITEMS_CONTAINER_INDEX,
-                content: rowContent,
-                index: rowIndex
-            }
-        );
-    },
-
-    _getSelectedItem: function () {
+    _getRowContent: function(items, index, row, content) {
         var instance = this;
 
-        return instance._selectedItem;
+        return Lang.sub(
+            instance.ITEMS_CONTAINER_TEMPLATE,
+            {
+                className: CSS_PALETTE_ITEMS_CONTAINER_INDEX,
+                content: content,
+                index: row
+            }
+        );
     },
 
-    _generateContent: function (items, itemsPerRow) {
+    _indexItemsIfNeeded: function() {
+        var instance = this;
+
+        if (!instance._items) {
+            instance._items = instance.get(CONTENT_BOX).all(_DOT+CSS_PALETTE_ITEM_CONTAINER);
+        }
+    },
+
+    _renderItems: function() {
         var instance = this,
-            i,
-            itemsLength,
-            j,
-            result = EMPTY,
-            rowContent,
-            rowIndex = 0,
-            selectedIndex;
+            items = instance.get(ITEMS),
+            columns,
+            width = instance.get(WIDTH);
 
-        selectedIndex = instance.get('selected');
+        if (width) {
+            columns = items.length;
+        }
+        else {
+            columns = instance.get(COLUMNS);
 
-        for(i = 0, itemsLength = items.length; i < itemsLength;) {
-            rowContent = EMPTY;
-
-            for(j = 0; j < itemsPerRow && i < itemsLength; j++, i++) {
-                rowContent += Lang.sub(
-                    TPL_PALETTE_ITEM_WRAPPER,
-                    {
-                        content: instance._getPaletteItemContent(items, i, rowIndex, j, (selectedIndex === i))
-                    }
-                );
+            if (columns === -1) {
+                columns = items.length;
             }
-
-            result += instance._getPaletteItemsContent(items, rowIndex, rowContent);
-
-            rowIndex++;
         }
 
-        result = instance._getPaletteContent(items, rowIndex, result);
-
-        return result;
+        instance.get(CONTENT_BOX).setHTML(
+            instance._getContent(items, columns));
     },
 
     _onItemClick: function(event) {
+        var instance = this,
+            selected = instance.get(SELECTED),
+            toggleSelection = instance.get(TOGGLE_SELECTION),
+            eventName = SELECT,
+            itemNode = event.currentTarget,
+            selectedItem = instance.getItemByIndex(selected);
+
+        if (toggleSelection && (itemNode === selectedItem)) {
+            eventName = UNSELECT;
+        }
+
+        instance.fire(eventName, instance._getEventsPayload(event));
+    },
+
+    _onItemMouseEnter: function(event) {
         var instance = this;
 
-        instance.fire(
-            'itemClick',
-            {
-                node: event.currentTarget
-            }
-        );
+        instance.fire(ENTER, instance._getEventsPayload(event));
     },
 
-    _onItemMouseEnter: function (event) {
-        event.currentTarget.addClass(CSS_PALETTE_ITEM_HOVER);
+    _onItemMouseLeave: function(event) {
+        var instance = this;
+
+        instance.fire(LEAVE, instance._getEventsPayload(event));
     },
 
-    _onItemMouseLeave: function (event) {
-        event.currentTarget.removeClass(CSS_PALETTE_ITEM_HOVER);
+    _setItems: function(val) {
+        var instance = this;
+
+        instance._items = null;
+
+        return val;
     },
 
-    _renderItems: function () {
-        var instance = this,
-            items,
-            itemsPerRow,
-            result,
-            width;
+    _valueFormatterFn: function() {
+        return function (items, index, row, column) {
+            var instance = this;
 
-        width = instance.get(WIDTH);
-
-        items = instance.get('colors');
-
-        if (width) {
-            itemsPerRow = items.length;
-        }
-        else {
-            itemsPerRow = instance.get('columns');
-
-            if (itemsPerRow === -1) {
-                itemsPerRow = items.length;
-            }
-        }
-
-        result = instance._generateContent(items, itemsPerRow);
-
-        instance.get('contentBox').setHTML(result);
-    },
-
-    _selectItem: function (selectedIndex) {
-        var instance = this,
-            itemNode;
-
-        if (instance._selectedItem) {
-            instance._selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
-
-            instance._selectedItem = null;
-        }
-
-        if (selectedIndex !== -1) {
-            itemNode = instance.get('contentBox').one('[data-index=' + selectedIndex + ']');
-
-            itemNode.addClass(CSS_PALETTE_ITEM_SELECTED);
-
-            instance._selectedItem = itemNode;
-        }
-    },
-
-    _setColors: function (value) {
-        return value;
+            return Lang.sub(
+                instance.ITEM_TEMPLATE,
+                {
+                    column: column,
+                    index: index,
+                    row: row,
+                    value: items[index]
+                }
+            );
+        };
     }
 }, {
-    CSS_PREFIX: getClassName(NAME),
-
     ATTRS: {
         columns: {
             validator: Lang.isNumber,
             value: -1
         },
 
-        colors: {
-            setter: '_setColors',
+        formatter: {
+            validator: Lang.isFunction,
+            valueFn: '_valueFormatterFn'
+        },
+
+        items: {
+            setter: '_setItems',
             validator: Lang.isArray,
-            value: [
-                '#9FC6E7',
-                '#5484ED',
-                '#A4BDFC',
-                '#51B749',
-                '#FBD75B',
-                '#FFB878',
-                '#FF887C',
-                '#DC2127',
-                '#DBADFF',
-                '#E1E1E1'
-            ]
+            value: []
         },
 
         selected: {
-            setter: '_setSelected',
             validator: Lang.isNumber
         },
 
-        selectedItem: {
-            getter: '_getSelectedItem',
-            readOnly: true
+        toggleSelection: {
+            validator: Lang.isBoolean,
+            value: true
         }
-    },
-
-    NAME: NAME,
-
-    NS: NAME
+    }
 });
 
 A.Palette = Palette;

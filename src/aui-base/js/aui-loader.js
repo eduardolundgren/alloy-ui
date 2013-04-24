@@ -549,9 +549,10 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-palette": {
         "requires": [
             "base-build",
-            "event-mouseenter",
+            "event-hover",
+            "widget",
             "aui-classnamemanager",
-            "widget"
+            "aui-base"
         ],
         "skinnable": true
     },
@@ -859,4 +860,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'c67de0dc4f45411097596532942febfb';
+YUI.Env[Y.version].md5 = 'de3f7b4bdc9fcada6bb46bb1b4cbb479';
