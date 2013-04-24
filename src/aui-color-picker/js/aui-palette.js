@@ -134,6 +134,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
     _getContent: function(items, columns) {
         var instance = this,
             formatter = instance.get(FORMATTER),
+            selected = instance.get(SELECTED),
             column,
             content,
             index = 0,
@@ -154,7 +155,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
 
                 content += instance._getCellContent(
                             items, index, row, column,
-                            formatter.call(instance, items, index, row, column));
+                            formatter.call(instance, items, index, row, column, (selected === index)));
             }
 
             result += instance._getRowContent(items, index, row, content);
@@ -270,7 +271,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
     },
 
     _valueFormatterFn: function() {
-        return function (items, index, row, column) {
+        return function (items, index, row, column, selected) {
             var instance = this;
 
             return Lang.sub(

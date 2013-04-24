@@ -1,6 +1,6 @@
-.aui-palette-color-item-container {
-	background-image: url(sprite.png);
-	background-position: -315px -96px;
+.aui-color-palette .aui-palette-item-selected .aui-palette-item {
+    background-image: url(sprite.png);
+    background-position: -315px -96px;
 }
 
 .aui-hsv-trigger {

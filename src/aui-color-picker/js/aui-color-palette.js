@@ -21,7 +21,7 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
     ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + ' {selectedClassName}" data-value="{value}" style="background-color:{value}" onclick="return false;" title="{title}"></a>',
 
     _valueFormatterFn: function() {
-        return function (items, index, row, column) {
+        return function (items, index, row, column, selected) {
             var instance = this,
                 item = items[index];
 
