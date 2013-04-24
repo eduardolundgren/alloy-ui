@@ -1,7 +1,8 @@
 .aui-palette-color-item-container {
-	border: 1px solid transparent;
+	background-image: url(sprite.png);
+	background-position: -315px -96px;
 }
 
 .aui-hsv-trigger {
-	font-weight: bold;
+    font-weight: bold;
 }

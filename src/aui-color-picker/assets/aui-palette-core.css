@@ -1,0 +1,14 @@
+.aui-palette-container {
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+.aui-palette-item {
+    display: block;
+    height: 16px;
+    width: 16px;
+}
+
+.aui-palette-item-container {
+    padding: 0;
+}
