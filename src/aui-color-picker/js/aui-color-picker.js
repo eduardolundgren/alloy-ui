@@ -232,7 +232,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             validator: Lang.isObject,
             value: {
                 columns: 10,
-                colors: [
+                items: [
                     '#000000',
                     '#434343',
                     '#666666',
