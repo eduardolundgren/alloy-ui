@@ -40,9 +40,10 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
     },
 
     _setItems: function (value) {
-        var instance = this;
+        var instance = this,
+            result;
 
-        var result = AArray.map(value, function (item, index) {
+        result = AArray.map(value, function (item, index) {
             var tmp = item,
                 color;
 

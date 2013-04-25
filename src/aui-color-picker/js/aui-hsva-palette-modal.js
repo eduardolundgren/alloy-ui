@@ -1,6 +1,7 @@
 /* global A*/
 
 var AArray = A.Array,
+    AWidget = A.Widget,
     Lang = A.Lang,
 
     getClassName = A.getClassName,
@@ -16,12 +17,22 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
         var instance = this;
 
         instance.after('render', instance._renderHSVAPalette, instance);
+
+        instance.on('selectedChange', instance._onSelectionChange, instance);
     },
 
     _getSelected: function () {
         var instance = this;
 
         return instance._hsvPalette.get('selected');
+    },
+
+    _onSelectionChange: function (event) {
+        var instance = this;
+
+        if (event.src !== AWidget.UI_SRC) {
+            instance._hsvPalette.set('selected', event.newVal);
+        }
     },
 
     _renderHSVAPalette: function () {
@@ -57,15 +68,11 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
         instance._hsvPalette.after(
             'selectedChange',
             function (event) {
-                instance.set('selected', event.newVal);
+                instance.set('selected', event.newVal, {
+                    src: AWidget.UI_SRC
+                });
             }
         );
-    },
-
-    _setSelected: function (value) {
-        var instance = this;
-
-        return instance._hsvPalette.set('selected', value);
     }
 }, {
     ATTRS: {
@@ -78,7 +85,6 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
 
         selected: {
             getter: '_getSelected',
-            setter: '_setSelected',
             validator: Lang.isString,
             value: EMPTY
         }

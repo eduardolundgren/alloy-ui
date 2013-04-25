@@ -55,7 +55,25 @@
     YUI({ filter:'raw' }).use(
         'aui-palette',
         function(A) {
-            var palette = new A.Palette().render('#palette');
+            var defaultColor = {
+                value: '#FFF',
+                name: 'White'
+            };
+
+            var palette = new A.Palette({
+                items: [
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor,
+                    defaultColor
+                ]
+            }).render('#palette');
         }
     );
 
