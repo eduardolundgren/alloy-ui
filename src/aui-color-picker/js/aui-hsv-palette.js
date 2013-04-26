@@ -90,7 +90,7 @@ var AColor = A.Color,
         '</div>',
 
 HSVPalette = A.Base.create(NAME, A.Widget, [], {
-    initializer: function () {
+    initializer: function() {
         var instance = this;
 
         instance.onceAfter('render', instance._createSliders, instance);
@@ -98,7 +98,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance.on(SELECTED_CHANGE, instance._onSelectedChange, instance);
     },
 
-    bindUI: function () {
+    bindUI: function() {
         var instance = this;
 
         instance._hsContainer.after('mousedown', instance._afterPaletteMousedown, instance);
@@ -108,13 +108,13 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._bindDD();
     },
 
-    destructor: function () {
+    destructor: function() {
         var instance = this;
 
         instance._dd.destroy();
     },
 
-    renderUI: function () {
+    renderUI: function() {
         var instance = this;
 
         instance._renderContainer();
@@ -127,7 +127,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
     },
 
-    _afterInputChange: function (event) {
+    _afterInputChange: function(event) {
         var instance = this,
             fieldNode,
             type,
@@ -151,7 +151,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _afterHSThumbChange: function (x, y) {
+    _afterHSThumbChange: function(x, y) {
         var instance = this,
             hexColor,
             hexValue,
@@ -198,7 +198,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         });
     },
 
-    _afterPaletteMousedown: function (event) {
+    _afterPaletteMousedown: function(event) {
         var instance = this,
             hsContainerXY,
             thumbXY,
@@ -221,13 +221,13 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._dd._handleMouseDownEvent(event);
     },
 
-    _afterPaletteDragStart: function () {
+    _afterPaletteDragStart: function() {
         var instance = this;
 
         instance._setHSContainerXY();
     },
 
-    _afterPaletteThumbDrag: function (event) {
+    _afterPaletteThumbDrag: function(event) {
         var instance = this,
             x,
             y;
@@ -238,7 +238,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._afterHSThumbChange(x, y);
     },
 
-    _bindDD: function () {
+    _bindDD: function() {
         var instance = this,
             dd;
 
@@ -255,13 +255,13 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._dd = dd;
     },
 
-    _calculateRGBColor: function (hue, saturation, value) {
+    _calculateRGBColor: function(hue, saturation, value) {
         var instance = this;
 
         return instance._calculateRGB(hue, saturation, value);
     },
 
-    _calculateHue: function (x) {
+    _calculateHue: function(x) {
         var instance = this,
             hue;
 
@@ -278,7 +278,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return hue;
     },
 
-    _calculateRGB: function (hue, saturation, value) {
+    _calculateRGB: function(hue, saturation, value) {
         var rgbColor = 'rgb(255, 0, 0)',
             hsvColor;
 
@@ -291,13 +291,13 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return rgbColor;
     },
 
-    _calculateRGBArray: function (r, g, b) {
+    _calculateRGBArray: function(r, g, b) {
         var instance = this;
 
         return AColor.fromArray([r, g, b], 'RGB');
     },
 
-    _calculateSaturation: function (y) {
+    _calculateSaturation: function(y) {
         var instance = this,
             saturation;
 
@@ -314,7 +314,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return saturation;
     },
 
-    _calculateX: function (hue) {
+    _calculateX: function(hue) {
         var instance = this,
             x;
 
@@ -331,7 +331,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return x;
     },
 
-    _calculateY: function (saturation) {
+    _calculateY: function(saturation) {
         var instance = this,
             y;
 
@@ -348,7 +348,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return y;
     },
 
-    _createSliders: function () {
+    _createSliders: function() {
         var instance = this;
 
         instance._valueSliderContainerHeight = instance._valueSliderContainer.get('offsetHeight');
@@ -356,7 +356,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._createValueSlider();
     },
 
-    _createValueSlider: function () {
+    _createValueSlider: function() {
         var instance = this,
             contentBox,
             slider,
@@ -391,7 +391,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._valueSlider = slider;
     },
 
-    _getContainerClassName: function () {
+    _getContainerClassName: function() {
         var instance = this,
             className = EMPTY;
 
@@ -402,17 +402,17 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return className;
     },
 
-    _getFieldValue: function (fieldNode) {
+    _getFieldValue: function(fieldNode) {
         var instance = this;
 
         return fieldNode.one(DOT + CSS_VALUE).get('value');
     },
 
-    _getHexValue: function (hexColor, rgbColorArray) {
+    _getHexValue: function(hexColor, rgbColorArray) {
         return hexColor.substring(1);
     },
 
-    _getHexContainerConfig: function () {
+    _getHexContainerConfig: function() {
         var instance = this;
 
         return {
@@ -425,13 +425,13 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         };
     },
 
-    _getHSVArray: function (hsv) {
+    _getHSVArray: function(hsv) {
         var instance = this;
 
         return AColor.toArray(hsv, 'HSV');
     },
 
-    _getXYFromHueSaturation: function (hue, saturation) {
+    _getXYFromHueSaturation: function(hue, saturation) {
         var instance = this,
             x,
             y;
@@ -443,17 +443,21 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         return [x,y];
     },
 
-    _normalizeHexValue: function (hex) {
+    _normalizeHexValue: function(hex) {
         var padding = '';
+
+        if (hex.indexOf('#') === 0) {
+            hex = hex.substring(1);
+        }
 
         if (hex.length === 3) {
             padding = 'fff';
         }
 
-        return (hex += padding);
+        return (hex += padding).toUpperCase();
     },
 
-    _onSelectedChange: function (event) {
+    _onSelectedChange: function(event) {
         var instance = this;
 
         if (event.src !== AWidget.UI_SRC) {
@@ -461,7 +465,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _onValueChange: function (event) {
+    _onValueChange: function(event) {
         var instance = this,
             hexColor,
             hexValue,
@@ -517,7 +521,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _renderContainer: function () {
+    _renderContainer: function() {
         var instance = this,
             className;
 
@@ -535,7 +539,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._renderViewContainer();
     },
 
-    _renderViewContainer: function () {
+    _renderViewContainer: function() {
         var instance = this;
 
         instance._viewContainer = A.Node.create(TPL_VIEW_CONTAINER);
@@ -545,7 +549,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._paletteContainer.appendChild(instance._viewContainer);
     },
 
-    _renderViewContainerContent: function () {
+    _renderViewContainerContent: function() {
         var instance = this;
 
         instance._renderImageBackdrop();
@@ -567,7 +571,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._renderHexNode();
     },
 
-    _renderField: function (container, data) {
+    _renderField: function(container, data) {
         var instance = this;
 
         return container.appendChild(
@@ -585,7 +589,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderHexNode: function () {
+    _renderHexNode: function() {
         var instance = this,
             labelValueHexContainer,
             hexContainerConfig;
@@ -608,7 +612,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._labelValueRGBContainer = labelValueHexContainer;
     },
 
-    _renderFields: function () {
+    _renderFields: function() {
         var instance = this,
             labelValueHSVContainer,
             labelValueRGBContainer;
@@ -709,7 +713,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         instance._labelValueRGBContainer = labelValueRGBContainer;
     },
 
-    _renderImageBackdrop: function () {
+    _renderImageBackdrop: function() {
         var instance = this;
 
         instance._hsImageBackdrop = instance._viewContainer.appendChild(
@@ -717,7 +721,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderHSContainer: function () {
+    _renderHSContainer: function() {
         var instance = this;
 
         instance._hsContainer = instance._viewContainer.appendChild(
@@ -725,7 +729,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderValueSliderContainer: function () {
+    _renderValueSliderContainer: function() {
         var instance = this;
 
         instance._valueSliderContainer = instance._viewContainer.appendChild(
@@ -733,7 +737,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderResultBackdrop: function () {
+    _renderResultBackdrop: function() {
         var instance = this;
 
         instance._resultViewBackdrop = instance._viewContainer.appendChild(
@@ -741,7 +745,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderResultView: function () {
+    _renderResultView: function() {
         var instance = this;
 
         instance._resultView = instance._viewContainer.appendChild(
@@ -749,7 +753,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderThumb: function () {
+    _renderThumb: function() {
         var instance = this;
 
         instance._colorThumb = instance._viewContainer.appendChild(
@@ -757,25 +761,25 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _setHSContainerXY: function () {
+    _setHSContainerXY: function() {
         var instance = this;
 
         instance._hsContainerXY = instance._hsContainer.getXY();
     },
 
-    _setFieldValue: function (fieldNode, value) {
+    _setFieldValue: function(fieldNode, value) {
         var instance = this;
 
         fieldNode.one(DOT + CSS_VALUE).set('value', value);
     },
 
-    _updatePaletteThumbPosition: function (xy) {
+    _updatePaletteThumbPosition: function(xy) {
         var instance = this;
 
         instance._colorThumb.setXY([xy[0] - instance._colorThumbGutter, xy[1] - instance._colorThumbGutter]);
     },
 
-    _updateViewFromInput: function (fieldNode) {
+    _updateViewFromInput: function(fieldNode) {
         var instance = this,
             type;
 
@@ -792,7 +796,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _updateViewByHSVA: function (fieldNode) {
+    _updateViewByHSVA: function(fieldNode) {
         var instance = this,
             hexColor,
             hexValue,
@@ -855,7 +859,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         });
     },
 
-    _updateViewByRGB: function (fieldNode) {
+    _updateViewByRGB: function(fieldNode) {
         var instance = this,
             b,
             g,
@@ -933,7 +937,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         });
     },
 
-    _updateViewByHEXNode: function (fieldNode) {
+    _updateViewByHEXNode: function(fieldNode) {
         var instance = this,
             hex;
 
@@ -950,7 +954,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _updateViewByHEX: function (hex) {
+    _updateViewByHEX: function(hex) {
         var instance = this,
             b,
             g,
@@ -969,21 +973,21 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
 
         hex = hex.substr(0, 6);
 
-       hsvColor = AColor.toHSV(hex);
-       hsvColorArray = AColor.toArray(hsvColor, 'HSV');
+        hsvColor = AColor.toHSV(hex);
+        hsvColorArray = AColor.toArray(hsvColor, 'HSV');
 
-       hue = hsvColorArray[0];
-       saturation = hsvColorArray[1];
-       value = hsvColorArray[2];
+        hue = hsvColorArray[0];
+        saturation = hsvColorArray[1];
+        value = hsvColorArray[2];
 
-       rgb = AColor.toRGBA(hsvColor);
-       rgbColorArray = AColor.toArray(rgb);
+        rgb = AColor.toRGBA(hsvColor);
+        rgbColorArray = AColor.toArray(rgb);
 
-       r = rgbColorArray[0];
-       g = rgbColorArray[1];
-       b = rgbColorArray[2];
+        r = rgbColorArray[0];
+        g = rgbColorArray[1];
+        b = rgbColorArray[2];
 
-       position = instance._getXYFromHueSaturation(hsvColorArray[0], hsvColorArray[1]);
+        position = instance._getXYFromHueSaturation(hsvColorArray[0], hsvColorArray[1]);
 
         instance._colorThumb.setStyles(
             {
@@ -1018,7 +1022,7 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _validateFieldValue: function (fieldNode) {
+    _validateFieldValue: function(fieldNode) {
         var instance = this,
             fieldValidator,
             result,
