@@ -6,10 +6,13 @@ var AArray = A.Array,
 
     getClassName = A.getClassName,
 
+    _EMPTY = '',
+
     COLOR = 'color',
     CONTENT_BOX = 'contentBox',
     DEFAULT_COLOR = '#FFF',
     DEFAULT_HSV_COLOR = 'FF0000',
+    RENDER_HSV_PALETTE = 'renderHSVPalette',
     SELECTED = 'selected',
 
     CSS_HSV_TRIGGER = getClassName('hsv-trigger'),
@@ -34,10 +37,12 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         var instance = this,
             renderHSVPalette;
 
-        renderHSVPalette = instance.get('renderHSVPalette');
+        renderHSVPalette = instance.get(RENDER_HSV_PALETTE);
 
         if (renderHSVPalette) {
             instance._hsvTrigger.on('click', instance._onHSVTriggerClick, instance);
+
+            instance._recentColorsPalette.on('selectedChange', instance._onRecentColorPaletteSelectChange, instance);
         }
     },
 
@@ -52,7 +57,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             instance._renderColorPalette();
         }
 
-        renderHSVPalette = instance.get('renderHSVPalette');
+        renderHSVPalette = instance.get(RENDER_HSV_PALETTE);
 
         if (renderHSVPalette) {
             instance._renderHSVTrigger();
@@ -175,14 +180,34 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         return instance._hsvPaletteModal;
     },
 
-    _onColorPaletteSelectChange: function(event) {
+    _onColorChange: function(colorIndex) {
+        var instance = this,
+            color = _EMPTY;
+
+        if (colorIndex !== -1) {
+            color = instance._colorPalette.getItemByIndex(colorIndex).getAttribute('data-value');
+        }
+
+        instance.set('color', color, {
+            src: AWidget.UI_SRC
+        });
+    },
+
+    _onRecentColorPaletteSelectChange: function(event) {
         var instance = this;
 
-        if (instance.get('renderHSVPalette')) {
+        instance._onColorChange(event.newVal);
+    },
+
+    _onColorPaletteSelectChange: function(event) {
+        var instance = this,
+            color;
+
+        if (instance.get(RENDER_HSV_PALETTE)) {
             instance._recentColorsPalette.set(SELECTED, -1);
         }
 
-        // TODO: fire an event with the current color
+        instance._onColorChange(event.newVal);
     },
 
     _onHSVPaletteOK: function(event) {
