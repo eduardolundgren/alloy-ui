@@ -13,7 +13,7 @@ var AArray = A.Array,
     EMPTY = '',
 
 HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
-    initializer: function () {
+    initializer: function() {
         var instance = this;
 
         instance.after('render', instance._renderHSVAPalette, instance);
@@ -21,13 +21,13 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
         instance.on('selectedChange', instance._onSelectionChange, instance);
     },
 
-    _getSelected: function () {
+    _getSelected: function() {
         var instance = this;
 
         return instance._hsvPalette.get('selected');
     },
 
-    _onSelectionChange: function (event) {
+    _onSelectionChange: function(event) {
         var instance = this;
 
         if (event.src !== AWidget.UI_SRC) {
@@ -35,7 +35,7 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
         }
     },
 
-    _renderHSVAPalette: function () {
+    _renderHSVAPalette: function() {
         var instance = this,
             body,
             contentBox,
@@ -67,7 +67,7 @@ HSVAPaletteModal = A.Base.create(NAME, A.Modal, [], {
 
         instance._hsvPalette.after(
             'selectedChange',
-            function (event) {
+            function(event) {
                 instance.set('selected', event.newVal, {
                     src: AWidget.UI_SRC
                 });

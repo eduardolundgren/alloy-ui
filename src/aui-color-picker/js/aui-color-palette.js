@@ -22,7 +22,7 @@ ColorPalette = A.Base.create(_NAME, A.Widget, [
                     '</td>',
 
     _valueFormatterFn: function() {
-        return function (items, index, row, column, selected) {
+        return function(items, index, row, column, selected) {
             var instance = this,
                 item = items[index];
 
@@ -40,11 +40,11 @@ ColorPalette = A.Base.create(_NAME, A.Widget, [
         };
     },
 
-    _setItems: function (value) {
+    _setItems: function(value) {
         var instance = this,
             result;
 
-        result = AArray.map(value, function (item, index) {
+        result = AArray.map(value, function(item, index) {
             var tmp = item,
                 color;
 

@@ -25,12 +25,12 @@ var AArray = A.Array,
         '</div',
 
 ColorPicker = A.Base.create(NAME, A.Widget, [], {
-    initializer: function () {
+    initializer: function() {
         var instance = this;
 
     },
 
-    bindUI: function () {
+    bindUI: function() {
         var instance = this,
             renderHSVPalette;
 
@@ -41,7 +41,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    renderUI: function () {
+    renderUI: function() {
         var instance = this,
             renderColorPalette,
             renderHSVPalette;
@@ -61,7 +61,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         }
     },
 
-    _defaultValueRecentColors: function () {
+    _defaultValueRecentColors: function() {
         var instance = this,
             defaultColor;
 
@@ -87,7 +87,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         };
     },
 
-    _getDefaultOptions: function (optionsName) {
+    _getDefaultOptions: function(optionsName) {
         var instance = this,
             color,
             options;
@@ -116,7 +116,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         AArray.some(
             items,
-            function (item, index) {
+            function(item, index) {
                 var emptySlot = (item.value === DEFAULT_COLOR);
 
                 if (emptySlot) {
@@ -130,7 +130,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         return result;
     },
 
-    _getHSVPalette: function () {
+    _getHSVPalette: function() {
         var instance = this,
             contentBox,
             strings;
@@ -175,7 +175,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         return instance._hsvPaletteModal;
     },
 
-    _onColorPaletteSelectChange: function (event) {
+    _onColorPaletteSelectChange: function(event) {
         var instance = this;
 
         if (instance.get('renderHSVPalette')) {
@@ -251,12 +251,16 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         hsvPalette = instance._getHSVPalette();
 
-        hsvPalette.set('selected', color || DEFAULT_HSV_COLOR);
+        if (color === DEFAULT_COLOR) {
+            color = 'FF0000';
+        }
+
+        hsvPalette.set('selected', color);
 
         hsvPalette.show();
     },
 
-    _renderColorPalette: function () {
+    _renderColorPalette: function() {
         var instance = this,
             color,
             colorPaletteOptions,
@@ -271,7 +275,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         instance._colorPalette.on('selectedChange', instance._onColorPaletteSelectChange, instance);
     },
 
-    _renderHSVTrigger: function () {
+    _renderHSVTrigger: function() {
         var instance = this,
             contentBox,
             strings;
@@ -290,7 +294,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         );
     },
 
-    _renderRecentColors: function () {
+    _renderRecentColors: function() {
         var instance = this,
             color,
             contentBox,
