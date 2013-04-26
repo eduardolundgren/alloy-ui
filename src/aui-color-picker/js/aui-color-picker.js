@@ -298,14 +298,14 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         var instance = this,
             color,
             contentBox,
-            recentColorsOptions,
+            recentColors,
             recentColorsPalette;
 
         contentBox = instance.get(CONTENT_BOX);
 
-        recentColorsOptions = instance._getDefaultOptions('recentColorsOptions');
+        recentColors = instance._getDefaultOptions('recentColors');
 
-        recentColorsPalette = new A.ColorPalette(recentColorsOptions).render(contentBox);
+        recentColorsPalette = new A.ColorPalette(recentColors).render(contentBox);
 
         recentColorsPalette.on(['select','unselect'], instance._onRecentColorClick, instance);
 
@@ -313,23 +313,6 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
     }
 }, {
     ATTRS: {
-        renderColorPalette: {
-            validator: Lang.isBoolean,
-            value: true
-        },
-
-        renderHSVPalette: {
-            validator: Lang.isBoolean,
-            value: true
-        },
-
-        hsvPalette: {
-            validator: Lang.isObject,
-            value: {
-                alpha: false
-            }
-        },
-
         color: {
             validator: Lang.isString
         },
@@ -423,9 +406,26 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             }
         },
 
-        recentColorsOptions: {
+        hsvPalette: {
+            validator: Lang.isObject,
+            value: {
+                alpha: false
+            }
+        },
+
+        recentColors: {
             validator: Lang.isObject,
             valueFn: '_defaultValueRecentColors'
+        },
+
+        renderColorPalette: {
+            validator: Lang.isBoolean,
+            value: true
+        },
+
+        renderHSVPalette: {
+            validator: Lang.isBoolean,
+            value: true
         },
 
         strings: {
