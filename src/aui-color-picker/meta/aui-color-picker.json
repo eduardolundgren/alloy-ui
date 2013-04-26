@@ -1,15 +1,4 @@
 {
-    "aui-palette": {
-        "requires": [
-            "base-build",
-            "event-hover",
-            "widget",
-            "aui-classnamemanager",
-            "aui-base"
-        ],
-        "skinnable": true
-    },
-
     "aui-color-palette": {
         "requires": [
             "array-extras",
