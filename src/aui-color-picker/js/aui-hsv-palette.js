@@ -7,6 +7,7 @@ var AColor = A.Color,
     getClassName = A.getClassName,
 
     DOT = '.',
+    SELECTED_CHANGE = 'selectedChange',
 
     CSS_CONTAINER = getClassName('hsv-container'),
     CSS_CONTAINER_CONTROLS = getClassName('hsv-container-controls'),
@@ -93,6 +94,8 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         var instance = this;
 
         instance.onceAfter('render', instance._createSliders, instance);
+
+        instance.on(SELECTED_CHANGE, instance._onSelectedChange, instance);
     },
 
     bindUI: function () {
@@ -190,7 +193,9 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             }
         );
 
-        instance.set('selected', hexValue);
+        instance.set('selected', hexValue, {
+            src: AWidget.UI_SRC
+        });
     },
 
     _afterPaletteMousedown: function (event) {
@@ -284,6 +289,12 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         }
 
         return rgbColor;
+    },
+
+    _calculateRGBArray: function (r, g, b) {
+        var instance = this;
+
+        return AColor.fromArray([r, g, b], 'RGB');
     },
 
     _calculateSaturation: function (y) {
@@ -414,6 +425,12 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         };
     },
 
+    _getHSVArray: function (hsv) {
+        var instance = this;
+
+        return AColor.toArray(hsv, 'HSV');
+    },
+
     _getXYFromHueSaturation: function (hue, saturation) {
         var instance = this,
             x,
@@ -424,6 +441,24 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
         y = instance._calculateY(saturation);
 
         return [x,y];
+    },
+
+    _normalizeHexValue: function (hex) {
+        var padding = '';
+
+        if (hex.length === 3) {
+            padding = 'fff';
+        }
+
+        return (hex += padding);
+    },
+
+    _onSelectedChange: function (event) {
+        var instance = this;
+
+        if (event.src !== AWidget.UI_SRC) {
+            instance._updateViewByHEX(event.newVal);
+        }
     },
 
     _onValueChange: function (event) {
@@ -476,7 +511,9 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
                 }
             );
 
-            instance.set('selected', hexValue);
+            instance.set('selected', hexValue, {
+                src: AWidget.UI_SRC
+            });
         }
     },
 
@@ -813,29 +850,9 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             }
         );
 
-        instance.set('selected', hexValue);
-    },
-
-    _calculateRGBArray: function (r, g, b) {
-        var instance = this;
-
-        return AColor.fromArray([r, g, b], 'RGB');
-    },
-
-    _getHSVArray: function (hsv) {
-        var instance = this;
-
-        return AColor.toArray(hsv, 'HSV');
-    },
-
-    _normalizeHexValue: function (hex) {
-        var padding = '';
-
-        if (hex.length === 3) {
-            padding = 'fff';
-        }
-
-        return (hex += padding);
+        instance.set('selected', hexValue, {
+            src: AWidget.UI_SRC
+        });
     },
 
     _updateViewByRGB: function (fieldNode) {
@@ -911,14 +928,32 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             }
         );
 
-        instance.set('selected', hexValue);
+        instance.set('selected', hexValue, {
+            src: AWidget.UI_SRC
+        });
     },
 
-    _updateViewByHEX: function (fieldNode) {
+    _updateViewByHEXNode: function (fieldNode) {
+        var instance = this,
+            hex;
+
+        hex = instance._getFieldValue(instance._hexContainer);
+
+        instance._updateViewByHEX(hex);
+
+        instance.fire(
+            'hexInputChange',
+            {
+                hexColor: hex,
+                fieldNode: instance._hexContainer
+            }
+        );
+    },
+
+    _updateViewByHEX: function (hex) {
         var instance = this,
             b,
             g,
-            hex,
             hexColor,
             hsvColor,
             hsvColorArray,
@@ -929,8 +964,6 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             rgbColorArray,
             saturation,
             value;
-
-        hex = instance._getFieldValue(instance._hexContainer);
 
         hex = instance._normalizeHexValue(hex);
 
@@ -983,14 +1016,6 @@ HSVPalette = A.Base.create(NAME, A.Widget, [], {
             instance._setFieldValue(instance._gContainer, g);
             instance._setFieldValue(instance._bContainer, b);
         }
-
-        instance.fire(
-            'hexInputChange',
-            {
-                hexColor: hex,
-                node: fieldNode
-            }
-        );
     },
 
     _validateFieldValue: function (fieldNode) {

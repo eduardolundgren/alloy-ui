@@ -6,17 +6,20 @@ var AArray = A.Array,
 
     getClassName = A.getClassName,
 
-    NAME = 'color-palette',
-
-    SPACE = ' ',
+    _NAME = 'color-palette',
+    _EMPTY = '',
 
     CSS_COLOR_PALETTE_ITEM = getClassName('color-palette-item'),
     CSS_PALETTE_ITEM = getClassName('palette-item'),
+    CSS_PALETTE_ITEM_INNER = getClassName('palette-item-inner'),
+    CSS_PALETTE_ITEM_SELECTED = getClassName('palette-item-selected'),
 
-ColorPalette = A.Base.create(NAME, A.Widget, [
+ColorPalette = A.Base.create(_NAME, A.Widget, [
     A.Palette
 ], {
-    ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + '" data-value="{value}" style="background-color:{value}" onclick="return false;" title="{title}"></a>',
+    ITEM_TEMPLATE:  '<td class="' + CSS_PALETTE_ITEM + ' {selectedClassName}" data-column={column} data-index={index} data-row={row} data-value="{value}">' +
+                        '<a href="" class="' + CSS_PALETTE_ITEM_INNER + '" style="background-color:{value}" onclick="return false;" title="{title}"></a>' +
+                    '</td>',
 
     _valueFormatterFn: function() {
         return function (items, index, row, column, selected) {
@@ -29,6 +32,7 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
                     column: column,
                     index: index,
                     row: row,
+                    selectedClassName: selected ? CSS_PALETTE_ITEM_SELECTED : _EMPTY,
                     title: item.name,
                     value: item.value
                 }
@@ -37,9 +41,10 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
     },
 
     _setItems: function (value) {
-        var instance = this;
+        var instance = this,
+            result;
 
-        var result = AArray.map(value, function (item, index) {
+        result = AArray.map(value, function (item, index) {
             var tmp = item,
                 color;
 
@@ -60,9 +65,9 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
         return result;
     }
 }, {
-    CSS_PREFIX: getClassName(NAME),
+    CSS_PREFIX: getClassName(_NAME),
 
-    NAME: NAME,
+    NAME: _NAME,
 
     ATTRS: {
         items: {

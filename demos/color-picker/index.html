@@ -55,7 +55,24 @@
     YUI({ filter:'raw' }).use(
         'aui-palette',
         function(A) {
-            var palette = new A.Palette().render('#palette');
+            var palette = new A.Palette({
+                items: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+                on: {
+                    enter: function(event) {
+                        console.log(event.type);
+                    },
+                    leave: function(event) {
+                        console.log(event.type);
+                    },
+                    select: function(event) {
+                        console.log(event.type);
+                    },
+                    unselect: function(event) {
+                        console.log(event.type);
+                    }
+                },
+                toggleSelection: false
+            }).render('#palette');
         }
     );
 

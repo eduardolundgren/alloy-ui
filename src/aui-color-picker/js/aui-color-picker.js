@@ -1,9 +1,16 @@
 /* global A*/
 
 var AArray = A.Array,
+    AWidget = A.Widget,
     Lang = A.Lang,
 
     getClassName = A.getClassName,
+
+    COLOR = 'color',
+    CONTENT_BOX = 'contentBox',
+    DEFAULT_COLOR = '#FFF',
+    DEFAULT_HSV_COLOR = 'FF0000',
+    SELECTED = 'selected',
 
     CSS_HSV_TRIGGER = getClassName('hsv-trigger'),
     CSS_HSV_TRIGGER_CONTAINER = getClassName('hsv-trigger-container'),
@@ -60,12 +67,12 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         defaultColor = {
             name: instance.get('strings').noColor,
-            color: '#FFF'
+            value: DEFAULT_COLOR
         };
 
         return {
             columns: 10,
-            colors: [
+            items: [
                 defaultColor,
                 defaultColor,
                 defaultColor,
@@ -80,13 +87,56 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         };
     },
 
+    _getDefaultOptions: function (optionsName) {
+        var instance = this,
+            color,
+            options;
+
+        options = instance.get(optionsName);
+
+        color = instance.get(COLOR);
+
+        if (color) {
+            A.mix(
+                options,
+                {
+                    selected: color
+                }
+            );
+        }
+
+        return options;
+    },
+
+    _findRecentColorEmptySpot: function(items) {
+        var instance = this,
+            result = -1;
+
+        items = items || instance._recentColorsPalette.get('items');
+
+        AArray.some(
+            items,
+            function (item, index) {
+                var emptySlot = (item.value === DEFAULT_COLOR);
+
+                if (emptySlot) {
+                    result = index;
+                }
+
+                return emptySlot;
+            }
+        );
+
+        return result;
+    },
+
     _getHSVPalette: function () {
         var instance = this,
             contentBox,
             strings;
 
         if (!instance._hsvPaletteModal) {
-            contentBox = instance.get('contentBox');
+            contentBox = instance.get(CONTENT_BOX);
 
             strings = instance.get('strings');
 
@@ -109,21 +159,13 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
                 {
                     label: strings.cancel,
                     on: {
-                        click: function() {
-                            instance._hsvPaletteModal.hide();
-                        }
+                        click: A.bind(instance._hsvPaletteModal.hide, instance._hsvPaletteModal)
                     }
                 },
                 {
                     label: strings.ok,
                     on: {
-                        click: function() {
-                            var color = instance._hsvPaletteModal.get('selected');
-
-                            console.log(color);
-
-                            instance._hsvPaletteModal.hide();
-                        }
+                        click: A.bind(instance._onHSVPaletteOK, instance)
                     },
                     primary: true
                 }
@@ -133,11 +175,61 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         return instance._hsvPaletteModal;
     },
 
+    _onColorPaletteSelectChange: function (event) {
+        var instance = this;
+
+        if (instance.get('renderHSVPalette')) {
+            instance._recentColorsPalette.set(SELECTED, -1);
+        }
+
+        // TODO: fire an event with the current color
+    },
+
+    _onHSVPaletteOK: function(event) {
+        var instance = this,
+            color,
+            emptySpotIndex,
+            recentColor,
+            recentColors;
+
+        color = '#' + instance._hsvPaletteModal.get(SELECTED);
+
+        instance._colorPalette.set(SELECTED, -1);
+
+        recentColors = instance._recentColorsPalette.get('items');
+
+        if (Lang.isNumber(instance._recentColorIndex)) {
+            instance._recentColorsPalette.set(SELECTED, instance._recentColorIndex, {
+                src: AWidget.UI_SRC
+            });
+
+            recentColors[instance._recentColorIndex] = color;
+        }
+        else {
+            emptySpotIndex = instance._findRecentColorEmptySpot(recentColors);
+
+            if (emptySpotIndex > -1) {
+                recentColors[emptySpotIndex] = color;
+            }
+            else {
+                recentColors.push(color);
+            }
+        }
+
+        instance._recentColorsPalette.set('items', recentColors);
+
+        instance._hsvPaletteModal.hide();
+    },
+
     _onHSVTriggerClick: function() {
         var instance = this,
             hsvPalette;
 
+        instance._recentColorIndex = null;
+
         hsvPalette = instance._getHSVPalette();
+
+        hsvPalette.set(SELECTED, DEFAULT_HSV_COLOR);
 
         hsvPalette.show();
     },
@@ -149,29 +241,34 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             index,
             node;
 
-        node = event.node;
+        node = event.item;
 
-        color = node.getAttribute('data-color');
+        color = node.getAttribute('data-value');
 
-        instance._currentRecentColorIndex = node.getAttribute('data-index');
+        instance._recentColorIndex = Lang.toInt(node.getAttribute('data-index'));
 
         event.preventDefault();
 
         hsvPalette = instance._getHSVPalette();
+
+        hsvPalette.set('selected', color || DEFAULT_HSV_COLOR);
 
         hsvPalette.show();
     },
 
     _renderColorPalette: function () {
         var instance = this,
+            color,
             colorPaletteOptions,
             contentBox;
 
-        contentBox = instance.get('contentBox');
+        contentBox = instance.get(CONTENT_BOX);
 
-        colorPaletteOptions = instance.get('colorPalette');
+        colorPaletteOptions = instance._getDefaultOptions('colorPalette');
 
         instance._colorPalette = new A.ColorPalette(colorPaletteOptions).render(contentBox);
+
+        instance._colorPalette.on('selectedChange', instance._onColorPaletteSelectChange, instance);
     },
 
     _renderHSVTrigger: function () {
@@ -179,7 +276,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             contentBox,
             strings;
 
-        contentBox = instance.get('contentBox');
+        contentBox = instance.get(CONTENT_BOX);
 
         strings = instance.get('strings');
 
@@ -195,17 +292,18 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
     _renderRecentColors: function () {
         var instance = this,
+            color,
             contentBox,
             recentColorsOptions,
             recentColorsPalette;
 
-        contentBox = instance.get('contentBox');
+        contentBox = instance.get(CONTENT_BOX);
 
-        recentColorsOptions = instance.get('recentColorsOptions');
+        recentColorsOptions = instance._getDefaultOptions('recentColorsOptions');
 
         recentColorsPalette = new A.ColorPalette(recentColorsOptions).render(contentBox);
 
-        recentColorsPalette.on('itemClick', instance._onRecentColorClick, instance);
+        recentColorsPalette.on(['select','unselect'], instance._onRecentColorClick, instance);
 
         instance._recentColorsPalette = recentColorsPalette;
     }
@@ -226,6 +324,10 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             value: {
                 alpha: false
             }
+        },
+
+        color: {
+            validator: Lang.isString
         },
 
         colorPalette: {
