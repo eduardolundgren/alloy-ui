@@ -38,7 +38,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
 
     ITEMS_CONTAINER_TEMPLATE: '<tr class="' + CSS_PALETTE_ITEMS_CONTAINER + _SPACE + CSS_PALETTE_ITEMS_CONTAINER_INDEX + '">{content}</tr>',
 
-    ITEM_WRAPPER_TEMPLATE: '<td class="' + CSS_PALETTE_ITEM_CONTAINER + '" data-column={column} data-index={index} data-row={row}>{content}</td>',
+    ITEM_WRAPPER_TEMPLATE: '<td class="' + CSS_PALETTE_ITEM_CONTAINER + ' {selectedClassName}" data-column={column} data-index={index} data-row={row}>{content}</td>',
 
     ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + '" data-value="{value}" onclick="return false;"></a>',
 
@@ -99,6 +99,11 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
             selected = instance.get(SELECTED),
             selectedItem = instance.getItemByIndex(selected);
 
+        // prevent dom select event to fire _defSelectFn
+        if (event.src !== A.Widget.UI_SRC) {
+            return;
+        }
+
         if (selectedItem) {
             selectedItem.removeClass(CSS_PALETTE_ITEM_SELECTED);
         }
@@ -116,7 +121,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
         event.item.removeClass(CSS_PALETTE_ITEM_SELECTED);
     },
 
-    _getCellContent: function(items, index, row, column, content) {
+    _getCellContent: function(items, index, row, column, content, selected) {
         var instance = this;
 
         return Lang.sub(
@@ -126,6 +131,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
                 content: content,
                 index: index,
                 row: row,
+                selectedClassName: selected ? CSS_PALETTE_ITEM_SELECTED : _EMPTY,
                 value: items[index]
             }
         );
@@ -155,7 +161,8 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
 
                 content += instance._getCellContent(
                             items, index, row, column,
-                            formatter.call(instance, items, index, row, column, (selected === index)));
+                            formatter.call(instance, items, index, row, column, (selected === index)),
+                            (selected === index));
             }
 
             result += instance._getRowContent(items, index, row, content);
@@ -177,6 +184,7 @@ var Palette = A.Base.create(_NAME, A.Widget, [], {
             item: itemNode,
             index: index,
             row: Lang.toInt(itemNode.getAttribute('data-row')),
+            src: A.Widget.UI_SRC,
             value: items[index]
         };
     },

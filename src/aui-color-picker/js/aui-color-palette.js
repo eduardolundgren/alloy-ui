@@ -8,17 +8,15 @@ var AArray = A.Array,
 
     NAME = 'color-palette',
 
-    EMPTY = '',
     SPACE = ' ',
 
     CSS_COLOR_PALETTE_ITEM = getClassName('color-palette-item'),
     CSS_PALETTE_ITEM = getClassName('palette-item'),
-    CSS_PALETTE_ITEM_SELECTED = getClassName('palette-item-selected'),
 
 ColorPalette = A.Base.create(NAME, A.Widget, [
     A.Palette
 ], {
-    ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + ' {selectedClassName}" data-value="{value}" style="background-color:{value}" onclick="return false;" title="{title}"></a>',
+    ITEM_TEMPLATE: '<a href="" class="' + CSS_PALETTE_ITEM + '" data-value="{value}" style="background-color:{value}" onclick="return false;" title="{title}"></a>',
 
     _valueFormatterFn: function() {
         return function (items, index, row, column, selected) {
@@ -31,7 +29,6 @@ ColorPalette = A.Base.create(NAME, A.Widget, [
                     column: column,
                     index: index,
                     row: row,
-                    selectedClassName: selected ? CSS_PALETTE_ITEM_SELECTED : EMPTY,
                     title: item.name,
                     value: item.value
                 }
