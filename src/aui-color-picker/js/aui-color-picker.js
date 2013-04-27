@@ -64,7 +64,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
             instance._renderRecentColors();
         }
-    },
+    },    
 
     _defaultValueRecentColors: function() {
         var instance = this,
@@ -180,34 +180,32 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         return instance._hsvPaletteModal;
     },
 
-    _onColorChange: function(colorIndex) {
-        var instance = this,
-            color = _EMPTY;
-
-        if (colorIndex !== -1) {
-            color = instance._colorPalette.getItemByIndex(colorIndex).getAttribute('data-value');
-        }
-
-        instance.set('color', color, {
-            src: AWidget.UI_SRC
-        });
-    },
-
-    _onRecentColorPaletteSelectChange: function(event) {
-        var instance = this;
-
-        instance._onColorChange(event.newVal);
-    },
-
     _onColorPaletteSelectChange: function(event) {
         var instance = this,
-            color;
+            color,
+            item,
+            selectedIndex;
 
-        if (instance.get(RENDER_HSV_PALETTE)) {
-            instance._recentColorsPalette.set(SELECTED, -1);
+        if (event.src !== AWidget.UI_SRC) {
+            if (instance.get(RENDER_HSV_PALETTE)) {
+                instance._recentColorsPalette.set(SELECTED, -1, {
+                    src: AWidget.UI_SRC
+                });
+            }
+
+            if (event.newVal === -1) {
+                instance.set('color', _EMPTY, {
+                    src: AWidget.UI_SRC
+                });
+            }
+            else {
+                item = instance._colorPalette.get('items')[event.newVal];
+
+                color = Lang.isObject(item) ? item.name : item;
+
+                instance.set('color', color);
+            }
         }
-
-        instance._onColorChange(event.newVal);
     },
 
     _onHSVPaletteOK: function(event) {
@@ -219,16 +217,18 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         color = '#' + instance._hsvPaletteModal.get(SELECTED);
 
-        instance._colorPalette.set(SELECTED, -1);
-
         recentColors = instance._recentColorsPalette.get('items');
 
+        instance._colorPalette.set(SELECTED, -1, {
+            src: AWidget.UI_SRC
+        });
+
         if (Lang.isNumber(instance._recentColorIndex)) {
+            recentColors[instance._recentColorIndex] = color;
+
             instance._recentColorsPalette.set(SELECTED, instance._recentColorIndex, {
                 src: AWidget.UI_SRC
             });
-
-            recentColors[instance._recentColorIndex] = color;
         }
         else {
             emptySpotIndex = instance._findRecentColorEmptySpot(recentColors);
@@ -239,9 +239,15 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             else {
                 recentColors.push(color);
             }
+
+            instance._recentColorsPalette.set('selected', emptySpotIndex, {
+                src: AWidget.UI_SRC
+            });
         }
 
         instance._recentColorsPalette.set('items', recentColors);
+
+        instance.set('color', color);
 
         instance._hsvPaletteModal.hide();
     },
@@ -259,6 +265,31 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         hsvPalette.show();
     },
 
+    _onRecentColorPaletteSelectChange: function(event) {
+        var instance = this,
+            color,
+            item;
+
+        if (event.src !== AWidget.UI_SRC) {
+            instance._colorPalette.set(SELECTED, -1, {
+                src: AWidget.UI_SRC
+            });
+
+            if (event.newVal === -1) {
+                instance.set('color', _EMPTY);
+            }
+            else {
+                item = instance._recentColorsPalette.get('items')[event.newVal];
+
+                color = Lang.isObject(item) ? item.name : item;
+
+                instance.set('color', color, {
+                    src: AWidget.UI_SRC
+                });
+            }
+        }
+    },
+
     _onRecentColorClick: function(event) {
         var instance = this,
             color,
@@ -272,17 +303,15 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         instance._recentColorIndex = Lang.toInt(node.getAttribute('data-index'));
 
-        event.preventDefault();
-
-        hsvPalette = instance._getHSVPalette();
-
         if (color === DEFAULT_COLOR) {
-            color = 'FF0000';
+            event.preventDefault();
+
+            hsvPalette = instance._getHSVPalette();
+
+            hsvPalette.set('selected', 'FF0000');
+
+            hsvPalette.show();
         }
-
-        hsvPalette.set('selected', color);
-
-        hsvPalette.show();
     },
 
     _renderColorPalette: function() {

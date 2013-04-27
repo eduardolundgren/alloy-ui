@@ -29,6 +29,10 @@
         'aui-color-picker',
         function(A) {
             var colorPicker = new A.ColorPicker().render('#colorPicker');
+
+            colorPicker.on('colorChange', function(event) {
+                console.log(event.newVal);
+            });
         }
     );
 </script>
