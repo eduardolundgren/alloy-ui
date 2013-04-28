@@ -6,14 +6,29 @@ var AArray = A.Array,
 
     getClassName = A.getClassName,
 
+    _DEFAULT_COLUMNS = 10,
     _EMPTY = '',
+    _INVALID_COLOR_INDEX = -1,
+    _POUND = '#',
 
+    CLICK = 'click',
     COLOR = 'color',
+    COLOR_PALETTE = 'colorPalette',
     CONTENT_BOX = 'contentBox',
+    DATA_INDEX = 'data-index',
+    DATA_VALUE = 'data-value',
     DEFAULT_COLOR = '#FFF',
     DEFAULT_HSV_COLOR = 'FF0000',
+    HSV_PALETTE = 'hsvPalette',
+    ITEMS = 'items',
+    RECENT_COLORS = 'recentColors',
+    RENDER_COLOR_PALETTE = 'renderColorPalette',
     RENDER_HSV_PALETTE = 'renderHSVPalette',
+    SELECT = 'select',
     SELECTED = 'selected',
+    SELECTED_CHANGE = 'selectedChange',
+    STRINGS = 'strings',
+    UNSELECT = 'unselect',
 
     CSS_HSV_TRIGGER = getClassName('hsv-trigger'),
     CSS_HSV_TRIGGER_CONTAINER = getClassName('hsv-trigger-container'),
@@ -40,9 +55,9 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         renderHSVPalette = instance.get(RENDER_HSV_PALETTE);
 
         if (renderHSVPalette) {
-            instance._hsvTrigger.on('click', instance._onHSVTriggerClick, instance);
+            instance._hsvTrigger.on(CLICK, instance._onHSVTriggerClick, instance);
 
-            instance._recentColorsPalette.on('selectedChange', instance._onRecentColorPaletteSelectChange, instance);
+            instance._recentColorsPalette.on(SELECTED_CHANGE, instance._onRecentColorPaletteSelectChange, instance);
         }
     },
 
@@ -51,7 +66,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             renderColorPalette,
             renderHSVPalette;
 
-        renderColorPalette = instance.get('renderColorPalette');
+        renderColorPalette = instance.get(RENDER_COLOR_PALETTE);
 
         if (renderColorPalette) {
             instance._renderColorPalette();
@@ -64,19 +79,19 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
             instance._renderRecentColors();
         }
-    },    
+    },
 
     _defaultValueRecentColors: function() {
         var instance = this,
             defaultColor;
 
         defaultColor = {
-            name: instance.get('strings').noColor,
+            name: instance.get(STRINGS).noColor,
             value: DEFAULT_COLOR
         };
 
         return {
-            columns: 10,
+            columns: _DEFAULT_COLUMNS,
             items: [
                 defaultColor,
                 defaultColor,
@@ -115,9 +130,9 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
     _findRecentColorEmptySpot: function(items) {
         var instance = this,
-            result = -1;
+            result = _INVALID_COLOR_INDEX;
 
-        items = items || instance._recentColorsPalette.get('items');
+        items = items || instance._recentColorsPalette.get(ITEMS);
 
         AArray.some(
             items,
@@ -143,7 +158,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         if (!instance._hsvPaletteModal) {
             contentBox = instance.get(CONTENT_BOX);
 
-            strings = instance.get('strings');
+            strings = instance.get(STRINGS);
 
             instance._hsvPaletteModal = new A.HSVAPaletteModal(
                 {
@@ -154,7 +169,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
                             header: strings.header
                         }
                     ),
-                    hsv: instance.get('hsvPalette'),
+                    hsv: instance.get(HSV_PALETTE),
                     modal: true,
                     resizable: false
                 }
@@ -188,22 +203,22 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         if (event.src !== AWidget.UI_SRC) {
             if (instance.get(RENDER_HSV_PALETTE)) {
-                instance._recentColorsPalette.set(SELECTED, -1, {
+                instance._recentColorsPalette.set(SELECTED, _INVALID_COLOR_INDEX, {
                     src: AWidget.UI_SRC
                 });
             }
 
-            if (event.newVal === -1) {
-                instance.set('color', _EMPTY, {
+            if (event.newVal === _INVALID_COLOR_INDEX) {
+                instance.set(COLOR, _EMPTY, {
                     src: AWidget.UI_SRC
                 });
             }
             else {
-                item = instance._colorPalette.get('items')[event.newVal];
+                item = instance._colorPalette.get(ITEMS)[event.newVal];
 
                 color = Lang.isObject(item) ? item.name : item;
 
-                instance.set('color', color);
+                instance.set(COLOR, color);
             }
         }
     },
@@ -215,11 +230,11 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             recentColor,
             recentColors;
 
-        color = '#' + instance._hsvPaletteModal.get(SELECTED);
+        color = _POUND + instance._hsvPaletteModal.get(SELECTED);
 
-        recentColors = instance._recentColorsPalette.get('items');
+        recentColors = instance._recentColorsPalette.get(ITEMS);
 
-        instance._colorPalette.set(SELECTED, -1, {
+        instance._colorPalette.set(SELECTED, _INVALID_COLOR_INDEX, {
             src: AWidget.UI_SRC
         });
 
@@ -233,21 +248,21 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         else {
             emptySpotIndex = instance._findRecentColorEmptySpot(recentColors);
 
-            if (emptySpotIndex > -1) {
+            if (emptySpotIndex > _INVALID_COLOR_INDEX) {
                 recentColors[emptySpotIndex] = color;
             }
             else {
                 recentColors.push(color);
             }
 
-            instance._recentColorsPalette.set('selected', emptySpotIndex, {
+            instance._recentColorsPalette.set(SELECTED, emptySpotIndex, {
                 src: AWidget.UI_SRC
             });
         }
 
-        instance._recentColorsPalette.set('items', recentColors);
+        instance._recentColorsPalette.set(ITEMS, recentColors);
 
-        instance.set('color', color);
+        instance.set(COLOR, color);
 
         instance._hsvPaletteModal.hide();
     },
@@ -271,19 +286,19 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
             item;
 
         if (event.src !== AWidget.UI_SRC) {
-            instance._colorPalette.set(SELECTED, -1, {
+            instance._colorPalette.set(SELECTED, _INVALID_COLOR_INDEX, {
                 src: AWidget.UI_SRC
             });
 
-            if (event.newVal === -1) {
-                instance.set('color', _EMPTY);
+            if (event.newVal === _INVALID_COLOR_INDEX) {
+                instance.set(COLOR, _EMPTY);
             }
             else {
-                item = instance._recentColorsPalette.get('items')[event.newVal];
+                item = instance._recentColorsPalette.get(ITEMS)[event.newVal];
 
                 color = Lang.isObject(item) ? item.name : item;
 
-                instance.set('color', color, {
+                instance.set(COLOR, color, {
                     src: AWidget.UI_SRC
                 });
             }
@@ -299,16 +314,16 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         node = event.item;
 
-        color = node.getAttribute('data-value');
+        color = node.getAttribute(DATA_VALUE);
 
-        instance._recentColorIndex = Lang.toInt(node.getAttribute('data-index'));
+        instance._recentColorIndex = Lang.toInt(node.getAttribute(DATA_INDEX));
 
         if (color === DEFAULT_COLOR) {
             event.preventDefault();
 
             hsvPalette = instance._getHSVPalette();
 
-            hsvPalette.set('selected', 'FF0000');
+            hsvPalette.set(SELECTED, DEFAULT_HSV_COLOR);
 
             hsvPalette.show();
         }
@@ -322,11 +337,11 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         contentBox = instance.get(CONTENT_BOX);
 
-        colorPaletteOptions = instance._getDefaultOptions('colorPalette');
+        colorPaletteOptions = instance._getDefaultOptions(COLOR_PALETTE);
 
         instance._colorPalette = new A.ColorPalette(colorPaletteOptions).render(contentBox);
 
-        instance._colorPalette.on('selectedChange', instance._onColorPaletteSelectChange, instance);
+        instance._colorPalette.on(SELECTED_CHANGE, instance._onColorPaletteSelectChange, instance);
     },
 
     _renderHSVTrigger: function() {
@@ -336,7 +351,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         contentBox = instance.get(CONTENT_BOX);
 
-        strings = instance.get('strings');
+        strings = instance.get(STRINGS);
 
         instance._hsvTrigger = contentBox.appendChild(
             Lang.sub(
@@ -357,11 +372,11 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
 
         contentBox = instance.get(CONTENT_BOX);
 
-        recentColors = instance._getDefaultOptions('recentColors');
+        recentColors = instance._getDefaultOptions(RECENT_COLORS);
 
         recentColorsPalette = new A.ColorPalette(recentColors).render(contentBox);
 
-        recentColorsPalette.on(['select','unselect'], instance._onRecentColorClick, instance);
+        recentColorsPalette.on([SELECT, UNSELECT], instance._onRecentColorClick, instance);
 
         instance._recentColorsPalette = recentColorsPalette;
     }
@@ -374,7 +389,7 @@ ColorPicker = A.Base.create(NAME, A.Widget, [], {
         colorPalette: {
             validator: Lang.isObject,
             value: {
-                columns: 10,
+                columns: _DEFAULT_COLUMNS,
                 items: [
                     '#000000',
                     '#434343',
