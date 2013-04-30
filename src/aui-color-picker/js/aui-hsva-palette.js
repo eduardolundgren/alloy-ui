@@ -10,8 +10,9 @@ var Lang = A.Lang,
     getClassName = A.getClassName,
 
     _DOT = '.',
-    _SPACE = ' ',
     _EMPTY = '',
+    _POUND = '#',
+    _SPACE = ' ',
 
     BACKGROUND_COLOR = 'backgroundColor',
     COLOR_TYPE_HSVA = 'HSVA',
@@ -25,11 +26,13 @@ var Lang = A.Lang,
     LENGTH = 'length',
     OFFSET_HEIGHT = 'offsetHeight',
     OPACITY = 'opacity',
+    OUT_TYPE_HEX = 'Hex',
     PREFIX_ALPHA = '0',
     RAIL_MOUSEDOWN = 'railMouseDown',
     RGB_INPUT_CHANGE = 'rgbInputChange',
     SLIDE_START = 'slideStart',
     STRINGS = 'strings',
+    TO = 'to',
     VALUE = 'value',
     VALUE_CHANGE = 'valueChange',
 
@@ -60,14 +63,13 @@ var Lang = A.Lang,
 
     REGEX_HEX_COLOR_ALPHA = /^([a-f0-9]{6}|[a-f0-9]{8}|[a-f0-9]{3})$/i,
 
-    TPL_ALPHA_CANVAS = '<span class="' + CSS_ALPHA_CANVAS + '"></span>',
-
-    TPL_ALPHA_SLIDER_CONTAINER =
-        '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
-
-    TPL_ALPHA_THUMB = '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
-
 HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
+    TPL_ALPHA_CANVAS: '<span class="' + CSS_ALPHA_CANVAS + '"></span>',
+
+    TPL_ALPHA_SLIDER_CONTAINER: '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
+
+    TPL_ALPHA_THUMB: '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
+
     initializer: function() {
         var instance = this;
 
@@ -170,6 +172,33 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         return rgbColor;
     },
 
+    _convertColor: function(value, from, to) {
+        var instance = this,
+            out,
+            outputHex;
+
+        outputHex = (to === TYPE_HEX);
+
+        if (from === TYPE_HEX) {
+            value = _POUND + value;
+        }
+
+        if (outputHex) {
+            to = OUT_TYPE_HEX;
+        }
+        else {
+            to = (to + 'a').toUpperCase();
+        }
+
+        out = AColor[TO + to](value);
+
+        if (outputHex) {
+            out = out.substr(1);
+        }
+
+        return out;
+    },
+
     _getContainerClassName: function() {
         var instance = this,
             className;
@@ -219,8 +248,8 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
             }
         );
 
-        slider.RAIL_TEMPLATE = TPL_ALPHA_CANVAS;
-        slider.THUMB_TEMPLATE = TPL_ALPHA_THUMB;
+        slider.RAIL_TEMPLATE = instance.TPL_ALPHA_CANVAS;
+        slider.THUMB_TEMPLATE = instance.TPL_ALPHA_THUMB;
 
         slider.render(instance._alphaSliderContainer);
 
@@ -228,7 +257,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
 
         slider.set(
             LENGTH,
-            instance._valueSliderContainerHeight + (alphaThumbHeight / 2)
+            instance._alphaSliderContainer.get(OFFSET_HEIGHT) + (alphaThumbHeight / 2)
         );
 
         slider.on([SLIDE_START, RAIL_MOUSEDOWN], instance._setHSContainerXY, instance);
@@ -303,7 +332,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
             rgbColorArray = AColor.toArray(rgbColor);
             hexValue = instance._getHexValue(AColor.toHex(rgbColor), rgbColorArray);
 
-            instance._setFieldValue(instance._hexContainer, hexValue);
+            instance._setFieldValue(instance._outputContainer, hexValue);
 
             if (instance.get(CONTROLS)) {
                 instance._setFieldValue(instance._aContainer, MAX_ALPHA - alpha);
@@ -318,7 +347,7 @@ HSVAPalette = A.Base.create(NAME, A.HSVPalette, [], {
         var instance = this;
 
         instance._alphaSliderContainer = instance._viewContainer.appendChild(
-            TPL_ALPHA_SLIDER_CONTAINER
+            instance.TPL_ALPHA_SLIDER_CONTAINER
         );
     },
 

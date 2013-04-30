@@ -99,14 +99,14 @@
     );
 
     YUI({ filter:'raw' }).use(
-        'aui-color-picker',
+        'aui-hsva-palette', 'aui-color-palette',
         function(A) {
             var hsvPalette;
 
             var alphaCheckbox = A.one('#alpha');
             var controlsCheckbox = A.one('#controls');
 
-            function createhsvPalette() {
+            function createHSVPalette() {
                 if (hsvPalette) {
                     hsvPalette.destroy();
                 }
@@ -130,10 +130,10 @@
                 });
             }
 
-            alphaCheckbox.after('change', createhsvPalette);
-            controlsCheckbox.after('change', createhsvPalette);
+            alphaCheckbox.after('change', createHSVPalette);
+            controlsCheckbox.after('change', createHSVPalette);
 
-            createhsvPalette();
+            createHSVPalette();
         }
     );
 

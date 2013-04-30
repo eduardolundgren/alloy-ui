@@ -2,19 +2,19 @@
     height: 260px;
     padding: 5px;
     position: relative;
-    width: 400px;
+    width: 430px;
 }
 
 .aui-hsv-container-controls {
-    width: 490px;
+    width: 510px;
 }
 
 .aui-hsv-container-alpha {
-    width: 440px;
+    width: 470px;
 }
 
 .aui-hsv-container-controls.aui-hsv-container-alpha {
-    width: 520px;
+    width: 550px;
 }
 
 .aui-hsv-view-container .aui-control-group {
@@ -82,7 +82,7 @@
 
 .aui-hsv-label {
     display: inline;
-    margin-right: 5px;
+    margin-left: 5px;
 }
 
 .aui-hsv-label-value-container {
@@ -103,16 +103,20 @@
 }
 
 .aui-hsv-label-value-rgb-container {
-    left: 410px;
+    left: 440px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-rgb-container {
-    left: 450px;
+    left: 480px;
 }
 
 .aui-hsv-label-value-hex-container {
     left: 310px;
-    top: 70px;
+    top: 80px;
+}
+
+.aui-hsv-label-value-hex-container .aui-hsv-output-type {
+    width: 75px;
 }
 
 .aui-hsv-container-alpha .aui-hsv-label-value-hex-container {
@@ -121,7 +125,7 @@
 }
 
 .aui-hsv-container-controls .aui-hsv-label-value-hex-container {
-    left: 400px;
+    left: 390px;
     top: 0;
 }
 
@@ -129,16 +133,14 @@
     left: 430px;
 }
 
-.aui-hsv-label-value-h, .aui-hsv-label-value-s, .aui-hsv-label-value-v,
-.aui-hsv-label-value-r, .aui-hsv-label-value-g, .aui-hsv-label-value-b,
-.aui-hsv-label-value-a {
-    margin-top: 2px;
-}
-
 .aui-hsv-label-value-hex {
     position: absolute;
-    top: 10px;
+    top: 5px;
     left: 10px;
+}
+
+.aui-hsv-label-value-container .aui-control-group .aui-hsv-label-hidden {
+    display: none;
 }
 
 .aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-label {
@@ -149,11 +151,10 @@
     width: 50px;
 }
 
-.aui-hsv-container-alpha .aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-value {
-    width: 70px;
+.aui-hsv-label-value-container .aui-hsv-label-value-hex .aui-hsv-value {
+    width: 95px;
 }
 
 .aui-hsv-label-value-container .aui-hsv-value {
-    margin-right: 2px;
     width: 30px;
 }

@@ -130,10 +130,18 @@
         ],
         "skinnable": true
     },
-    "aui-color-picker": {
+    "aui-color-picker-base": {
         "requires": [
             "aui-color-palette",
-            "aui-hsva-palette-modal"
+            "aui-hsva-palette-modal",
+            "event-outside"
+        ],
+        "skinnable": true
+    },
+    "aui-color-picker-popover": {
+        "requires": [
+            "aui-color-picker-base",
+            "aui-popover"
         ],
         "skinnable": true
     },

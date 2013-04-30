@@ -140,10 +140,18 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
-    "aui-color-picker": {
+    "aui-color-picker-base": {
         "requires": [
             "aui-color-palette",
-            "aui-hsva-palette-modal"
+            "aui-hsva-palette-modal",
+            "event-outside"
+        ],
+        "skinnable": true
+    },
+    "aui-color-picker-popover": {
+        "requires": [
+            "aui-color-picker-base",
+            "aui-popover"
         ],
         "skinnable": true
     },
@@ -860,4 +868,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'de3f7b4bdc9fcada6bb46bb1b4cbb479';
+YUI.Env[Y.version].md5 = 'ec02d2469e97b5b7b1a52b2c404ac54f';
