@@ -119,10 +119,14 @@ var StateInteraction = A.Component.create(
 
 				if (instance.get(DEFAULT_STATE)) {
 					node.addClass(instance._CSS_STATES[DEFAULT]);
+
+					node.removeAttribute(DISABLED);
 				}
 
 				if (instance.get(DISABLED)) {
 					node.addClass(instance._CSS_STATES[DISABLED]);
+
+					node.attr(DISABLED, 'true');
 				}
 				else {
 					instance._createEvents();
@@ -221,13 +225,20 @@ var StateInteraction = A.Component.create(
 				var attrName = event.attrName;
 
 				if (instance.get(attrName + 'State')) {
-					var action = 'addClass';
+					var cssStates = instance._CSS_STATES[attrName];
 
-					if (!event.newVal) {
-						action = 'removeClass';
+					var node = instance.get(NODE);
+
+					if (event.newVal) {
+						node.addClass(cssStates);
+
+						node.attr(DISABLED, true);
 					}
+					else {
+						node.removeClass(cssStates);
 
-					instance.get(NODE)[action](instance._CSS_STATES[attrName]);
+						node.removeAttribute(DISABLED);
+					}
 				}
 			}
 		}
