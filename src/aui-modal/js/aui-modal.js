@@ -10,8 +10,11 @@ var Lang = A.Lang,
     _EMPTY = '',
     _SPACE = ' ',
 
+    BOUNDING_BOX = 'boundingBox',
     BR = 'br',
     CLICK = 'click',
+    CSS_CLASS = 'cssClass',
+    CSS_CLASS_CHANGE = 'cssClassChange',
     DESTROY_ON_HIDE = 'destroyOnHide',
     DRAGGABLE = 'draggable',
     FILL_HEIGHT = 'fillHeight',
@@ -19,6 +22,7 @@ var Lang = A.Lang,
     MODAL = 'modal',
     MOUSEMOVE = 'mousemove',
     RESIZABLE = 'resizable',
+    SYNC_UI = 'syncUI',
     VISIBLE_CHANGE = 'visibleChange',
     WIDTH = 'width',
 
@@ -40,9 +44,17 @@ A.Modal = A.Base.create(MODAL, A.Widget, [
         var instance = this;
 
         A.after(instance._afterFillHeight, instance, FILL_HEIGHT);
+        instance.after(instance.syncModalExtUI, instance, SYNC_UI);
         instance.after('resize:end', A.bind(instance._syncResizeDimensions, instance));
+        instance.after(CSS_CLASS_CHANGE, instance._afterCssClassChange);
         instance.after(VISIBLE_CHANGE, instance._afterVisibleChange);
         instance.once([CLICK, MOUSEMOVE], instance._onUserInitInteraction);
+    },
+
+    syncModalExtUI: function() {
+        var instance = this;
+
+        instance._uiSetCssClass(instance.get(CSS_CLASS));
     },
 
     _addBubbleTargets: function(config) {
@@ -52,6 +64,12 @@ A.Modal = A.Base.create(MODAL, A.Widget, [
             config = {};
         }
         return A.mix(config, { bubbleTargets: instance });
+    },
+
+    _afterCssClassChange: function(event) {
+        var instance = this;
+
+        instance._uiSetCssClass(event.newVal, event.prevVal);
     },
 
     _afterFillHeight: function(event) {
@@ -111,6 +129,16 @@ A.Modal = A.Base.create(MODAL, A.Widget, [
 
         instance.set(WIDTH, resize.offsetWidth);
         instance.set(HEIGHT, resize.offsetHeight);
+    },
+
+    _uiSetCssClass: function(val, prevVal) {
+        var instance = this,
+            boundingBox = instance.get(BOUNDING_BOX);
+
+        if (prevVal) {
+            boundingBox.removeClass(prevVal);
+        }
+        boundingBox.addClass(val);
     }
 }, {
     CSS_PREFIX: getClassName(MODAL),
@@ -120,6 +148,10 @@ A.Modal = A.Base.create(MODAL, A.Widget, [
         // this._currFillNode is never updated if _uiSetFillHeight is not called.
         bodyContent: {
             value: _EMPTY
+        },
+
+
+        cssClass: {
         },
 
         destroyOnHide: {
