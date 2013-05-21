@@ -375,6 +375,8 @@ ToolbarRenderer.prototype = {
                 buttonNode = A.Node.create(instance.TEMPLATES.button);
             }
 
+            buttonNode.attr('type', value.type || 'submit');
+
             // Add cssClass support
             cssClass = [ CSS_BTN, value.cssClass ];
             if (value.primary) {
