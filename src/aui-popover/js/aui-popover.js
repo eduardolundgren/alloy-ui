@@ -41,7 +41,8 @@ var Lang = A.Lang,
  *
  * @class Popover
  * @extends A.Widget
- * @uses WidgetStdMod,WidgetPosition,WidgetStack,WidgetPositionAlign,WidgetPositionConstrain
+ * @uses A.WidgetStdMod, A.WidgetPosition, A.WidgetStack, A.WidgetPositionAlign,
+ * A.WidgetPositionConstrain
  * @param config {Object} Object literal specifying widget configuration properties.
  * @constructor
  */
