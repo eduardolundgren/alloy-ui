@@ -39,9 +39,10 @@ var Lang = A.Lang,
  *
  * Check the [live demo](http://alloyui.com/examples/popover/).
  *
- * @class Popover
- * @extends Widget
- * @uses WidgetStdMod,WidgetPosition,WidgetStack,WidgetPositionAlign,WidgetPositionConstrain
+ * @class A.Popover
+ * @extends A.Widget
+ * @uses A.WidgetStdMod, A.WidgetPosition, A.WidgetStack, A.WidgetPositionAlign,
+ * A.WidgetPositionConstrain
  * @param config {Object} Object literal specifying widget configuration properties.
  * @constructor
  */
