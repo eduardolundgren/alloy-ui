@@ -64,7 +64,6 @@ A.Tab.NAME = TAB;
  * Check the [live demo](http://alloyui.com/examples/tabview/).
  *
  * @class A.Tab
- * @extends A.Tab
  * @param config {Object} Object literal specifying widget configuration properties.
  * @constructor
  */
@@ -135,7 +134,6 @@ A.TabView.CSS_PREFIX = getClassName(TABBABLE);
  * Check the [live demo](http://alloyui.com/examples/tabview/).
  *
  * @class A.TabView
- * @extends A.TabView
  * @param config {Object} Object literal specifying widget configuration properties.
  * @constructor
  */
