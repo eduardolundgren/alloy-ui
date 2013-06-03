@@ -444,7 +444,7 @@ ToolbarRenderer.prototype = {
      * @method render
      * @param childRenderHints
      */
-    render: function(childRenderHints) {
+    render: function(children) {
         var instance = this;
 
         if (!children) {
