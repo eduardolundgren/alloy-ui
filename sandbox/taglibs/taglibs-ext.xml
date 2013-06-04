@@ -21,4 +21,5 @@
 			</attribute>
 		</attributes>
 	</component>
+	<component name="Simple" writeJSP="false" writeBaseClass="false" />
 </taglibs>
