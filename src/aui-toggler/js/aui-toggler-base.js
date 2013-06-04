@@ -15,7 +15,6 @@ var Lang = A.Lang,
     DOT = '.',
     EMPTY_STR = '',
     PIXEL = 'px',
-    SPACE = ' ',
 
     ANIMATED = 'animated',
     ANIMATING = 'animating',
@@ -40,6 +39,7 @@ var Lang = A.Lang,
     MINUS = 'minus',
     NUM_MINUS = 'num_minus',
     NUM_PLUS = 'num_plus',
+    OFFSET_HEIGHT = 'offsetHeight',
     PARENT_NODE = 'parentNode',
     PLUS = 'plus',
     RIGHT = 'right',
@@ -352,10 +352,16 @@ var Toggler = A.Component.create({
          * @param expand
          */
         toggle: function(expand) {
-            var instance = this;
+            var instance = this,
+                currentExpandState;
+
+            currentExpandState = instance.get(EXPANDED);
 
             if (isUndefined(expand)) {
-                expand = !instance.get(EXPANDED);
+                expand = !currentExpandState;
+            }
+            else if (expand === currentExpandState) {
+                return expand;
             }
 
             if (instance.get(ANIMATED)) {
@@ -376,6 +382,9 @@ var Toggler = A.Component.create({
 
                         content.setStyle(MARGIN_TOP, gutter);
                     }
+                    else {                        
+                        instance._lastGutter = gutter;
+                    }
 
                     instance.wrapped = true;
                 }
@@ -384,7 +393,7 @@ var Toggler = A.Component.create({
 
                 instance.animate(
                     {
-                        marginTop: -(height + gutter) + PIXEL
+                        marginTop: instance._lastGutter + PIXEL
                     },
                     function() {
                         instance.set(ANIMATING, false);

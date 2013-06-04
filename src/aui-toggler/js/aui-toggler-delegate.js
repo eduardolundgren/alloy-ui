@@ -20,6 +20,8 @@ var Lang = A.Lang,
     EMPTY_STR = '',
     SPACE = ' ',
 
+    ACTION_COLLAPSE = 'collapse',
+    ACTION_EXPAND = 'expand',
     ANIMATED = 'animated',
     CLICK = 'click',
     CLOSE_ALL_ON_EXPAND = 'closeAllOnExpand',
@@ -223,6 +225,28 @@ var TogglerDelegate = A.Component.create({
         },
 
         /**
+         * Collapse all nodes, previously specified in <code>attribute</code> header
+         *
+         * @method collapseAll
+         */
+        collapseAll: function() {
+            var instance = this;
+
+            instance._processItemsState(ACTION_COLLAPSE);
+        },
+
+        /**
+         * Expand all nodes, previously specified in <code>attribute</code> header
+         *
+         * @method expandAll
+         */
+        expandAll: function() {
+            var instance = this;
+
+            instance._processItemsState(ACTION_EXPAND);
+        },
+
+        /**
          * Return the content node.
          *
          * @method headerEventHandler
@@ -316,6 +340,32 @@ var TogglerDelegate = A.Component.create({
             var instance = this;
 
             instance.animating = event.newVal;
+        },
+
+        /**
+         * Expand or collapse all the items, specified in <code>attribute</code> attribute
+         *
+         * @method _processItemsState
+         * @param action Could be one of these strings 'expand' or collapse'
+         * @protected
+         */
+        _processItemsState: function(action) {
+            var instance = this;
+
+            var header = instance.get(HEADER);
+
+            A.all(header).each(
+                function(item, index, collection) {
+                    var toggler = item.getData(TOGGLER) || instance._create(item);
+
+                    if (action === ACTION_EXPAND) {
+                        toggler.expand();
+                    }
+                    else {
+                        toggler.collapse();
+                    }
+                }
+            );
         }
 
     }
