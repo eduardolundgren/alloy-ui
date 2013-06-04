@@ -382,6 +382,9 @@ var Toggler = A.Component.create({
 
                         content.setStyle(MARGIN_TOP, gutter);
                     }
+                    else {                        
+                        instance._lastGutter = gutter;
+                    }
 
                     instance.wrapped = true;
                 }
@@ -390,7 +393,7 @@ var Toggler = A.Component.create({
 
                 instance.animate(
                     {
-                        marginTop: -(height + gutter) + PIXEL
+                        marginTop: instance._lastGutter + PIXEL
                     },
                     function() {
                         instance.set(ANIMATING, false);
