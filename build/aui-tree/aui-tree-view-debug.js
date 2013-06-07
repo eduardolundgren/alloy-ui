@@ -134,28 +134,13 @@ var TreeView = A.Component.create(
 				value: true
 			},
 
-			/**
-			 * IO metadata for loading the children using ajax.
-			 *
-			 * @attribute io
-			 * @default null
-			 * @type Object
-			 */
-			io: {
-				value: null
-			},
-
-			paginator: {
-				value: null
-			},
-
 			selectOnToggle: {
 				validator: isBoolean,
 				value: false
 			}
 		},
 
-		AUGMENTS: [A.TreeData],
+		AUGMENTS: [A.TreeData, A.TreeViewPaginator, A.TreeViewIO],
 
 		prototype: {
 			CONTENT_TEMPLATE: '<ul></ul>',
@@ -176,7 +161,21 @@ var TreeView = A.Component.create(
 			bindUI: function() {
 				var instance = this;
 
+				instance.after('childrenChange', A.bind(instance._afterSetChildren, instance));
+
 				instance._delegateDOM();
+			},
+
+			createNodes: function(nodes) {
+				var instance = this;
+
+				A.Array.each(A.Array(nodes), function(node) {
+					var newNode = instance.createNode(node);
+
+					instance.appendChild(newNode);
+				});
+
+				instance._syncPaginatorUI(nodes);
 			},
 
 			/**
@@ -189,6 +188,19 @@ var TreeView = A.Component.create(
 				var instance = this;
 
 				instance._renderElements();
+			},
+
+			/**
+			 * Fires after set children.
+			 *
+			 * @method _afterSetChildren
+			 * @param {EventFacade} event
+			 * @protected
+			 */
+			_afterSetChildren: function(event) {
+				var instance = this;
+
+				instance._syncPaginatorUI();
 			},
 
 			/**
@@ -281,6 +293,7 @@ var TreeView = A.Component.create(
 			 */
 			_delegateDOM: function() {
 				var instance = this;
+
 				var boundingBox = instance.get(BOUNDING_BOX);
 
 				// expand/collapse delegations
@@ -301,6 +314,7 @@ var TreeView = A.Component.create(
 			 */
 			_onClickNodeEl: function(event) {
 				var instance = this;
+
 				var treeNode = instance.getNodeByChild( event.currentTarget );
 
 				if (treeNode) {
@@ -937,4 +951,4 @@ var TreeViewDD = A.Component.create(
 
 A.TreeViewDD = TreeViewDD;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-tree-node','dd-delegate','dd-proxy']});
+}, '@VERSION@' ,{skinnable:true, requires:['aui-tree-node','aui-tree-paginator','aui-tree-io','dd-delegate','dd-proxy']});
