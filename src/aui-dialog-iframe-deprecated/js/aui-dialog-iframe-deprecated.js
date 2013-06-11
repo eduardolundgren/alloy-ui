@@ -87,6 +87,12 @@ var DialogIframePlugin = A.Component.create(
 				);
 
 				instance.afterHostMethod(
+					'_uiSetVisible',
+					A.bind(instance._afterHostUISetVisible, instance),
+					instance
+				);
+
+				instance.afterHostMethod(
 					'_uiSetWidth',
 					A.bind(instance._setNodeDimensions, instance),
 					instance
@@ -101,6 +107,14 @@ var DialogIframePlugin = A.Component.create(
 				instance._host.set('bodyContent', instance._previousBodyContent);
 
 				instance.node.remove(true);
+			},
+
+			_afterHostUISetVisible: function(val) {
+				var instance = this;
+
+				if (val) {
+					instance._host._fillHeight();
+				}
 			},
 
 			_afterRenderUI: function() {
