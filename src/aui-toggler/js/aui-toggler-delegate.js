@@ -209,9 +209,31 @@ var TogglerDelegate = A.Component.create({
             var container = instance.get(CONTAINER);
             var header = instance.get(HEADER);
 
-            instance.on(TOGGLER_ANIMATING_CHANGE, A.bind('_onAnimatingChange', instance));
+            instance._eventHandles = [
+                instance.on(TOGGLER_ANIMATING_CHANGE, A.bind('_onAnimatingChange', instance)),
+                container.delegate([CLICK, KEYDOWN], A.bind('headerEventHandler', instance), header)
+            ]
+        },
 
-            container.delegate([CLICK, KEYDOWN], A.bind('headerEventHandler', instance), header);
+        /**
+         * Destructor lifecycle implementation for the TogglerDelegate class. Lifecycle.
+         *
+         * @method destructor
+         * @protected
+         */
+        destructor: function() {
+            var instance = this;
+
+            AArray.each(
+                instance.items,
+                function(item, index, collection) {
+                    item.destroy();
+                }
+            );
+
+            instance.items.length = 0;
+
+            (new A.EventHandle(instance._eventHandles)).detach();
         },
 
         /**
@@ -295,10 +317,14 @@ var TogglerDelegate = A.Component.create({
             var toggler = target.getData(TOGGLER) || instance._create(target);
 
             if (Toggler.headerEventHandler(event, toggler) && instance.get(CLOSE_ALL_ON_EXPAND)) {
+                var ancestors = toggler.get(CONTENT).ancestors(instance.get(CONTENT));
+
                 AArray.each(
                     instance.items,
                     function(item, index) {
-                        if (item !== toggler && item.get(EXPANDED)) {
+                        var content = item.get(CONTENT);
+
+                        if (item !== toggler && item.get(EXPANDED) && !(ancestors.indexOf(content) > -1)) {
                             item.collapse();
                         }
                     }
