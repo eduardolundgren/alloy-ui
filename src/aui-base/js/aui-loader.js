@@ -236,7 +236,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "aui-datatype": {
         "requires": [
-            "datatype"
+            "datatype",
+            "aui-datatype-date-parse"
         ]
     },
     "aui-datatype-date-parse": {
@@ -245,6 +246,47 @@ Y.mix(YUI.Env[Y.version].modules, {
             "datatype-date-format",
             "datatype-date-parse",
             "intl"
+        ]
+    },
+    "aui-datepicker": {
+        "use": [
+            "aui-datepicker-delegate"
+        ]
+    },
+    "aui-datepicker-calendar": {
+        "condition": {
+            "name": "aui-datepicker-calendar",
+            "test": function (A) {
+    return !A.UA.mobile;
+},
+            "trigger": "aui-datepicker-delegate"
+        },
+        "requires": [
+            "calendar",
+            "aui-classnamemanager",
+            "aui-popover"
+        ],
+        "skinnable": true
+    },
+    "aui-datepicker-delegate": {
+        "requires": [
+            "base",
+            "base-build",
+            "node-event-delegate",
+            "event-focus",
+            "aui-event-input",
+            "aui-datatype-date-parse"
+        ]
+    },
+    "aui-datepicker-native": {
+        "condition": {
+            "name": "aui-datepicker-native",
+            "trigger": "aui-datepicker-delegate",
+            "ua": "mobile"
+        },
+        "requires": [
+            "aui-event-input",
+            "aui-node-base"
         ]
     },
     "aui-debounce": {},
@@ -970,4 +1012,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '0708a7ccb6d1b4794e70aaa692b22321';
+YUI.Env[Y.version].md5 = '5b30eb364f04bd6a14f7293446852d51';

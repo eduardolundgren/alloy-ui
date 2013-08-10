@@ -7,8 +7,22 @@ add('load', '0', {
     "trigger": "aui-base",
     "ua": "ie"
 });
-// aui-event-input
+// aui-datepicker-calendar
 add('load', '1', {
+    "name": "aui-datepicker-calendar",
+    "test": function (A) {
+    return !A.UA.mobile;
+},
+    "trigger": "aui-datepicker-delegate"
+});
+// aui-datepicker-native
+add('load', '2', {
+    "name": "aui-datepicker-native",
+    "trigger": "aui-datepicker-delegate",
+    "ua": "mobile"
+});
+// aui-event-input
+add('load', '3', {
     "name": "aui-event-input",
     "test": function (A) {
     var supportsDOMEvent  = A.supportsDOMEvent,
@@ -28,7 +42,7 @@ add('load', '1', {
     "trigger": "aui-event"
 });
 // aui-node-html5
-add('load', '2', {
+add('load', '4', {
     "name": "aui-node-html5",
     "trigger": "aui-node",
     "ua": "ie"

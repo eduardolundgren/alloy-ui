@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <script src="../../build/aui/aui.js"></script>
+    <style>
+    #delegate {
+        margin: 30px;
+    }
+    </style>
+</head>
+<body class="yui3-skin-sam">
+    <h1>AlloyUI - Datepicker</h1>
+    <div id="delegate">
+        <h2>Delegate on buttons (Japanese)</h2>
+        <button class="btn btn-primary"><i class="icon-calendar"></i> Select the date</button>
+        <button class="btn"><i class="icon-calendar"></i></button>
+        <h2>Delegate on input text (Japanese)</h2>
+        <input class="input-xxlarge" type="text">
+        <br>
+        <input class="input-xxlarge" type="text" placeholder="mm/dd/yyyy" value="10/14/1985">
+        <br>
+        <input class="input-xxlarge" type="text" placeholder="mm/dd/yyyy">
+        <br>
+        <h2>Delegate on textarea (en-US)</h2>
+        <textarea class="input-xxlarge" type="text" placeholder="Day, Mon dd, yyyy">Wed, Aug 07, 2013 — Thu, Aug 08, 2013 — Sun, Aug 18, 2013</textarea>
+    </div>
+    <div id="log"></div>
+
+    <script>
+    YUI({ lang: 'ja', filter: 'raw' }).use('aui-datepicker-delegate', function(Y) {
+        new Y.DatePickerDelegate({
+            mask: '%a, %b %d, %Y',
+            on: {
+                selectionChange: function(event) {
+                    // Y.one('#log').html(event.newSelection)
+                }
+            },
+            panes: 1,
+            selector: '#delegate input, #delegate button'
+        });
+    });
+
+    YUI({ lang: 'en-US', filter: 'raw' }).use('aui-datepicker-delegate', function(Y) {
+        var datepicker = new Y.DatePickerDelegate({
+            calendar: {
+                selectionMode: 'multiple'
+            },
+            mask: '%a, %b %d, %Y',
+            popover: {
+                toolbars: {
+                    header: [[
+                        {
+                            icon:'icon-trash',
+                            label: 'Clear',
+                            on: {
+                                click: function() {
+                                    datepicker.clearSelection();
+                                }
+                            }
+                        },
+                        {
+                            icon:'icon-globe',
+                            label: 'Travel date',
+                            on: {
+                                click: function() {
+                                    datepicker.clearSelection();
+                                    datepicker.selectDates(new Date(2015, 2, 3, 2, 0, 0));
+                                }
+                            }
+                        }
+                    ]]
+                }
+            },
+            on: {
+                selectionChange: function(event) {
+                    console.log(event.newSelection)
+                }
+            },
+            panes: 2,
+            selector: '#delegate textarea'
+        });
+    });
+    </script>
+</body>
+</html>

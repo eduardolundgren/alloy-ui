@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <script src="../../build/aui/aui.js"></script>
+</head>
+<body>
+    <h1>AlloyUI - Front in BH</h1>
+    <div id="scheduler"></div>
+    <script>
+
+    YUI().use('aui-scheduler', function(Y) {
+
+        var scheduler = new Y.Scheduler({
+            items: [
+                {
+                    content: 'Palestra',
+                    startDate: new Date(2013, 7, 3, 5, 00)
+                },
+                {
+                    content: 'Beers',
+                    startDate: new Date(2013, 7, 3, 21, 00),
+                    endDate: new Date(2013, 7, 4, 2, 00)
+                }
+            ],
+            views: [
+                new Y.SchedulerDayView(),
+                new Y.SchedulerWeekView(),
+                new Y.SchedulerMonthView(),
+                new Y.SchedulerAgendaView()
+            ],
+            eventRecorder: new Y.SchedulerEventRecorder(),
+            on: {
+                '*:add': function(event) {
+                    console.log(event.model.toJSON());
+                },
+                '*:remove': function(event) {
+                    console.log(event.model.toJSON());
+                }
+            }
+        })
+        .render('#scheduler');
+
+    });
+
+    </script>
+</body>
+</html>

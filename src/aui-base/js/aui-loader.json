@@ -226,7 +226,8 @@
     },
     "aui-datatype": {
         "requires": [
-            "datatype"
+            "datatype",
+            "aui-datatype-date-parse"
         ]
     },
     "aui-datatype-date-parse": {
@@ -235,6 +236,45 @@
             "datatype-date-format",
             "datatype-date-parse",
             "intl"
+        ]
+    },
+    "aui-datepicker": {
+        "use": [
+            "aui-datepicker-delegate"
+        ]
+    },
+    "aui-datepicker-calendar": {
+        "condition": {
+            "name": "aui-datepicker-calendar",
+            "test": "aui-datepicker-calendar-test.js",
+            "trigger": "aui-datepicker-delegate"
+        },
+        "requires": [
+            "calendar",
+            "aui-classnamemanager",
+            "aui-popover"
+        ],
+        "skinnable": true
+    },
+    "aui-datepicker-delegate": {
+        "requires": [
+            "base",
+            "base-build",
+            "node-event-delegate",
+            "event-focus",
+            "aui-event-input",
+            "aui-datatype-date-parse"
+        ]
+    },
+    "aui-datepicker-native": {
+        "condition": {
+            "name": "aui-datepicker-native",
+            "trigger": "aui-datepicker-delegate",
+            "ua": "mobile"
+        },
+        "requires": [
+            "aui-event-input",
+            "aui-node-base"
         ]
     },
     "aui-debounce": {},
