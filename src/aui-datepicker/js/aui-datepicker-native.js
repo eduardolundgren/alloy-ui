@@ -8,6 +8,7 @@ var Lang = A.Lang,
     DATE = 'date',
     SELECTION_CHANGE = 'selectionChange',
     SELECTOR = 'selector',
+    TOUCHSTART = 'touchstart',
     TYPE = 'type';
 
 if (A.DatePickerCalendar) {
@@ -32,7 +33,7 @@ A.mix(DatePickerNative.prototype, {
 
         instance._eventHandles.push(
             container.delegate(
-                ['touchstart'],
+                [TOUCHSTART],
                 A.bind('_onceUserInteraction', instance), selector),
 
             container.delegate(
@@ -83,7 +84,7 @@ A.mix(DatePickerNative.prototype, {
 
     useInputNode: function(node) {
         var instance = this,
-            type = node.attr('type'),
+            type = node.attr(TYPE),
             parsed;
 
         instance.set(ACTIVE_INPUT, node);
@@ -106,7 +107,7 @@ A.mix(DatePickerNative.prototype, {
 
     _afterNativeSelectionChange: function(event) {
         var instance = this,
-            type = event.currentTarget.attr('type');
+            type = event.currentTarget.attr(TYPE);
 
         if (instance._isTypeSupported(type)) {
             instance._fireSelectionChange();
@@ -132,7 +133,7 @@ A.mix(DatePickerNative.prototype, {
 
     _isTypeSupported: function(type) {
         switch (type.toLowerCase()) {
-            case 'date':
+            case DATE:
                 return true;
             default:
                 return false;
