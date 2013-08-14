@@ -24,6 +24,7 @@ The basic structure of the project is given in the following way:
 
 * `build/` Contains AlloyUI and YUI generated files, once Yogi Alloy's build task has been run. However, this directory is unnecessary for versioning, so it is ignored ([.gitignore](https://github.com/liferay/alloy-ui/tree/2.0.x/.gitignore)).
 * `demos/` Contains basic examples of the AlloyUI modules.
+* `grunt/` Contains Grunt's automated tasks.
 * `src/` Contains the source code of the AlloyUI modules.
 * `.alloy.json` Specifies all dependencies and some configurations.
 * `.editorconfig` Specifies the coding style for different editors/IDEs.
@@ -34,7 +35,37 @@ The basic structure of the project is given in the following way:
 
 ## Build
 
-To develop and build AlloyUI you need [Yogi Alloy](https://github.com/liferay/yogi-alloy), check [how to](https://github.com/liferay/yogi-alloy#alloyui).
+### Dependencies
+
+1. Install [NodeJS](https://github.com/bevry/community/wiki/Installing-Node), if you don't have it yet.
+
+2. Install [Grunt](https://github.com/gruntjs/grunt-cli), [Shifter](https://github.com/yui/shifter), [Yogi](https://github.com/yui/yogi) and [YUIDocs](https://github.com/yui/yuidoc) globally:
+
+	```
+	[sudo] npm install -g grunt-cli shifter yogi yuidocjs
+	```
+
+### Grunt
+
+Provides a set of util tasks to work with [AlloyUI](http://github.com/liferay/alloy-ui) project. For any configuration, check [Gruntfile.js](https://github.com/liferay/alloy-ui/blob/master/Gruntfile.js).
+
+* Build AlloyUI/YUI:
+
+    ```
+grunt build
+    ```
+
+* Create a new module under `src/` folder:
+
+    ```
+grunt create
+    ```
+
+* Build and watch for any changes:
+
+    ```
+grunt watch
+    ```
 
 ## Team
 

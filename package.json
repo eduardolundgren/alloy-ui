@@ -11,14 +11,19 @@
     "license": "BSD",
     "repository": {
         "type": "git",
-        "url": "git@github.com:eduardolundgren/alloy.git"
+        "url": "git@github.com:liferay/alloy-ui.git"
     },
     "keywords": [
         "alloy", "yui", "external", "commands", "helpers"
     ],
-    "dependencies": {
-        "fs-extra": "*"
+    "devDependencies": {
+        "async": "0.2.9",
+        "command": "0.0.4",
+        "fs-extra": "0.6.3",
+        "grunt": "0.4.1"
     },
-    "engines": { "node": "*" },
-    "preferGlobal": "true"
+    "engines": {
+        "node": ">=0.8.0",
+        "npm": ">=1.2.10"
+    }
 }
