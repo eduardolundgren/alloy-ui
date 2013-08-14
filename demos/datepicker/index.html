@@ -42,7 +42,7 @@
                 }
             },
             panes: 1,
-            selector: '#delegate input, #delegate button'
+            trigger: '#delegate input, #delegate button'
         });
     });
 
@@ -83,7 +83,7 @@
                 }
             },
             panes: 2,
-            selector: '#delegate textarea'
+            trigger: '#delegate textarea'
         });
 
         new Y.DatePickerNative({
@@ -92,7 +92,7 @@
                     console.log(event.newSelection);
                 }
             },
-            selector: '#delegateNative input'
+            trigger: '#delegateNative input'
         });
     });
     </script>

@@ -6,14 +6,27 @@ var Lang = A.Lang,
     CHANGE = 'change',
     CONTAINER = 'container',
     DATE = 'date',
+    NATIVE_MASK = 'nativeMask',
+    NATIVE_TYPE = 'nativeType',
     SELECTION_CHANGE = 'selectionChange',
     SELECTOR = 'selector',
     TOUCHSTART = 'touchstart',
+    TIME = 'time',
     TYPE = 'type';
 
 function DatePickerNativeBase() {}
 
-DatePickerNativeBase.RFC3339_DATE_MASK = '%Y-%m-%d';
+DatePickerNativeBase.ATTRS = {
+    nativeMask: {
+        validator: Lang.isString,
+        value: '%Y-%m-%d'
+    },
+
+    nativeType: {
+        validator: Lang.isString,
+        value: 'date'
+    }
+};
 
 DatePickerNativeBase.prototype = {
     initializer: function() {
@@ -80,6 +93,7 @@ DatePickerNativeBase.prototype = {
 
     useInputNode: function(node) {
         var instance = this,
+            nativeType = instance.get(NATIVE_TYPE),
             type = node.attr(TYPE),
             parsed;
 
@@ -92,7 +106,7 @@ DatePickerNativeBase.prototype = {
             }
         }
 
-        node.setAttribute(TYPE, DATE);
+        node.setAttribute(TYPE, nativeType);
 
         instance._fireSelectionChange();
     },
@@ -121,15 +135,21 @@ DatePickerNativeBase.prototype = {
 
     _formatDate: function(date) {
         var instance = this,
-            formatted = A.Date.format(date,
-                { format: DatePickerNativeBase.RFC3339_DATE_MASK });
+            nativeMask = instance.get(NATIVE_MASK),
+            nativeType = instance.get(NATIVE_TYPE),
+            formatted = A.Date.format(date, { format: nativeMask });
 
-        return instance._addFourDigitsYearPadding(formatted);
+        if (nativeType === DATE) {
+            formatted = instance._addFourDigitsYearPadding(formatted);
+        }
+
+        return formatted;
     },
 
     _isTypeSupported: function(type) {
         switch (type.toLowerCase()) {
             case DATE:
+            case TIME:
                 return true;
             default:
                 return false;
@@ -137,14 +157,17 @@ DatePickerNativeBase.prototype = {
     },
 
     _parseDateFromString: function(text) {
+        var instance = this,
+            nativeMask = instance.get(NATIVE_MASK);
+
         if (!text) {
             return false;
         }
 
-        return A.Date.parse(DatePickerNativeBase.RFC3339_DATE_MASK, text);
+        return A.Date.parse(nativeMask, text);
     }
 };
 
 A.DatePickerNativeBase = DatePickerNativeBase;
 
-A.DatePickerNative = A.Base.create('datepicker-native', A.Base, [A.DatePickerDelegateBase, A.DatePickerNativeBase]);
+A.DatePickerNative = A.Base.create('datepicker-native', A.Base, [A.DatePickerDelegate, A.DatePickerNativeBase]);

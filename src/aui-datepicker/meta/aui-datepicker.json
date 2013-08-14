@@ -4,14 +4,13 @@
             "calendar",
             "base",
             "base-build",
-            "aui-classnamemanager",
-            "aui-popover",
-            "aui-datepicker-delegate-base"
+            "aui-datepicker-delegate",
+            "aui-datepicker-popover"
         ],
         "skinnable": true
     },
 
-    "aui-datepicker-delegate-base": {
+    "aui-datepicker-delegate": {
         "requires": [
             "node-event-delegate",
             "event-focus",
@@ -25,7 +24,14 @@
             "base",
             "base-build",
             "aui-node-base",
-            "aui-datepicker-delegate-base"
+            "aui-datepicker-delegate"
+        ]
+    },
+
+    "aui-datepicker-popover": {
+        "requires": [
+            "aui-classnamemanager",
+            "aui-popover"
         ]
     }
 }

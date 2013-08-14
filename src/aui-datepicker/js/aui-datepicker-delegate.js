@@ -1,5 +1,5 @@
 /**
- * The DatePickerDelegateBase Component
+ * The DatePickerDelegate Component
  *
  * @module aui-datepicker-delegate
  */
@@ -17,15 +17,15 @@ var Lang = A.Lang,
     MASK = 'mask',
     MOUSEDOWN = 'mousedown',
     SELECTION_CHANGE = 'selectionChange',
-    SELECTOR = 'selector',
+    TRIGGER = 'trigger',
     FOCUSIN = 'focusin',
     FOCUSOUT = 'focusout',
     VALUE_EXTRACTOR = 'valueExtractor',
     VALUE_FORMATTER = 'valueFormatter';
 
-function DatePickerDelegateBase() {}
+function DatePickerDelegate() {}
 
-DatePickerDelegateBase.prototype = {
+DatePickerDelegate.prototype = {
     _eventHandles: null,
 
     _userInteractionInProgress: false,
@@ -43,7 +43,7 @@ DatePickerDelegateBase.prototype = {
     },
 
     /**
-     * Bind the events on the DatePickerDelegateBase UI. Lifecycle.
+     * Bind the events on the DatePickerDelegate UI. Lifecycle.
      *
      * @method bindDelegateUI
      * @protected
@@ -51,20 +51,20 @@ DatePickerDelegateBase.prototype = {
     bindDelegateUI: function() {
         var instance = this,
             container = instance.get(CONTAINER),
-            selector = instance.get(SELECTOR);
+            trigger = instance.get(TRIGGER);
 
         instance._eventHandles = [
             container.delegate(
                 [FOCUSIN, MOUSEDOWN],
-                A.bind('_onceUserInteraction', instance), selector),
+                A.bind('_onceUserInteraction', instance), trigger),
 
             container.delegate(
                 FOCUSOUT,
-                A.bind('_onUserInteractionRelease', instance), selector),
+                A.bind('_onUserInteractionRelease', instance), trigger),
 
             container.delegate(
                 CLICK,
-                A.bind('_onceUserInteractionRelease', instance), selector)
+                A.bind('_onceUserInteractionRelease', instance), trigger)
         ];
 
         instance.publish(
@@ -98,8 +98,7 @@ DatePickerDelegateBase.prototype = {
         return null;
     },
 
-    useInputNode: function() {
-    },
+    useInputNode: function() {},
 
     useInputNodeOnce: function(node) {
         var instance = this;
@@ -192,7 +191,7 @@ DatePickerDelegateBase.prototype = {
     }
 };
 
-DatePickerDelegateBase.ATTRS = {
+DatePickerDelegate.ATTRS = {
     /**
      * The active input element that holds the calendar instance.
      *
@@ -213,7 +212,8 @@ DatePickerDelegateBase.ATTRS = {
     },
 
     dateSeparator: {
-        value: ' \u2014 '
+        value: ' \u2014 ',
+        validator: Lang.isString
     },
 
     mask: {
@@ -227,7 +227,7 @@ DatePickerDelegateBase.ATTRS = {
      * @attribute content
      * @type String
      */
-    selector: {
+    trigger: {
         validator: isString,
         writeOnce: true
     },
@@ -243,4 +243,4 @@ DatePickerDelegateBase.ATTRS = {
     }
 };
 
-A.DatePickerDelegateBase = DatePickerDelegateBase;
+A.DatePickerDelegate = DatePickerDelegate;
