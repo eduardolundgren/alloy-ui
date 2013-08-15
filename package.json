@@ -20,7 +20,8 @@
         "async": "0.2.9",
         "command": "0.0.4",
         "fs-extra": "0.6.3",
-        "grunt": "0.4.1"
+        "grunt": "0.4.1",
+        "which": "1.0.5"
     },
     "engines": {
         "node": ">=0.8.0",

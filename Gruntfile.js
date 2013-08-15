@@ -9,6 +9,7 @@
 
 var path  = require('path');
 var spawn = require('child_process').spawn;
+var which = require('which').sync;
 
 // -- Config -------------------------------------------------------------------
 module.exports = function(grunt) {
@@ -52,7 +53,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', 'Install local dependencies', function() {
         var done = this.async();
 
-        var cmd = spawn('npm', ['install'], {
+        var cmd = spawn(which('npm'), ['install'], {
             stdio: 'inherit'
         });
 

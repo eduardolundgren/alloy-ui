@@ -14,6 +14,7 @@ var TASK = {
 // -- Dependencies -------------------------------------------------------------
 var async = require('async');
 var spawn = require('child_process').spawn;
+var which = require('which').sync;
 
 // -- Task ---------------------------------------------------------------------
 module.exports = function(grunt) {
@@ -52,7 +53,7 @@ module.exports = function(grunt) {
     };
 
     exports._runCommand = function(mainCallback) {
-        var cmd = spawn('yogi', ['init', grunt.config('create.name')], {
+        var cmd = spawn(which('yogi'), ['init', grunt.config('create.name')], {
             stdio: 'inherit'
         });
 
