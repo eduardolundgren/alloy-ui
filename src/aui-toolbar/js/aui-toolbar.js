@@ -392,6 +392,9 @@ ToolbarRenderer.prototype = {
                 buttonNode.append(value.label);
             }
 
+            // Add type support
+            buttonNode.setAttribute('type', value.type || BUTTON);
+
             // Add icon support
             if (value.icon) {
                 var iconContent = Lang.sub(instance.TEMPLATES.icon, {
