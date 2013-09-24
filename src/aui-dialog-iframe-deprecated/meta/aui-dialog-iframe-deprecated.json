@@ -1,0 +1,10 @@
+{
+    "aui-dialog-iframe-deprecated": {
+        "requires": [
+            "plugin",
+            "aui-base-deprecated",
+            "aui-loading-mask-deprecated"
+        ],
+        "skinnable": true
+    }
+}
