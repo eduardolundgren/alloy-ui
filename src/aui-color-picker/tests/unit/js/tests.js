@@ -1,7 +1,7 @@
 YUI.add('module-tests', function(Y) {
 
     //--------------------------------------------------------------------------
-    // ColorPicker Freemarker Tests
+    // ColorPicker Tests
     //--------------------------------------------------------------------------
 
     var suite = new Y.Test.Suite('aui-color-picker'),
