@@ -11,16 +11,16 @@ var Lang = A.Lang,
     _DOCUMENT = A.one(A.config.doc),
 
     ACTIVE_INPUT = 'activeInput',
+    BLUR = 'blur',
     CLICK = 'click',
     CONTAINER = 'container',
     DATE_SEPARATOR = 'dateSeparator',
     DATEPICKER_SELECTION = 'datepickerSelection',
+    FOCUS = 'focus',
     MASK = 'mask',
     MOUSEDOWN = 'mousedown',
     SELECTION_CHANGE = 'selectionChange',
     TRIGGER = 'trigger',
-    FOCUSIN = 'focusin',
-    FOCUSOUT = 'focusout',
     VALUE_EXTRACTOR = 'valueExtractor',
     VALUE_FORMATTER = 'valueFormatter';
 
@@ -75,13 +75,29 @@ DatePickerDelegate.prototype = {
             trigger = instance.get(TRIGGER);
 
         instance._eventHandles = [
-            container.delegate(
-                [FOCUSIN, MOUSEDOWN],
-                A.bind('_onceUserInteraction', instance), trigger),
+            container.on(
+                FOCUS,
+                function(event) {
+                    if (event.target.test(trigger)) {
+                        instance._onceUserInteraction(event.target);
+                    }
+                }
+            ),
 
             container.delegate(
-                FOCUSOUT,
-                A.bind('_onUserInteractionRelease', instance), trigger),
+                MOUSEDOWN,
+                function(event) {
+                    instance._onceUserInteraction(event.currentTarget);
+                }, trigger),
+
+            container.on(
+                BLUR,
+                function(event) {
+                    if (event.target.test(trigger)) {
+                        instance._onUserInteractionRelease(event.target);
+                    }
+                }
+            ),
 
             container.delegate(
                 CLICK,
@@ -191,13 +207,13 @@ DatePickerDelegate.prototype = {
      * TODO. Wanna help? Please send a Pull Request.
      *
      * @method _onceUserInteraction
-     * @param event
+     * @param target
      * @protected
      */
-    _onceUserInteraction: function(event) {
+    _onceUserInteraction: function(target) {
         var instance = this;
 
-        instance.useInputNodeOnce(event.currentTarget);
+        instance.useInputNodeOnce(target);
 
         instance._userInteractionInProgress = true;
     },
@@ -206,13 +222,13 @@ DatePickerDelegate.prototype = {
      * TODO. Wanna help? Please send a Pull Request.
      *
      * @method _onceUserInteractionRelease
-     * @param event
+     * @param target
      * @protected
      */
-    _onceUserInteractionRelease: function(event) {
+    _onceUserInteractionRelease: function(target) {
         var instance = this;
 
-        instance.useInputNodeOnce(event.currentTarget);
+        instance.useInputNodeOnce(target);
 
         instance._userInteractionInProgress = false;
     },
@@ -224,10 +240,10 @@ DatePickerDelegate.prototype = {
      * @param event
      * @protected
      */
-    _onUserInteractionRelease: function(event) {
+    _onUserInteractionRelease: function(target) {
         var instance = this;
 
-        instance.useInputNode(event.currentTarget);
+        instance.useInputNode(target);
 
         instance._userInteractionInProgress = false;
     },

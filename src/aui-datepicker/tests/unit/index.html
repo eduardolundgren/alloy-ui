@@ -1,25 +1,40 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-    <title>aui-datepicker</title>
-    <script src="/build/yui/yui.js"></script>
-    <script src="js/tests.js"></script>
+    <title>AUI DatePicker Unit Tests</title>
     <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="../../../../build/aui-css/css/bootstrap.css">
+    <script src="../../../../build/aui/aui.js"></script>
+    <script src="js/tests.js"></script>
 </head>
 <body class="yui3-skin-sam">
-<div id="logger"></div>
 
-<script>
-YUI({
-    coverage: ['aui-datepicker'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-}).use('test-console', 'test', 'module-tests', function(Y) {
-    
-    (new Y.Test.Console()).render('#logger');
+    <div id="logger"></div>
 
-    Y.Test.Runner.setName('aui-datepicker');
-    Y.Test.Runner.run();
-});
-</script>
+    <h1>AlloyUI - Timepicker</h1>
+    <div id="delegate">
+        <h2>Input text</h2>
+        <input class="input-large" id="pickerInput1" type="text" placeholder="hh:mm" value="01:30 AM, 06:00 AM">
+        <br>
+        <input class="input-large" id="pickerInput2" type="text" placeholder="hh:mm" value="12:00 AM">
+    </div>
+
+    <div>
+        <input id="outside">
+    </div>
+
+    <script>
+        YUI({
+            coverage: ['aui-datepicker', 'aui-datepicker-delegate'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test', 'module-tests', function(Y) {
+
+            (new Y.Test.Console()).render('#logger');
+
+            Y.Test.Runner.setName('aui-datepicker');
+            Y.Test.Runner.run();
+        });
+    </script>
 </body>
 </html>
