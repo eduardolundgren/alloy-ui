@@ -30,6 +30,7 @@ var Lang = A.Lang,
     },
 
     BODY = 'body',
+    BOUNDING_BOX = 'boundingBox',
     CLOSE = 'close',
     COL = 'col',
     COL_HEADER_DAYS_NODE = 'colHeaderDaysNode',
@@ -213,7 +214,7 @@ var SchedulerTableView = A.Component.create({
          * @type Number
          */
         displayRows: {
-            value: 4
+            value: 2
         },
 
         /**
@@ -1039,6 +1040,7 @@ var SchedulerTableView = A.Component.create({
          */
         _renderEventsOverlay: function() {
             var instance = this;
+            var scheduler = instance.get(SCHEDULER);
             var strings = instance.get(STRINGS);
 
             instance[EVENTS_OVERLAY] = new A.Overlay({
@@ -1050,7 +1052,7 @@ var SchedulerTableView = A.Component.create({
                         label: strings[CLOSE]
                     }
                 ),
-                render: instance[ROWS_CONTAINER_NODE],
+                render: instance.get(BOUNDING_BOX),
                 visible: false,
                 width: 250,
                 zIndex: 450
