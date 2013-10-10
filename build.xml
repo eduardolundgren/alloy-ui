@@ -283,7 +283,7 @@
 
 	<target name="clean-release">
 		<delete dir="${release.temp.dir}" />
-		<delete file="${project.dir}/${release.name}-${release.version}.zip" />
+		<delete file="${project.dir}/${release.name}-${release.version}*.zip" />
 	</target>
 
 	<target name="init-yui">
@@ -352,7 +352,17 @@
 
 		<echo>Creating Zip file ${release.name}.zip</echo>
 
-		<zip basedir="${release.temp.dir}" destfile="${project.dir}/${release.name}-${release.version}.zip" />
+		<if>
+			<isset property="patch.version" />
+			<then>
+				<property name="zip.version" value="${release.version}.${patch.version}" />
+			</then>
+			<else>
+				<property name="zip.version" value="${release.version}" />
+			</else>
+		</if>
+
+		<zip basedir="${release.temp.dir}" destfile="${project.dir}/${release.name}-${zip.version}.zip" />
 
 		<delete dir="${release.temp.dir}" />
 	</target>
