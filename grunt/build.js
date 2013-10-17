@@ -165,10 +165,17 @@ module.exports = function(grunt) {
             var auiBaseDir = path.join(auiSrcDir, 'aui-base');
 
             if (cwd === ROOT || cwd === auiSrcDir) {
+                var curDir = process.env.PWD;
+                var srcDir = auiSrcDir;
+
+                if (curDir != auiSrcDir && curDir.indexOf(auiSrcDir) === 0) {
+                    srcDir = curDir;
+                }
+
                 args.push('--walk');
 
                 stack.push(function(mainCallback) {
-                    exports._runShifter(mainCallback, target, args, auiSrcDir);
+                    exports._runShifter(mainCallback, target, args, srcDir);
                 });
             }
             else {
