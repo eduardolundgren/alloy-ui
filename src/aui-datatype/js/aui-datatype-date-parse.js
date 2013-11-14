@@ -24,7 +24,6 @@ var Lang = A.Lang,
  * @param opt_pattern {String} Mask as strftime string.
  * @constructor
  */
-
 function DateParser(opt_pattern) {
     var instance = this;
 
@@ -36,7 +35,7 @@ function DateParser(opt_pattern) {
 /**
  * Static property provides a string to identify the token prefix, e.g. %A.
  *
- * @property DateParser.TOKEN_PREFIX
+ * @property TOKEN_PREFIX
  * @type String
  * @static
  */
@@ -46,7 +45,7 @@ DateParser.TOKEN_PREFIX = '%';
  * Static property provides a base year to sum two digit years, e.g. For the
  * mask %Y, "13" will be parsed to 2013.
  *
- * @property DateParser.TWO_DIGIT_YEAR_BASE
+ * @property TWO_DIGIT_YEAR_BASE
  * @type Number
  * @static
  */
@@ -644,7 +643,7 @@ A.mix(DateParser.prototype, {
  * Static property provides an object that contains hints information for
  * possible token values, e.g. year, month, day etc.
  *
- * @property DateParser.HINTS
+ * @property HINTS
  * @type Object
  * @static
  */
@@ -653,7 +652,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * aggregates tokens.
      *
-     * @property DateParser.HINTS.AGGREGATES
+     * @property HINTS.AGGREGATES
      * @type Object
      * @static
      */
@@ -665,7 +664,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * ampm tokens.
      *
-     * @property DateParser.HINTS.AMPM
+     * @property HINTS.AMPM
      * @type Object
      * @static
      */
@@ -685,7 +684,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * year tokens.
      *
-     * @property DateParser.HINTS.YEAR
+     * @property HINTS.YEAR
      * @type Object
      * @static
      */
@@ -709,7 +708,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * month tokens.
      *
-     * @property DateParser.HINTS.MONTH
+     * @property HINTS.MONTH
      * @type Object
      * @static
      */
@@ -738,7 +737,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * day tokens.
      *
-     * @property DateParser.HINTS.DAY
+     * @property HINTS.DAY
      * @type Object
      * @static
      */
@@ -758,7 +757,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * hours tokens.
      *
-     * @property DateParser.HINTS.HOURS
+     * @property HINTS.HOURS
      * @type Object
      * @static
      */
@@ -779,7 +778,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * minutes tokens.
      *
-     * @property DateParser.HINTS.MINUTES
+     * @property HINTS.MINUTES
      * @type Object
      * @static
      */
@@ -799,7 +798,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * seconds tokens.
      *
-     * @property DateParser.HINTS.SECONDS
+     * @property HINTS.SECONDS
      * @type Object
      * @static
      */
@@ -819,7 +818,7 @@ DateParser.HINTS = {
      * Static property provides an object that contains hints information for
      * timezone tokens.
      *
-     * @property DateParser.HINTS.TZ
+     * @property HINTS.TZ
      * @type Object
      * @static
      */
