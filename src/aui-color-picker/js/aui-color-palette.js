@@ -24,9 +24,8 @@ var AArray = A.Array,
      *
      * @class A.ColorPalette
      * @extends Widget
-     * @uses A.Palette
-     * @param config {Object} Object literal specifying widget configuration
-     *     properties.
+     * @uses A.Palette, A.WidgetCssClass, A.WidgetToggle
+     * @param config {Object} Object literal specifying widget configuration properties.
      * @constructor
      */
     ColorPalette = A.Base.create(_NAME, A.Widget, [

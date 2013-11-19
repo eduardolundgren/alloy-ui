@@ -141,8 +141,7 @@ var AColor = A.Color,
      *
      * @class A.HSVPalette
      * @extends Widget
-     * @param config {Object} Object literal specifying widget configuration
-     *     properties.
+     * @param config {Object} Object literal specifying widget configuration properties.
      * @constructor
      */
     HSVPalette = A.Base.create(NAME, A.Widget, [A.WidgetCssClass, A.WidgetToggle], {
@@ -206,8 +205,7 @@ var AColor = A.Color,
         },
 
         /**
-         * Destructor lifecycle implementation for the `HSVPalette` class.
-         * Lifecycle.
+         * Destructor lifecycle implementation for the `HSVPalette` class. Lifecycle.
          *
          * @method destructor
          * @protected

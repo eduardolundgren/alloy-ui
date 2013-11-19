@@ -56,11 +56,9 @@ var AArray = A.Array,
  * A base class for `ColorPickerBase`.
  *
  * @class A.ColorPickerBase
- * @param config {Object} Object literal specifying widget configuration
- *     properties.
+ * @param config {Object} Object literal specifying widget configuration properties.
  * @constructor
  */
-
 function ColorPickerBase(config) {}
 
 ColorPickerBase.prototype = {
@@ -77,8 +75,7 @@ ColorPickerBase.prototype = {
     _hsvPaletteModal: null,
 
     /**
-     * Construction logic executed during `ColorPickerBase` instantiation.
-     * Lifecycle.
+     * Construction logic executed during `ColorPickerBase` instantiation. Lifecycle.
      *
      * @method initializer
      * @protected
@@ -92,8 +89,7 @@ ColorPickerBase.prototype = {
     },
 
     /**
-     * Destructor lifecycle implementation for the `ColorPickerBase` class.
-     * Lifecycle.
+     * Destructor lifecycle implementation for the `ColorPickerBase` class. Lifecycle.
      *
      * @method destructor
      * @protected
@@ -159,7 +155,7 @@ ColorPickerBase.prototype = {
     },
 
     /**
-     * Binds the click event to the NoColor node.
+     * Binds the click event to the no color node.
      *
      * @method _bindNoColor
      * @protected
@@ -653,8 +649,7 @@ ColorPickerBase.prototype = {
     },
 
     /**
-     * Creates new instance of the `ColorPalette` component with `defaultColor`
-     * options.
+     * Creates new instance of the `ColorPalette` component with `defaultColor` options.
      *
      * @method _renderColorPalette
      * @protected
@@ -676,8 +671,7 @@ ColorPickerBase.prototype = {
     },
 
     /**
-     * Renders `trigger` for the `HSVPalette` and appends it to the actions
-     * container.
+     * Renders `trigger` for the `HSVPalette` and appends it to the actions container.
      *
      * @method _renderHSVTrigger
      * @protected
@@ -776,13 +770,12 @@ ColorPickerBase.prototype = {
 
     /**
      * Overwrites the default setter for `trigger` in `WidgetTrigger` class
-     * which invokes A.one, but we need to support multiple triggers.
+     * which invokes `Y.one`, but we need to support multiple triggers.
      *
      * @method _setTrigger
      * @param {Node | String} value
      * @protected
      */
-
     _setTrigger: function(value) {
         return value;
     },
@@ -979,8 +972,7 @@ ColorPickerBase.ATTRS = {
     },
 
     /**
-     * `HSVPalette` used for selecting custom colors not present in
-     * `defualtColors`.
+     * `HSVPalette` used for selecting custom colors not present in `defaultColors`.
      *
      * @attribute hsvPalette
      * @type {Object}
