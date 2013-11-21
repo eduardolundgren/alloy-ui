@@ -359,26 +359,27 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "aui-event-input",
             "test": function(A) {
-                var supportsDOMEvent = A.supportsDOMEvent,
-                    testFeature = A.Features.test,
-                    addFeature = A.Features.add;
+    var supportsDOMEvent = A.supportsDOMEvent,
+        testFeature = A.Features.test,
+        addFeature = A.Features.add;
 
-                if (testFeature('event', 'input') === undefined) {
-                    addFeature('event', 'input', {
-                        test: function() {
-                            return supportsDOMEvent(document.createElement('textarea'), 'input');
-                        }
-                    });
-                }
+    if (testFeature('event', 'input') === undefined) {
+        addFeature('event', 'input', {
+            test: function() {
+                return supportsDOMEvent(document.createElement('textarea'), 'input') && (!A.UA.ie || A.UA.ie > 9);
+            }
+        });
+    }
 
-                return !testFeature('event', 'input');
-            },
+    return !testFeature('event', 'input');
+},
             "trigger": "aui-event"
         },
         "requires": [
             "aui-event-base",
             "event-delegate",
-            "event-synthetic"
+            "event-synthetic",
+            "timers"
         ]
     },
     "aui-form-builder": {
@@ -1035,4 +1036,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6a882418dca45cdde6a39a5f1f567549';
+YUI.Env[Y.version].md5 = '30f9c917ba33429d941b06b2fd00593f';
