@@ -42,7 +42,7 @@ YUI.add('module-tests', function(Y) {
         //----------------------------------------------------------------------
 
         /**
-         * Checks that the synthetic input event is fired as expected
+         * Check that the synthetic input event is fired as expected
          *
          * @tests AUI-749
          */
@@ -75,7 +75,7 @@ YUI.add('module-tests', function(Y) {
         },
 
         /**
-         * Checks that the synthetic input event is detached properly
+         * Check that the synthetic input event is detached properly
          *
          * @tests AUI-749
          */

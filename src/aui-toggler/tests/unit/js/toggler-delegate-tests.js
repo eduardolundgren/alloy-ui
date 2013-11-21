@@ -60,7 +60,7 @@ YUI.add('module-tests', function(Y) {
                 catch (err) {
                     mockErrors.push(err.message);
                 }
-            }
+            };
         },
 
         //----------------------------------------------------------------------
