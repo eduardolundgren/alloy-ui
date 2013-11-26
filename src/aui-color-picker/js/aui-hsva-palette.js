@@ -69,7 +69,7 @@ var Lang = A.Lang,
     REGEX_HEX_COLOR_ALPHA = /^([a-f0-9]{6}|[a-f0-9]{8}|[a-f0-9]{3})$/i,
 
     /**
-     * A base class for HSVAPalette.
+     * A base class for `HSVAPalette`.
      *
      * @class A.HSVAPalette
      * @extends A.HSVPalette
@@ -84,7 +84,7 @@ var Lang = A.Lang,
         TPL_ALPHA_THUMB: '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE + '"></span></span>',
 
         /**
-         * Construction logic executed during HSVAPalette instantiation. Lifecycle.
+         * Construction logic executed during `HSVAPalette` instantiation. Lifecycle.
          *
          * @method initializer
          * @protected
@@ -100,14 +100,15 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Sets color after hex input `valueChange`.
          *
          * @method _afterHexInputChange
-         * @param event
+         * @param {EventFacade} event
          * @protected
          */
         _afterHexInputChange: function(event) {
-            // YUI Code toHSVA from hex + alpha is broken, will remove the alpha value
+            // YUI Code toHSVA from hex + alpha is broken, will remove the alpha
+            // value
             var instance = this,
                 hexColor = event.hexColor,
                 alpha = hexColor.substr(6, 2),
@@ -130,10 +131,10 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Sets alpha slider container style after thumb position change.
          *
          * @method _afterHsThumbChangeFn
-         * @param event
+         * @param {EventFacade} event
          * @protected
          */
         _afterHsThumbChangeFn: function(event) {
@@ -143,10 +144,11 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Sets alpha slider style, position, and results view after HSVA input
+         * `valueChange`.
          *
          * @method _afterHSVAInputChange
-         * @param event
+         * @param {EventFacade} event
          * @protected
          */
         _afterHSVAInputChange: function(event) {
@@ -166,10 +168,10 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Sets alpha slider container style after RGB input `valueChange`.
          *
          * @method _afterRGBInputChange
-         * @param event
+         * @param {EventFacade} event
          * @protected
          */
         _afterRGBInputChange: function(event) {
@@ -179,12 +181,13 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Calculates and returns RGB value from array of values.
          *
          * @method _calculateRGBArray
-         * @param r
-         * @param g
-         * @param b
+         * @param {Number} r
+         * @param {Number} g
+         * @param {Number} b
+         * @return {String} RGB value
          * @protected
          */
         _calculateRGBArray: function(r, g, b) {
@@ -197,12 +200,13 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Calculates and returns RGB color value.
          *
          * @method _calculateRGBColor
-         * @param hue
-         * @param saturation
-         * @param value
+         * @param {Number} hue
+         * @param {Number} saturation
+         * @param {Number} value
+         * @return {String} RGB value
          * @protected
          */
         _calculateRGBColor: function(hue, saturation, value) {
@@ -213,13 +217,14 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Calculates RGB color value from HSVA color value.
          *
          * @method _calculateRGBA
-         * @param hue
-         * @param saturation
-         * @param value
-         * @param alpha
+         * @param {Number} hue
+         * @param {Number} saturation
+         * @param {Number} value
+         * @param {Number} alpha
+         * @return {String} RGB value
          * @protected
          */
         _calculateRGBA: function(hue, saturation, value, alpha) {
@@ -247,12 +252,13 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Converts one color value type to another.
          *
          * @method _convertColor
-         * @param value
-         * @param from
-         * @param to
+         * @param {String} color value
+         * @param {String} from type
+         * @param {String} to type
+         * @return {String} converted color value
          * @protected
          */
         _convertColor: function(value, from, to) {
@@ -283,9 +289,10 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Returns container class name.
          *
          * @method _getContainerClassName
+         * @return {String} class name
          * @protected
          */
         _getContainerClassName: function() {
@@ -300,11 +307,12 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Returns hexadecimal color value.
          *
          * @method _getHexValue
-         * @param hexColor
-         * @param rgbColorArray
+         * @param {String} hexColor
+         * @param {Array} rgbColorArray
+         * @return {String} hex value
          * @protected
          */
         _getHexValue: function(hexColor, rgbColorArray) {
@@ -324,10 +332,11 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Returns HSV color values.
          *
          * @method _getHSVArray
-         * @param hsv
+         * @param {Number} hsv
+         * @return {Array} hsv color array
          * @protected
          */
         _getHSVArray: function(hsv) {
@@ -337,7 +346,7 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Renders alpha slider and binds events.
          *
          * @method _createAlphaSlider
          * @protected
@@ -376,7 +385,7 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Creates sliders.
          *
          * @method _createSliders
          * @protected
@@ -390,9 +399,10 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Returns hex container configuration.
          *
          * @method _getHexContainerConfig
+         * @return {Object} hex container config object
          * @protected
          */
         _getHexContainerConfig: function() {
@@ -409,10 +419,11 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Formats hexadecimal color values.
          *
          * @method _normalizeHexValue
-         * @param hex
+         * @param {String} hex
+         * @return {String} formatted hex color value
          * @protected
          */
         _normalizeHexValue: function(hex) {
@@ -429,10 +440,10 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Syncs `HSVAPalette` UI on alpha `valueChange`.
          *
          * @method _onAlphaChange
-         * @param event
+         * @param {EventFacade} event
          * @protected
          */
         _onAlphaChange: function(event) {
@@ -478,7 +489,7 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Renders alpha slider container.
          *
          * @method _renderAlphaSliderContainer
          * @protected
@@ -492,7 +503,7 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Renders alpha field.
          *
          * @method _renderFields
          * @protected
@@ -515,7 +526,7 @@ var Lang = A.Lang,
         },
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * Renders view container content.
          *
          * @method _renderViewContainerContent
          * @protected
@@ -533,16 +544,16 @@ var Lang = A.Lang,
          * Static property provides a string to identify the class.
          *
          * @property NAME
-         * @type String
+         * @type {String}
          * @static
          */
         NAME: NAME,
 
         /**
-         * TODO. Wanna help? Please send a Pull Request.
+         * The namespace of the plugin.
          *
          * @property NS
-         * @type String
+         * @type {String}
          * @static
          */
         NS: NAME
