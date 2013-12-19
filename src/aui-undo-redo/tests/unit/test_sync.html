@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title>UndoRedo synchronous undo test page</title>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="../../../../build/aui-css/css/bootstrap.css">
+
+    <script src="../../../../build/aui/aui.js"></script>
+    <script type="text/javascript" src="js/test_sync.js"></script>
+  </head>
+
+  <body  class="yui3-skin-sam">
+      <div id="logger"></div>
+
+      <script>
+          YUI({
+              coverage: ['aui-undo-redo', 'aui-undo-redo-action'],
+              filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+          }).use('test-console', 'test', 'module-tests', function(Y) {
+
+              (new Y.Test.Console()).render('#logger');
+
+              Y.Test.Runner.setName('aui-undo-redo');
+              Y.Test.Runner.run();
+          });
+      </script>
+  </body>
+</html>

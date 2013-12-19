@@ -906,7 +906,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "aui-tooltip-base": {
         "requires": [
-            "event-mouseenter",
+            "event-hover",
             "transition",
             "widget",
             "widget-autohide",
@@ -978,6 +978,16 @@ Y.mix(YUI.Env[Y.version].modules, {
         ],
         "skinnable": true
     },
+    "aui-undo-redo": {
+        "requires": [
+            "base"
+        ]
+    },
+    "aui-undo-redo-action": {
+        "requires": [
+            "aui-undo-redo"
+        ]
+    },
     "aui-url": {
         "requires": [
             "oop",
@@ -1035,4 +1045,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '6a882418dca45cdde6a39a5f1f567549';
+YUI.Env[Y.version].md5 = '802c32474491d07c8086745cb64aefc1';

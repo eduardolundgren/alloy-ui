@@ -882,7 +882,7 @@
     },
     "aui-tooltip-base": {
         "requires": [
-            "event-mouseenter",
+            "event-hover",
             "transition",
             "widget",
             "widget-autohide",
@@ -953,6 +953,16 @@
             "aui-tree-io"
         ],
         "skinnable": true
+    },
+    "aui-undo-redo": {
+        "requires": [
+            "base"
+        ]
+    },
+    "aui-undo-redo-action": {
+        "requires": [
+            "aui-undo-redo"
+        ]
     },
     "aui-url": {
         "requires": [
