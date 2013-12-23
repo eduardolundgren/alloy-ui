@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+</head>
+<style type="text/css" media="screen">
+    body {
+        font-size: 12px;
+    }
+
+    .wrapper {
+        padding: 10px;
+    }
+
+    .toolbar {
+        margin-bottom: 1em;
+    }
+
+    .bookshelf {
+        background-image: url('assets/bookshelf.png');
+        border: 2px solid #BBB;
+        height: 960px;
+        position: absolute;
+        width: 640px;
+    }
+
+    .img-container {
+        bottom: 0;
+        left: 50%;
+        display: block;
+        position: absolute;
+    }
+
+    .bookstore {
+        background-image: url('assets/bookstore.jpg');
+        border: 2px solid #BBB;
+        height: 432px;
+        left: 680px;
+        position: absolute;
+        width: 640px;
+    }
+</style>
+<body>
+
+<div class="wrapper">
+    <h1>Asynchronous Undo/Redo demo</h1>
+
+    <div class="toolbar">
+        <button class="btn btn-primary btn-large" id="addBook">Add book</button>
+        <button class="btn btn-large" disabled id="undo">Undo</button>
+        <button class="btn btn-large" disabled id="redo">Redo</button>
+    </div>
+
+    <div class="bookstore"></div>
+    <div class="bookshelf"></div>
+</div>
+
+<script src="../../build/aui/aui.js"></script>
+
+<script type="text/javascript" charset="utf-8">
+YUI({
+    combine: false,
+    filter: 'raw'
+}).ready('aui-undo-redo', 'transition', function(A) {
+    'use strict';
+
+    var Lang = A.Lang,
+        Node = A.Node,
+
+        actions,
+        AddBookAction,
+        addBookBtn,
+        bookshelfNode,
+        booksRowIndex,
+        bookWidth,
+        curRow,
+        left,
+        maxBooksShelf,
+        offsetHeigth,
+        redoBtn,
+        startHeight,
+        tplImg,
+        undoBtn,
+        undoRedo;
+
+    booksRowIndex = 0;
+    bookWidth = 55;
+    curRow = 0;
+    left = 20;
+    maxBooksShelf = 11;
+    offsetHeigth = 175;
+    startHeight = 220;
+
+    function addBook(callback) {
+        var actions,
+            addBookAction,
+            curIndex,
+            img,
+            startBottom,
+            startLeft,
+            targetBottom,
+            targetLeft,
+
+        curIndex = undoRedo.get('undoIndex');
+
+        startLeft = 960;
+        startBottom = 580;
+
+        targetBottom = startHeight + (curRow * offsetHeigth);
+        targetLeft = left + (booksRowIndex * bookWidth);
+
+        img = Node.create(
+            Lang.sub(
+                tplImg,
+                {
+                    bottom: startBottom,
+                    index: curIndex,
+                    left: startLeft
+                }
+            )
+        );
+
+        bookshelfNode.appendChild(img);
+
+        addBookAction = new AddBookAction({
+            asyncProcessing: true,
+            booksRowIndex: booksRowIndex,
+            curRow: curRow,
+            imgIndex: curIndex,
+            startBottom: startBottom,
+            startLeft: startLeft
+        });
+
+        if (++booksRowIndex === maxBooksShelf) {
+            booksRowIndex = 0;
+
+            ++curRow;
+        }
+
+        img.transition(
+            {
+                bottom: targetBottom + 'px',
+                duration: 1, // seconds
+                easing: 'ease-out',
+                left: targetLeft + 'px'
+            }, function() {
+                undoRedo.add(addBookAction);
+
+                if (curRow === 4) {
+                    addBookBtn.setAttribute('disabled', true);
+                }
+                else {
+                    addBookBtn.removeAttribute('disabled');
+                }
+
+                if (A.Lang.isFunction(callback)) {
+                    callback();
+                }
+            }
+        );
+    }
+
+    function disableButtons() {
+        addBookBtn.setAttribute('disabled', true);
+        redoBtn.setAttribute('disabled', true);
+        undoBtn.setAttribute('disabled', true);
+    }
+
+    function updateUI(){
+        var options,
+            undoIndex;
+
+        undoRedo.canUndo() ?
+            undoBtn.removeAttribute('disabled') :
+            undoBtn.setAttribute('disabled', true);
+
+        undoRedo.canRedo() ?
+            redoBtn.removeAttribute('disabled') :
+            redoBtn.setAttribute('disabled', true );
+    }
+
+    tplImg =
+        '<div class="img-container" style="left: {left}px; bottom: {bottom}px">' +
+            '<img data-index="{index}" src="assets/book.jpg">' +
+        '</div>';
+
+    // Main entry
+
+    undoRedo = new A.UndoRedo();
+
+    undoRedo.subscribe('actionAdded', updateUI);
+    undoRedo.subscribe('actionCanceled', updateUI);
+    undoRedo.subscribe('redoFinished', updateUI);
+    undoRedo.subscribe('undoFinished', updateUI);
+
+    AddBookAction = A.Base.create('addbookaction', A.UndoRedoAction, [], {
+        redo: function() {
+            var instance = this;
+
+            addBook(function() {
+                instance.fire('redoFinished');
+            });
+        },
+
+        undo: function() {
+            var instance = this,
+                imgIndex,
+                imgNode;
+
+            imgIndex = instance.get('imgIndex');
+
+            imgNode = bookshelfNode.one('[data-index="' + imgIndex + '"]');
+
+            if (imgNode) {
+                imgNode = imgNode.ancestor();
+
+                imgNode.transition(
+                    {
+                        bottom: instance.get('startBottom') + 'px',
+                        duration: 0.75, // seconds
+                        easing: 'ease-out',
+                        left: instance.get('startLeft') + 'px'
+                    }, function() {
+                        bookshelfNode.removeChild(imgNode);
+
+                        curRow = instance.get('curRow');
+
+                        booksRowIndex = instance.get('booksRowIndex');
+
+                        instance.fire('undoFinished');
+
+                        addBookBtn.removeAttribute('disabled');
+                    }
+                );
+            }
+        }
+    }, {
+        ATTRS: {
+            booksRowIndex: {
+                validator: Lang.isNumber
+            },
+
+            curRow: {
+                validator: Lang.isNumber
+            },
+
+            imgIndex: {
+                validator: Lang.isNumber
+            },
+
+            startBottom: {
+                validator: Lang.isNumber
+            },
+
+            startLeft: {
+                validator: Lang.isNumber
+            }
+        }
+    });
+
+    bookshelfNode = A.one('.bookshelf');
+
+    addBookBtn = A.one('#addBook');
+
+    addBookBtn.on('click', function() {
+        disableButtons();
+
+        addBook();
+    });
+
+    undoBtn = A.one('#undo');
+
+    undoBtn.on('click', function() {
+        disableButtons();
+
+        undoRedo.undo();
+    });
+
+    redoBtn = A.one('#redo');
+
+    redoBtn.on('click', function() {
+        disableButtons();
+
+        undoRedo.redo();
+    });
+});
+</script>
+
+</body>
+</html>
