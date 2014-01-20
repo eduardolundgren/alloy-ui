@@ -1,0 +1,12 @@
+{
+    "aui-undo-redo": {
+        "requires": [
+            "base"
+        ]
+    },
+    "aui-undo-redo-state": {
+    	"requires": [
+            "aui-undo-redo"
+        ]
+    }
+}
