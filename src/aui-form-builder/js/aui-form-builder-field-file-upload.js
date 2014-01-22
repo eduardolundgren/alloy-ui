@@ -29,7 +29,7 @@ var L = A.Lang,
  * A base class for `A.FormBuilderFileUploadField`.
  *
  * @class A.FormBuilderFileUploadField
- * @extends A.FormBuilderField
+ * @extends A.Component, A.FormBuilderField
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

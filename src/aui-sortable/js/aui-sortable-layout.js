@@ -106,7 +106,7 @@ var Lang = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/sortable-layout/).
  *
  * @class A.SortableLayout
- * @extends Base
+ * @extends A.Component, Base
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

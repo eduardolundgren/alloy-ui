@@ -67,7 +67,7 @@ var L = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/io/).
  *
  * @class A.IORequest
- * @extends Plugin.Base
+ * @extends A.Component, Plugin.Base
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @uses io

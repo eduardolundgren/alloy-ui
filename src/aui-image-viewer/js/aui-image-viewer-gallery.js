@@ -86,7 +86,7 @@ var L = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/image-viewer/gallery/).
  *
  * @class A.ImageGallery
- * @extends A.ImageViewer
+ * @extends A.Component, A.ImageViewer
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

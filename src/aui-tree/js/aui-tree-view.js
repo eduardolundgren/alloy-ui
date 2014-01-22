@@ -61,6 +61,7 @@ var L = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/tree/).
  *
  * @class A.TreeView
+ * @extends A.Component
  * @uses A.TreeData, A.TreeViewPaginator, A.TreeViewIO
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
@@ -476,7 +477,7 @@ var isNumber = L.isNumber,
  * - DragDrop support for the TreeNodes
  *
  * @class A.TreeViewDD
- * @extends A.TreeView
+ * @extends A.Component, A.TreeView
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

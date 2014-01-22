@@ -67,7 +67,7 @@ var Lang = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/toggler/).
  *
  * @class A.Toggler
- * @extends Base
+ * @extends A.Component, Base
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

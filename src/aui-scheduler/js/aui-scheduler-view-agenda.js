@@ -148,7 +148,7 @@ var Lang = A.Lang,
  * A base class for `SchedulerAgendaView`.
  *
  * @class A.SchedulerAgendaView
- * @extends A.SchedulerView
+ * @extends A.Component, A.SchedulerView
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor
