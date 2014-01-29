@@ -1041,9 +1041,10 @@ var FormBuilderField = A.Component.create({
          */
         _uiSetLabel: function(val) {
             var instance = this,
+                escape = A.Escape;
                 labelNode = instance.get(LABEL_NODE);
 
-            labelNode.setContent(val);
+            labelNode.setContent(escape.html(val));
         },
 
         /**
