@@ -34,14 +34,14 @@ var ACTIVE_ELEMENT = 'activeElement',
     };
 
 /**
- * TODO. Wanna help? Please send a Pull Request.
+ * Defines a new `input` event in the DOM event system.
  *
  * @event input
  */
 A.Event.define('input', {
 
     /**
-     * TODO. Wanna help? Please send a Pull Request.
+     * Implementation logic for event subscription.
      *
      * @method on
      * @param node
@@ -56,7 +56,7 @@ A.Event.define('input', {
     },
 
     /**
-     * TODO. Wanna help? Please send a Pull Request.
+     * Implementation logic for subscription via `node.delegate`.
      *
      * @method delegate
      * @param node
@@ -84,7 +84,7 @@ A.Event.define('input', {
     },
 
     /**
-     * TODO. Wanna help? Please send a Pull Request.
+     * Implementation logic for cleaning up a detached subscription.
      *
      * @method detach
      * @param node
@@ -96,7 +96,7 @@ A.Event.define('input', {
     },
 
     /**
-     * TODO. Wanna help? Please send a Pull Request.
+     * Implementation logic for cleaning up a detached delegate subscription.
      *
      * @method detachDelegate
      * @param node
@@ -115,7 +115,7 @@ A.Event.define('input', {
     },
 
     /**
-     * TODO. Wanna help? Please send a Pull Request.
+     * Dispatches an `input` event.
      *
      * @method _dispatchEvent
      * @param notifier
