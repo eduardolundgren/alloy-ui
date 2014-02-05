@@ -12,7 +12,7 @@ var Lang = A.Lang,
  * A base class for TernarySearchNode.
  *
  * @class A.TernarySearchNode
- * @extends Base
+ * @extends A.Component, Base
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

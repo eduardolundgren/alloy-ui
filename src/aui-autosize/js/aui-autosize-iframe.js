@@ -23,7 +23,7 @@ var Lang = A.Lang,
  * A base class for `A.AutosizeIframe`.
  *
  * @class A.AutosizeIframe
- * @extends Plugin.Base
+ * @extends A.Component, Plugin.Base
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor

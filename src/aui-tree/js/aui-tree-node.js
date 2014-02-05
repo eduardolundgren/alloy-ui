@@ -107,7 +107,7 @@ var Lang = A.Lang,
  * Check the [live demo](http://alloyui.com/examples/tree/).
  *
  * @class A.TreeNode
- * @extends Base
+ * @extends A.Component, Base
  * @uses A.TreeData
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
@@ -1075,7 +1075,7 @@ var TREE_NODE_IO = 'tree-node-io';
  * - Ajax support to load the children of the current TreeNode
  *
  * @class A.TreeNodeIO
- * @extends A.TreeNode
+ * @extends A.Component, A.TreeNode
  * @uses A.TreeViewPaginator, A.TreeViewIO
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
@@ -1320,7 +1320,7 @@ var CHECKBOX = 'checkbox',
  * - Checkbox support for the TreeNode
  *
  * @class A.TreeNodeCheck
- * @extends A.TreeNodeIO
+ * @extends A.Component, A.TreeNodeIO
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor
@@ -1596,7 +1596,7 @@ var CHILD = 'child',
  *   status
  *
  * @class A.TreeNodeTask
- * @extends A.TreeNodeCheck
+ * @extends A.Component, A.TreeNodeCheck
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor
@@ -1710,7 +1710,7 @@ var TREE_NODE_RADIO = 'tree-node-radio',
  *   status
  *
  * @class A.TreeNodeRadio
- * @extends A.TreeNodeTask
+ * @extends A.Component, A.TreeNodeTask
  * @param {Object} config Object literal specifying widget configuration
  *     properties.
  * @constructor
