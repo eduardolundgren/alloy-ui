@@ -30,6 +30,7 @@ var Lang = A.Lang,
     ROWS = 'rows',
     SELECTION_CHANGE = 'selectionChange',
     TYPE = 'type',
+    WINDOWRESIZE = 'windowresize',
 
     _SPACE = ' ',
 
@@ -93,6 +94,8 @@ var DataTableHighlight = A.Base.create(
             instance.afterHostEvent(ACTIVE_COORD_CHANGE, instance._afterActiveCoordChange);
             instance.afterHostEvent(SELECTION_CHANGE, instance._afterSelectionChange);
             instance.afterHostEvent(DATA_CHANGE, instance._afterDataChange);
+
+            A.on(WINDOWRESIZE, A.bind(instance._afterWindowResize, instance));
         },
 
         /**
@@ -241,6 +244,32 @@ var DataTableHighlight = A.Base.create(
                 A.Array.each(nodes, function(node) {
                     node.addClass(instance.CLASS_NAMES.highlight);
                 });
+            }
+        },
+
+        /**
+         * TODO. Wanna help? Please send a Pull Request.
+         *
+         * @method _afterWindowResize
+         * @protected
+         */
+        _afterWindowResize: function() {
+            var instance = this,
+                activeBorderWidth = instance.get(ACTIVE_BORDER_WIDTH),
+                overlayActiveNode = instance.get(OVERLAY_ACTIVE_NODE),
+                overlayNode = instance.get(OVERLAY_NODE),
+                rangeBorderWidth = instance.get(RANGE_BORDER_WIDTH),
+                tableHighlightActive = A.one('.table-highlight-overlay-active'),
+                tableHighlightSelection = tableHighlightActive ? tableHighlightActive.next('.table-highlight-overlay') : null;
+
+            if (tableHighlightActive) {
+                instance._alignBorder(
+                    overlayActiveNode, instance.getActiveRegion(), activeBorderWidth);
+            }
+
+            if (tableHighlightSelection) {
+                instance._alignBorder(
+                    overlayNode, instance.getSelectionRegion(), rangeBorderWidth);
             }
         },
 
