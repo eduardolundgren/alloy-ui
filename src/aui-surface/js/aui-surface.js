@@ -54,7 +54,7 @@ A.Surface = A.Base.create('surface', A.Base, [], {
         if (!child) {
             child = this.createChild(screenId);
         }
-        A.log('Screen [' +  screenId + '] is adding content to surface [' + this + ']', 'info');
+        A.log('Screen [' + screenId + '] is adding content to surface [' + this + ']', 'info');
         child.setContent(opt_content);
         this.transition(child, null);
         this.element.append(child);
