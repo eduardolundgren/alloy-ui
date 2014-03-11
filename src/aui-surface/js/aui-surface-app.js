@@ -72,6 +72,14 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
 
         screen.afterFlip();
 
+        // Concurrent routes can share the same screen, e.g. `/home` and
+        // `/home:param`, for those cases a page refresh is performed and
+        // removing the screen is not necessary.
+        if (screen === activeScreen) {
+            A.log('Screen [' + screen + '] refreshed', 'info');
+            return;
+        }
+
         if (activeScreen && !activeScreen.get('cacheable')) {
             this._removeScreen(this.activePath, activeScreen);
         }
@@ -94,6 +102,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
      */
     _handleNavigate: function(path, ScreenCtor, req, res, next) {
         var instance = this,
+            activeScreen = instance.activeScreen,
             screen = instance.screens[path],
             screenId,
             deffered,
@@ -109,6 +118,11 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
         }
 
         screenId = screen.get('id');
+
+        if (screen === activeScreen) {
+            A.log('Screen [' + screen + '] simulates page refresh', 'info');
+            screen.clearCache();
+        }
 
         // Stack the surfaces and its operations in the right order. Since
         // getContentForSurface could return a promise in order to fetch async
@@ -132,9 +146,9 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
                 return A.when(screen.beforeFlip());
             })
             .then(function() {
-                if (instance.activeScreen) {
+                if (activeScreen) {
                     A.log('Deactivate active screen', 'info');
-                    instance.activeScreen.deactivate();
+                    activeScreen.deactivate();
                 }
             })
             .then(function() {
