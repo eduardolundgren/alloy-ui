@@ -22,14 +22,14 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
     /**
      * Maps the screen classes by the path.
      *
-     * @property screens
+     * @property screenFactories
      * @type {Object}
      * @protected
      */
     screenFactories: null,
 
     /**
-     * Maps the screen instances by the screen id.
+     * Maps the screen instances by the path.
      *
      * @property screens
      * @type {Object}
@@ -38,7 +38,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
     screens: null,
 
     /**
-     * Map that index the surfaces instances by the screen id.
+     * Map that index the surfaces instances by the surface id.
      *
      * @property surfaces
      * @type {Object}
@@ -106,7 +106,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
             return;
         }
 
-        A.log('Navigation starts', 'info');
+        A.log('Navigate to [' + path + ']', 'info');
 
         if (!screen) {
             A.log('Screen not found, create one', 'info');
@@ -138,7 +138,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
             })
             .then(function() {
                 if (instance.activeScreen) {
-                    A.log('Deactivate the active screen', 'info');
+                    A.log('Deactivate active screen', 'info');
                     instance.activeScreen.deactivate();
                 }
             })
@@ -146,7 +146,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
                 instance._setDocumentTitle(screen);
             })
             .then(function() {
-                A.log('The screen is ready, batch transitions...', 'info');
+                A.log('Screen is ready, batch transitions...', 'info');
                 A.Array.each(surfaces, function(surface) {
                     transitions.push(surface.show(screenId));
                 });
@@ -156,7 +156,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
             })
             .then(function() {
                 instance._finalizeNavigate(path, screen);
-                A.log('Navigation done, process next screen', 'info');
+                A.log('Navigation done, request next screen', 'info');
                 next();
             });
     },
