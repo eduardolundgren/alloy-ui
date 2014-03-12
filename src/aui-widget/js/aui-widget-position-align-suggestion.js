@@ -41,19 +41,16 @@ PositionAlignSuggestion.ATTRS = {
      */
     position: {
         setter: function(value) {
-            var val;
+            var val = value;
 
             if (A.Lang.isFunction(value)) {
-                val = value.apply(window);
+                val = value.apply(this);
             }
-            else {
-                val = value;
-            }
-            if (val === BOTTOM || val === TOP || val === LEFT ||
-                val === RIGHT) {
+
+            if (val === BOTTOM || val === TOP || val === LEFT || val === RIGHT) {
                 return val;
             }
-    	},
+        },
         value: TOP
     }
 };

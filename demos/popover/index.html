@@ -26,6 +26,9 @@
             },
             bodyContent: 'One fine body…',
             headerContent: 'Header content',
+            position: function() {
+                return 'bottom';
+            },
             trigger: '#triggerTop',
             animated: true,
             duration: 0.5, // in seconds
@@ -38,7 +41,7 @@
             },
             bodyContent: 'Another fine body…',
             headerContent: 'Header content',
-            position: 'bottom',
+            position: 'right',
             trigger: '#triggerBottom'
         }).render();
 
