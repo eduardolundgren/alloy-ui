@@ -29,8 +29,10 @@
             delay: 500, // in milliseconds
             duration: 0.5, // in seconds
             headerContent: 'Header content',
+            position: function() {
+                return 'bottom';
+            },
             trigger: '#triggerTop'
-            
         }).render();
 
         var popoverBottom = new Y.Popover({
@@ -39,7 +41,7 @@
             },
             bodyContent: 'Another fine body…',
             headerContent: 'Header content',
-            position: 'bottom',
+            position: 'right',
             trigger: '#triggerBottom'
         }).render();
 

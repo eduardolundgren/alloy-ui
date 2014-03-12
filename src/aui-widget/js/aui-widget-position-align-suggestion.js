@@ -33,7 +33,7 @@ PositionAlignSuggestion.ATTRS = {
             var val = value;
 
             if (A.Lang.isFunction(value)) {
-                val = value.apply(window);
+                val = value.apply(this);
             }
 
             if (val === 'bottom' || val === 'top' || val === 'left' ||
