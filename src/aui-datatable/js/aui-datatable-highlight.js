@@ -260,7 +260,8 @@ var DataTableHighlight = A.Base.create(
                 overlayNode = instance.get(OVERLAY_NODE),
                 rangeBorderWidth = instance.get(RANGE_BORDER_WIDTH),
                 tableHighlightActive = A.one('.table-highlight-overlay-active'),
-                tableHighlightSelection = tableHighlightActive ? tableHighlightActive.next('.table-highlight-overlay') : null;
+                tableHighlightSelection = tableHighlightActive ? tableHighlightActive.next('.table-highlight-overlay') :
+                    null;
 
             if (tableHighlightActive) {
                 instance._alignBorder(
