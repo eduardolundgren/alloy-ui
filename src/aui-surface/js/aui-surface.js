@@ -184,16 +184,6 @@ A.Surface = A.Base.create('surface', A.Base, [], {
             validator: Lang.isString,
             value: A.guid(),
             writeOnce: true
-        },
-
-        /**
-         * The document.title to set when the screen is active.
-         *
-         * @attribute title
-         * @type {String}
-         */
-        title: {
-            validator: Lang.isString
         }
     },
 
