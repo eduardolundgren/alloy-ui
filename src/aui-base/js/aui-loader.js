@@ -837,8 +837,7 @@ Y.mix(YUI.Env[Y.version].modules, {
             "node-style",
             "pjax-base",
             "promise",
-            "router",
-            "aui-set"
+            "router"
         ]
     },
     "aui-tabview": {
@@ -1054,4 +1053,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'e8cdfca700308043481f507690524b69';
+YUI.Env[Y.version].md5 = 'a48cf335074d9c0b496f8615b35f5d97';
