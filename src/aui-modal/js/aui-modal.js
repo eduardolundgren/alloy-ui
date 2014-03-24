@@ -54,8 +54,14 @@ A.Modal = A.Base.create('modal', A.Widget, [
         var instance = this,
             eventHandles;
 
+        instance.get('hideOn').push({eventName: 'clickoutside'});
+        instance._attachModalAutohide();
+
         eventHandles = [
+            A.after(instance._attachModalAutohide, instance, '_attachUIHandlesAutohide'),
             A.after(instance._afterFillHeight, instance, 'fillHeight'),
+            A.on(instance._onAttachUIHandlesAutohide, instance, '_attachUIHandlesAutohide'),
+            instance.after('backdropChange', instance._afterBackdropChange),
             instance.after('resize:end', A.bind(instance._syncResizeDimensions, instance)),
             instance.after('draggableChange', instance._afterDraggableChange),
             instance.after('resizableChange', instance._afterResizableChange),
@@ -99,6 +105,17 @@ A.Modal = A.Base.create('modal', A.Widget, [
         return A.mix(config, {
             bubbleTargets: instance
         });
+    },
+
+    /**
+     * Fire after `backdrop` attribute change.
+     *
+     * @method _afterBackdropChange
+     * @param event
+     * @protected
+     */
+    _afterBackdropChange: function() {
+        this._attachUIHandlesAutohide();
     },
 
     /**
@@ -185,6 +202,34 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Attaches event to hide the `Modal`.
+     *
+     * @method _attachModalAutohide
+     * @protected
+     */
+    _attachModalAutohide: function() {
+        this._detachModalAutohide();
+    },
+ 
+    /**
+     * Detaches click on outside when `backdrop` is false.
+     * 
+     * @method _detachModalAutohide
+     * @protected
+     */
+    _detachModalAutohide: function() {
+        var instance = this;
+
+        A.each(instance._uiHandlesAutohide, function(hideEvents) {
+            if (!instance.get('backdrop')) {
+                if (hideEvents.evt.type === 'clickoutside') {
+                    hideEvents.detach();
+                }
+            }
+        });
+    },
+
+    /**
      * Set `maxHeight` CSS property.
      *
      * @method _fillMaxHeight
@@ -225,6 +270,16 @@ A.Modal = A.Base.create('modal', A.Widget, [
         if (instance.resize.proxy) {
             return new A.Do.Prevent();
         }
+    },
+
+    /**
+     * Detaches all before the attachment.
+     *
+     * @method _onAttachUIHandlesAutohide
+     * @protected
+     */
+    _onAttachUIHandlesAutohide: function() {
+        this._detachUIHandlesAutohide();
     },
 
     /**
@@ -311,6 +366,18 @@ A.Modal = A.Base.create('modal', A.Widget, [
      * @static
      */
     ATTRS: {
+
+        /**
+         * Determine if `Modal` will hide when click on outside.
+         *
+         * @attribute backdrop
+         * @default false
+         * @type Boolean
+         */
+        backdrop: {
+            validator: Lang.isBoolean,
+            value: false
+        },
 
         /**
          * Determine the content of Modal's body section.
