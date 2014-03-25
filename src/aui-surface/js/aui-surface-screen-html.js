@@ -51,7 +51,9 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
 
         return new A.Promise(function(resolve, reject) {
             A.io(url, {
-                headers: {'X-PJAX': 'true'},
+                headers: {
+                    'X-PJAX': 'true'
+                },
                 on: {
                     failure: function(id, response) {
                         reject(response.responseText);
@@ -161,9 +163,8 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          * Time in milliseconds after which an Ajax request should time out.
          *
          * @attribute timeout
-         * @type Number
+         * @type {Number}
          * @default 30000
-         * @since 3.5.0
          **/
         timeout: {
             value: 30000
