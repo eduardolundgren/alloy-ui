@@ -72,17 +72,6 @@ YUI({
         }
     });
 
-    Y.AboutScreen = Y.Base.create('aboutScreen', Y.HTMLScreen, [], {}, {
-        ATTRS: {
-            cacheable: {
-                value: false
-            },
-            title: {
-                value: 'About'
-            }
-        }
-    });
-
     Y.SurfaceScreen = Y.Base.create('surfaceScreen', Y.Screen, [], {
         getSurfacesContent: function(surfaces, req) {
             var url = new Y.Url(req.url);
@@ -142,7 +131,7 @@ YUI({
         },
         {
             path: '/about',
-            screen: Y.AboutScreen
+            screen: Y.HTMLScreen
         }
     ]);
 
