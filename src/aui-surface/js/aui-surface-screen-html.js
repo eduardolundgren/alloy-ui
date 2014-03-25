@@ -1,3 +1,5 @@
+var Lang = A.Lang;
+
 A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     /**
      * Loads the content for all surfaces in one AJAX request from the server.
@@ -8,10 +10,11 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {A.Promise} Promise, which should be resolved with the returned
      *     content from the server.
      */
+
     getSurfacesContent: function(surfaces, req) {
         var url = new A.Url(req.url);
 
-        url.addParameter('pjax', '1');
+        url.addParameters(this.get('urlParams'));
 
         return this._loadContent(url);
     },
@@ -28,6 +31,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {String|Node} String or Node instance which contains the content
      *     of the surface.
      */
+
     getSurfaceContent: function(surfaceId, req, contents) {
         var frag = contents.one('#' + surfaceId);
 
@@ -44,7 +48,10 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {A.Promise} Promise, which should be resolved with the returned
      *     content from the server.
      */
+
     _loadContent: function(url, opt_selector) {
+        var instance = this;
+
         return new A.Promise(function(resolve, reject) {
             A.io(url, {
                 on: {
@@ -59,10 +66,115 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
                             frag = frag.one(opt_selector);
                         }
 
+                        instance._setTitleFromFragment(frag);
+
                         resolve(frag);
                     }
-                }
+                },
+                timeout: instance.get('timeout')
             });
         });
+    },
+
+    /**
+     * Setter for urlParams attribute.
+     *
+     * @method _setUrlParams
+     * @protected
+     * @return {String|Object} If the provided value was string, it will be
+     *     converted to Object with one property - the provided string and "1"
+     *     as value. Otherwise, the provided object will be passed directly to
+     *     the attribute value.
+     */
+
+    _setUrlParams: function(val) {
+        var params = val;
+
+        if (Lang.isString(val)) {
+            params = {};
+            params[val] = 1;
+        }
+
+        return params;
+    },
+
+    /**
+     * Retrieves the title from the provided content and sets it to title
+     * attribute of the class.
+     *
+     * @method _setTitleFromFragment
+     * @param  {Node} frag The container from which the title should be
+     *     retrieve.
+     */
+
+    _setTitleFromFragment: function(frag) {
+        var title = frag.one(this.get('titleSelector'));
+
+        if (title) {
+            this.set('title', title);
+        }
+    },
+
+    /**
+     * Validates the value of urlParams. The value could be String or Object
+     * with key and values. During URL construction, they will be added to the
+     * other parameters.
+     *
+     * @method _validateUrlParams
+     * @protected
+     * @return {Boolean} true if val is String or an Object.
+     */
+
+    _validateUrlParams: function(val) {
+        return Lang.isString(val) || Lang.isObject(val);
     }
-}, {});
+}, {
+    ATTRS: {
+        /**
+         * Could be String or Object with multiple keys and values. If String,
+         * the defaule value will be "1". If an Object with multiple keys and
+         * values, they will be concatenated to the URL.
+         *
+         * @attribute urlParams
+         * @type {String|Object}
+         * @default pjax
+         */
+
+        urlParams: {
+            setter: '_setUrlParams',
+            validator: '_validateUrlParams',
+            value: 'pjax'
+        },
+
+        /**
+         * CSS selector used to extract a page title from the content of a page
+         * loaded via Pjax.
+         *
+         * By default this is set to extract the title from the `<title>`
+         * element, but you could customize it to extract the title from an
+         * `<h1>`, or from any other element, if that's more appropriate for the
+         * content you're loading.
+         *
+         * @attribute titleSelector
+         * @type String
+         * @default "title"
+         **/
+
+        titleSelector: {
+            value: 'title'
+        },
+
+        /**
+         * Time in milliseconds after which an Ajax request should time out.
+         *
+         * @attribute timeout
+         * @type Number
+         * @default 30000
+         * @since 3.5.0
+         **/
+
+        timeout: {
+            value: 30000
+        }
+    }
+});
