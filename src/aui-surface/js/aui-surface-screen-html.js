@@ -8,7 +8,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @param {Array} surfaces An array of surfaces which content should be loaded from the server.
      * @return {A.Promise} Promise, which should be resolved with the returned content from the server.
      */
-
     getSurfacesContent: function(surfaces, req) {
         var url = new A.Url(req.url);
 
@@ -26,12 +25,11 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @contents {Node} The content container from which the surface content will be retrieved.
      * @return {String|Node} String or Node instance which contains the content of the surface.
      */
-
     getSurfaceContent: function(surfaceId, req, contents) {
         var frag = contents.one('#' + surfaceId);
 
         if (frag) {
-            return frag.get('innerHTML');
+            return frag.getHTML();
         }
     },
 
@@ -43,7 +41,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {A.Promise} Promise, which should be resolved with the returned
      *     content from the server.
      */
-
     _loadContent: function(url, opt_selector) {
         var instance = this;
 
@@ -81,7 +78,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      *     as value. Otherwise, the provided object will be passed directly to
      *     the attribute value.
      */
-
     _setUrlParams: function(val) {
         var params = val;
 
@@ -101,12 +97,11 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @param  {Node} frag The container from which the title should be
      *     retrieve.
      */
-
     _setTitleFromFragment: function(frag) {
         var title = frag.one(this.get('titleSelector'));
 
         if (title) {
-            this.set('title', title);
+            this.set('title', title.get('text'));
         }
     },
 
@@ -119,7 +114,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @protected
      * @return {Boolean} true if val is String or an Object.
      */
-
     _validateUrlParams: function(val) {
         return Lang.isString(val) || Lang.isObject(val);
     }
@@ -134,7 +128,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          * @type {String|Object}
          * @default pjax
          */
-
         urlParams: {
             setter: '_setUrlParams',
             validator: '_validateUrlParams',
@@ -154,7 +147,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          * @type String
          * @default "title"
          **/
-
         titleSelector: {
             value: 'title'
         },
@@ -167,7 +159,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          * @default 30000
          * @since 3.5.0
          **/
-
         timeout: {
             value: 30000
         }
