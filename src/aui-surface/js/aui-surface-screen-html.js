@@ -2,6 +2,15 @@ var Lang = A.Lang;
 
 A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     /**
+     * Holds the IO request.
+     *
+     * @property _request
+     * @type {Object}
+     * @protected
+     */
+    _request: null,
+
+    /**
      * Loads the content for all surfaces in one AJAX request from the server.
      *
      * @method getSurfacesContent
@@ -49,8 +58,13 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     _loadContent: function(url, opt_selector) {
         var instance = this;
 
+        // If there's an outstanding request, abort it.
+        if (instance._request) {
+            instance._request.abort();
+        }
+
         return new A.Promise(function(resolve, reject) {
-            A.io(url, {
+            instance._request = A.io(url, {
                 headers: {
                     'X-PJAX': 'true'
                 },
