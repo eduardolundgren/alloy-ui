@@ -51,6 +51,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
 
         return new A.Promise(function(resolve, reject) {
             A.io(url, {
+                headers: {'X-PJAX': 'true'},
                 on: {
                     failure: function(id, response) {
                         reject(response.responseText);
