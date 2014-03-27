@@ -45,7 +45,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
 ], {
 
     /**
-     * Construction logic executed during Modal instantiation. Lifecycle.
+     * Construction logic executed during `A.Modal` instantiation. Lifecycle.
      *
      * @method initializer
      * @protected
@@ -54,8 +54,14 @@ A.Modal = A.Base.create('modal', A.Widget, [
         var instance = this,
             eventHandles;
 
+        instance.get('hideOn').push({eventName: 'clickoutside'});
+        instance._attachModalAutohide();
+
         eventHandles = [
+            A.after(instance._attachModalAutohide, instance, '_attachUIHandlesAutohide'),
             A.after(instance._afterFillHeight, instance, 'fillHeight'),
+            A.on(instance._onAttachUIHandlesAutohide, instance, '_attachUIHandlesAutohide'),
+            instance.after('backdropChange', instance._afterBackdropChange),
             instance.after('resize:end', A.bind(instance._syncResizeDimensions, instance)),
             instance.after('draggableChange', instance._afterDraggableChange),
             instance.after('resizableChange', instance._afterResizableChange),
@@ -68,7 +74,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
-     * Destructor lifecycle implementation for the `Modal` class.
+     * Destructor lifecycle implementation for the `A.Modal` class.
      *
      * @method destructor
      * @protected
@@ -99,6 +105,17 @@ A.Modal = A.Base.create('modal', A.Widget, [
         return A.mix(config, {
             bubbleTargets: instance
         });
+    },
+
+    /**
+     * Fire after `backdrop` attribute change.
+     *
+     * @method _afterBackdropChange
+     * @param event
+     * @protected
+     */
+    _afterBackdropChange: function() {
+        this._attachUIHandlesAutohide();
     },
 
     /**
@@ -185,6 +202,34 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Attaches event to hide the `A.Modal`.
+     *
+     * @method _attachModalAutohide
+     * @protected
+     */
+    _attachModalAutohide: function() {
+        this._detachModalAutohide();
+    },
+
+    /**
+     * Detaches click on outside when `backdrop` attribute is false.
+     *
+     * @method _detachModalAutohide
+     * @protected
+     */
+    _detachModalAutohide: function() {
+        var instance = this;
+
+        A.each(instance._uiHandlesAutohide, function(hideEvents) {
+            if (!instance.get('backdrop')) {
+                if (hideEvents.evt.type === 'clickoutside') {
+                    hideEvents.detach();
+                }
+            }
+        });
+    },
+
+    /**
      * Set `maxHeight` CSS property.
      *
      * @method _fillMaxHeight
@@ -228,6 +273,16 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
+     * Detaches all before the attachment.
+     *
+     * @method _onAttachUIHandlesAutohide
+     * @protected
+     */
+    _onAttachUIHandlesAutohide: function() {
+        this._detachUIHandlesAutohide();
+    },
+
+    /**
      * Plug draggable/resizable if enable.
      *
      * @method _onUserInitInteraction
@@ -250,7 +305,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
-     * Plug the drag Plugin
+     * Plug the drag plugin.
      *
      * @method _plugDrag
      * @protected
@@ -263,7 +318,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
     },
 
     /**
-     * Plug the resize Plugin
+     * Plug the resize plugin.
      *
      * @method _plugResize
      * @protected
@@ -304,7 +359,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
 
     /**
      * Static property used to define the default attribute
-     * configuration for the Modal.
+     * configuration for the `A.Modal`.
      *
      * @property ATTRS
      * @type Object
@@ -313,7 +368,19 @@ A.Modal = A.Base.create('modal', A.Widget, [
     ATTRS: {
 
         /**
-         * Determine the content of Modal's body section.
+         * Determine if `A.Modal` will hide when click on outside.
+         *
+         * @attribute backdrop
+         * @default false
+         * @type Boolean
+         */
+        backdrop: {
+            validator: Lang.isBoolean,
+            value: false
+        },
+
+        /**
+         * Determine the content of `A.Modal`'s body section.
          *
          * Temporary fix for widget-stdmod bug when bodyContent initializes
          * empty. this._currFillNode is never updated if _uiSetFillHeight is not
@@ -328,7 +395,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
         },
 
         /**
-         * Determine if Modal should be destroyed when hidden.
+         * Determine if `A.Modal` should be destroyed when hidden.
          *
          * @attribute destroyOnHide
          * @default false
@@ -340,7 +407,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
         },
 
         /**
-         * Determine if Modal should be draggable or not.
+         * Determine if `A.Modal` should be draggable or not.
          *
          * @attribute draggable
          * @type Object
@@ -358,7 +425,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
         },
 
         /**
-         * Determine if Modal should be resizable or not.
+         * Determine if `A.Modal` should be resizable or not.
          *
          * @attribute resizable
          * @type Object
@@ -371,7 +438,7 @@ A.Modal = A.Base.create('modal', A.Widget, [
         },
 
         /**
-         * Determine the content of Modal's header section.
+         * Determine the content of `A.Modal`'s header section.
          *
          * @attribute toolbars
          * @type Function
