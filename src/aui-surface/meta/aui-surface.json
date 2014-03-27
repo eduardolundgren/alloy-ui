@@ -10,7 +10,8 @@
         "requires": [
             "base-build",
             "node-style",
-            "promise"
+            "promise",
+            "aui-parse-content"
         ]
     },
 
