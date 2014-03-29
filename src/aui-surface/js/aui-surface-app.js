@@ -204,8 +204,9 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
 
         screenId = nextScreen.get('id');
 
-        instance.pendingRequest = A.CancellablePromise.resolve(nextScreen.getSurfacesContent(A.Object.keys(instance
-            .surfaces), req));
+        instance.pendingRequest = A.CancellablePromise.resolve(
+            nextScreen.getSurfacesContent(A.Object.keys(instance.surfaces), req));
+
         instance.pendingRequest.then(
             function(opt_contents) {
                 // Stack the surfaces and its operations in the right order. Since
