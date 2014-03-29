@@ -184,53 +184,6 @@ CancellablePromise.reject = A.Promise.reject;
  * @return {CancellablePromise} A promise for an array of all the fulfillment values
  * @static
  */
-// CancellablePromise.all = function(values) {
-//     var CancellablePromise = this,
-//         children = [];
-
-//     return new CancellablePromise(
-//         function(resolve, reject) {
-//             if (!A.Lang.isArray(values)) {
-//                 reject(new TypeError('CancellablePromise.all expects an array of values or promises'));
-//                 return;
-//             }
-
-//             var remaining = values.length,
-//                 i = 0,
-//                 length = values.length,
-//                 results = [],
-//                 child;
-
-//             function oneDone(index) {
-//                 return function(value) {
-//                     results[index] = value;
-
-//                     remaining--;
-
-//                     if (!remaining) {
-//                         resolve(results);
-//                     }
-//                 };
-//             }
-
-//             if (length < 1) {
-//                 return resolve(results);
-//             }
-
-//             for (; i < length; i++) {
-//                 child = CancellablePromise.resolve(values[i]);
-//                 child.then(oneDone(i), reject);
-//                 children.push(child);
-//             }
-//         },
-//         function() {
-//             console.log(children);
-//             A.Array.invoke(children, 'cancel');
-//             children = null;
-//         }
-//     );
-// };
-
 CancellablePromise.all = function(values) {
     var children = [];
 
@@ -261,7 +214,6 @@ CancellablePromise.all = function(values) {
             });
         },
         function() {
-            console.log(children);
             A.Array.invoke(children, 'cancel');
             children = null;
         }
