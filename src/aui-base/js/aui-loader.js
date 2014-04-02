@@ -856,7 +856,8 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "base-build",
             "node-style",
-            "aui-promise"
+            "aui-promise",
+            "aui-parse-content"
         ]
     },
     "aui-surface-screen": {
@@ -1085,4 +1086,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '351250ca634019e7455bf368ef161cd6';
+YUI.Env[Y.version].md5 = '5a842a8841b6d3f291522e0ecaa3c253';
