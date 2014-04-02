@@ -77,7 +77,6 @@ var ParseContent = A.Component.create({
      * @static
      */
     ATTRS: {
-
         /**
          * A queue of elements to be parsed.
          *
@@ -86,6 +85,17 @@ var ParseContent = A.Component.create({
          */
         queue: {
             value: null
+        },
+
+        /**
+         * When true, script nodes will not be removed from original content.
+         *
+         * @attribute preserve
+         * @default null
+         */
+        preserve: {
+            validator: L.isBoolean,
+            value: false
         }
     },
 
@@ -156,7 +166,7 @@ var ParseContent = A.Component.create({
         parseContent: function(content) {
             var instance = this;
 
-            var output = instance._clean(content);
+            var output = instance._extractScripts(content);
 
             instance._dispatch(output);
 
@@ -226,7 +236,7 @@ var ParseContent = A.Component.create({
          * @protected
          * @return {Object}
          */
-        _clean: function(content) {
+        _extractScripts: function(content) {
             var output = {};
 
             var fragment = A.Node.create('<div></div>');
@@ -252,11 +262,13 @@ var ParseContent = A.Component.create({
                 return SCRIPT_TYPES[script.getAttribute('type').toLowerCase()];
             });
 
-            output.js.each(
-                function(node, i) {
-                    node.remove();
-                }
-            );
+            if (!this.get('preserve')) {
+                output.js.each(
+                    function(node, i) {
+                        node.remove();
+                    }
+                );
+            }
 
             // remove PADDING_NODE
             fragment.get('firstChild').remove();
