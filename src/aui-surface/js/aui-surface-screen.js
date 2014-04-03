@@ -209,7 +209,6 @@ A.ScreenCacheable.prototype = {
      * @param {String} content Content to be cached.
      */
     addCache: function(surfaceId, content) {
-        console.log(this.cache);
         if (this.get('cacheable')) {
             this.cache = this.cache || {};
             this.cache[surfaceId] = content;
