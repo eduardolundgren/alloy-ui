@@ -16,7 +16,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @method abortRequest
      */
     abortRequest: function() {
-        // If there's an outstanding request, abort it.
         if (this._request) {
             this._request.abort();
         }
