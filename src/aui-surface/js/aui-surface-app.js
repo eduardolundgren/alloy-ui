@@ -140,7 +140,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Router, [A.PjaxBase], {
     _handleNavigateError: function(req, nextScreen, err) {
         A.log('Navigation error for [' + nextScreen + '] (' + err + ')', 'info');
         this.pendingRequest = null;
-
+        // Force redirect on errors not caused by navigation
         if (!A.instanceOf(err, A.CancellablePromise.Error)) {
             A.config.win.location.href = req.url;
         }
