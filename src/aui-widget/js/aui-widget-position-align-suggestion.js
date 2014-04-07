@@ -29,9 +29,17 @@ PositionAlignSuggestion.ATTRS = {
      * @type {String}
      */
     position: {
-        validator: function(val) {
-            return val === 'bottom' || val === 'top' || val === 'left' ||
-                val === 'right';
+        setter: function(value) {
+            var val = value;
+
+            if (A.Lang.isFunction(value)) {
+                val = value.apply(this);
+            }
+
+            if (val === 'bottom' || val === 'top' || val === 'left' ||
+                val === 'right') {
+                return val;
+            }
         },
         value: 'top'
     }
