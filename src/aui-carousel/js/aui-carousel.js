@@ -68,7 +68,7 @@ var Carousel = A.Component.create({
 
     /**
      * Static property used to define the default attribute
-     * configuration for the Carousel.
+     * configuration for the `A.Carousel`.
      *
      * @property ATTRS
      * @type Object
@@ -90,7 +90,7 @@ var Carousel = A.Component.create({
 
         /**
          * Duration of the animation in seconds when change index on
-         * Carousel.
+         * `A.Carousel`.
          *
          * @attribute animationTime
          * @default 0.5
@@ -113,7 +113,7 @@ var Carousel = A.Component.create({
 
         /**
          * CSS Selector whitch determines the items to be loaded to the
-         * Carousel.
+         * `A.Carousel`.
          *
          * @attribute itemSelector
          * @default >* (All first childs)
@@ -147,6 +147,18 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Determines if `A.Carousel` will pause on mouse enter or play when
+         * mouse leave.
+         *
+         * @attribute pauseOnHover
+         * @type Boolean
+         */
+        pauseOnHover: {
+            value: false,
+            validator: Lang.isBoolean
+        },
+
+        /**
          * Attributes that determines the status of transitions between
          * items.
          *
@@ -163,9 +175,11 @@ var Carousel = A.Component.create({
         animation: null,
         nodeSelection: null,
         nodeMenu: null,
+        _hoverEventHandler: null,
 
         /**
-         * Construction logic executed during Carousel instantiation. Lifecycle.
+         * Construction logic executed during `A.Carousel` instantiation.
+         * Lifecycle.
          *
          * @method initializer
          * @protected
@@ -182,7 +196,7 @@ var Carousel = A.Component.create({
         },
 
         /**
-         * Render the Carousel component instance. Lifecycle.
+         * Render the `A.Carousel` component instance. Lifecycle.
          *
          * @method renderUI
          * @protected
@@ -197,7 +211,7 @@ var Carousel = A.Component.create({
         },
 
         /**
-         * Bind the events on the Carousel UI. Lifecycle.
+         * Bind the events on the `A.Carousel` UI. Lifecycle.
          *
          * @method bindUI
          * @protected
@@ -211,6 +225,7 @@ var Carousel = A.Component.create({
                 itemSelectorChange: instance._afterItemSelectorChange,
                 intervalTimeChange: instance._afterIntervalTimeChange,
                 nodeMenuItemSelector: instance._afterNodeMenuItemSelectorChange,
+                pauseOnHoverChange: instance._afterPauseOnChange,
                 playingChange: instance._afterPlayingChange
             });
 
@@ -222,10 +237,14 @@ var Carousel = A.Component.create({
                     newVal: true
                 });
             }
+
+            if (instance.get('pauseOnHover')) {
+                this._attachHoverEvent();
+            }
         },
 
         /**
-         * Sync the Carousel UI. Lifecycle.
+         * Sync the `A.Carousel` UI. Lifecycle.
          *
          * @method syncUI
          * @protected
@@ -238,7 +257,7 @@ var Carousel = A.Component.create({
 
         /**
          * Set the `activeIndex` attribute which
-         * activates a certain item on Carousel based on its index.
+         * activates a certain item on `A.Carousel` based on its index.
          *
          * @method item
          * @param val
@@ -398,6 +417,55 @@ var Carousel = A.Component.create({
 
             if (menuPlayItem) {
                 menuPlayItem.replaceClass(fromClass, toClass);
+            }
+        },
+
+        /**
+         * Creates listeners for `mouseenter` and `mouseleave` events.
+         *
+         * @method _attachHoverEvent
+         * @protected
+         */
+        _attachHoverEvent: function() {
+
+            if (this._hoverEventHandler) {
+                return;
+            }
+
+            var bb = this.get('boundingBox'),
+                hoverEventHandler = [];
+
+            hoverEventHandler.push(bb.on('mouseenter', A.bind(this.pause, this)));
+            hoverEventHandler.push(bb.on('mouseleave', A.bind(this.play, this)));
+
+            this._hoverEventHandler = hoverEventHandler;
+        },
+
+        /**
+         * Detaches listeners created for `mouseenter` and `mouseleave` events.
+         *
+         * @method _detachHoverEvent
+         * @protected
+         */
+        _detachHoverEvent: function() {
+            A.each(this._hoverEventHandler, function(mouseEvent) {
+                mouseEvent.detach();
+            });
+            this._hoverEventHandler = null;
+        },
+
+        /**
+         * Fire after `pauseOnHover` attribute changes.
+         *
+         * @method _afterPauseOnChange
+         * @param event
+         * @protected
+         */
+        _afterPauseOnChange: function(event) {
+            this._detachHoverEvent();
+
+            if (event.newVal) {
+                this._attachHoverEvent();
             }
         },
 
