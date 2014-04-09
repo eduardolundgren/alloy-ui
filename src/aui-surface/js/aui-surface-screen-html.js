@@ -66,7 +66,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {CancellablePromise} Promise, which should be resolved with the returned
      *     content from the server.
      */
-    _loadContent: function(url, opt_selector) {
+    _loadContent: function(url) {
         var instance = this;
 
         instance.abortRequest();
@@ -77,6 +77,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
                     headers: {
                         'X-PJAX': 'true'
                     },
+                    method: instance.get('method'),
                     on: {
                         failure: function(id, response) {
                             reject(response.responseText);
@@ -84,10 +85,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
 
                         success: function(id, response) {
                             var frag = A.Node.create(response.responseText);
-
-                            if (opt_selector) {
-                                frag = frag.one(opt_selector);
-                            }
 
                             instance._setTitleFromFragment(frag);
 
@@ -155,18 +152,15 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
 }, {
     ATTRS: {
         /**
-         * Could be String or Object with multiple keys and values. If String,
-         * the defaule value will be "1". If an Object with multiple keys and
-         * values, they will be concatenated to the URL.
+         * Ajax request method.
          *
-         * @attribute urlParams
-         * @type {String|Object}
-         * @default pjax
-         */
-        urlParams: {
-            setter: '_setUrlParams',
-            validator: '_validateUrlParams',
-            value: 'pjax'
+         * @attribute method
+         * @type {String}
+         * @default GET
+         **/
+        method: {
+            validator: Lang.isString,
+            value: 'GET'
         },
 
         /**
@@ -195,6 +189,21 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          **/
         timeout: {
             value: 30000
+        },
+
+        /**
+         * Could be String or Object with multiple keys and values. If String,
+         * the defaule value will be "1". If an Object with multiple keys and
+         * values, they will be concatenated to the URL.
+         *
+         * @attribute urlParams
+         * @type {String|Object}
+         * @default pjax
+         */
+        urlParams: {
+            setter: '_setUrlParams',
+            validator: '_validateUrlParams',
+            value: 'pjax'
         }
     }
 });
