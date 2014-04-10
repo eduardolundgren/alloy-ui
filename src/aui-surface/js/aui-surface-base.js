@@ -45,7 +45,7 @@ A.Surface = A.Base.create('surface', A.Base, [], {
             throw 'Surface element id not specified.';
         }
 
-        this.el = this._getEl(id);
+        this.el = this.getEl(id);
 
         this.activeChild = this.defaultChild = this.addContent(A.Surface.DEFAULT);
     },
@@ -62,19 +62,17 @@ A.Surface = A.Base.create('surface', A.Base, [], {
      * @return {Node}
      */
     addContent: function(screenId, opt_content) {
-        var el;
-
         if (!opt_content) {
             return this.getChild(screenId);
         }
 
         A.log('Screen [' + screenId + '] add content to surface [' + this + ']', 'info');
 
-        var child = this.createChild(screenId);
+        var el = this.getEl(),
+            child = this.createChild(screenId);
+
         child.append(opt_content);
         this.transition(child, null);
-
-        el = this._getEl();
 
         if (el) {
             el.append(child);
@@ -106,6 +104,30 @@ A.Surface = A.Base.create('surface', A.Base, [], {
     },
 
     /**
+     * Retrieves the surface element from DOM, and sets it to the el property of
+     * the current instance.
+     *
+     * @method getEl
+     * @param  {String} opt_id The ID of the surface element. If not provided,
+     *     this.el will be used.
+     * @return {Node} The retrieved element.
+     */
+    getEl: function(opt_id) {
+        if (this.el) {
+            return this.el;
+        }
+
+        this.el = getNodeById(opt_id || this.get('id'));
+        if (this.el) {
+            this.el.plug(A.Plugin.ParseContent, {
+                preserveScriptNodes: true
+            });
+        }
+
+        return this.el;
+    },
+
+    /**
      * Shows screen content from a surface.
      *
      * @method show
@@ -131,8 +153,7 @@ A.Surface = A.Base.create('surface', A.Base, [], {
 
         // Avoid repainting if the child is already in place or the element does
         // not exist
-        el = this._getEl();
-
+        el = this.getEl();
         if (el && to && !to.inDoc()) {
             el.append(to);
         }
@@ -176,35 +197,6 @@ A.Surface = A.Base.create('surface', A.Base, [], {
      */
     transition: function(from, to) {
         return A.CancellablePromise.resolve(this.get('transition').call(this, from, to));
-    },
-
-    /**
-     * If not already set, retrieves the surface element from DOM, and sets it
-     * to the el property of the current instance.
-     *
-     * @method _getEl
-     * @param  {String} opt_id The ID of the surface element. If not provided,
-     *     this.el will be used.
-     * @return {Node} The retrieved element.
-     */
-    _getEl: function(opt_id) {
-        var el = this.el;
-
-        if (!el) {
-            opt_id = opt_id || this.get('id');
-
-            el = getNodeById(opt_id);
-
-            if (el) {
-                el.plug(A.Plugin.ParseContent, {
-                    preserveScriptNodes: true
-                });
-
-                this.el = el;
-            }
-        }
-
-        return el;
     },
 
     /**
