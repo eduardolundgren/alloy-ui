@@ -846,8 +846,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "aui-surface-app": {
         "requires": [
-            "pjax-base",
-            "router",
+            "event-delegate",
+            "node-event-html5",
             "aui-surface-base",
             "aui-surface-screen"
         ]
@@ -1086,4 +1086,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '5a842a8841b6d3f291522e0ecaa3c253';
+YUI.Env[Y.version].md5 = '1c380940a8bf74b3c8102c331ce36447';
