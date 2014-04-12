@@ -205,6 +205,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      * @method  _doNavigate
      * @param {String} path Path containing the querystring part.
      * @param {Boolean} opt_replaceHistory Replaces browser history.
+     * @return {Promise} Returns a pending request cancellable promise.
      */
     _doNavigate: function(path, opt_replaceHistory) {
         var instance = this,
