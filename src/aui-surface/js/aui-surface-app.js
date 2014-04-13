@@ -1,4 +1,5 @@
-var doc = A.config.doc,
+var Lang = A.Lang,
+    doc = A.config.doc,
     win = A.config.win;
 
 A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
@@ -149,7 +150,14 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
         path = path.substr(basePath.length);
 
         return A.Array.find(this.routes, function(route) {
-            return path.search(route.regex) > -1;
+            var routePath = route.get('path');
+
+            if (Lang.isFunction(routePath)) {
+                return routePath(path);
+            }
+            else {
+                return path.search(routePath) > -1;
+            }
         });
     },
 
@@ -306,7 +314,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
             route = this.matchesRoute(path);
             if (route) {
                 A.log('Create screen for [' + path + ']', 'info');
-                return new(route.screen)();
+                return new(route.get('screen'))();
             }
         }
 
@@ -422,41 +430,25 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
     },
 
     /**
-     * Escapes characters in the string that are not safe to use in a RegExp.
-     *
-     * @method _regExpEscape
-     * @param {String} s The string to escape. If not a string, it will be casted
-     *     to one.
-     * @return {string} A RegExp safe, escaped copy of `s`.
-     * @private
-     */
-    _regExpEscape: function(s) {
-        return String(s).replace(/([-()\[\]{}+?*.$\^|,:#<!\\])/g, '\\$1').replace(/\x08/g, '\\x08');
-    },
-
-    /**
      * Registers a route for a screen.
      *
      * @method  _registerRoutes
-     * @param {Array} screens Array of objects with `path` and `screen`
-     *     keys.
+     * @param {Array} screenRoutes Array of objects with `path` and `screen`
+     *     keys or `A.ScreenRoute` instances.
      * @private
      */
-    _registerRoutes: function(screens) {
+    _registerRoutes: function(screenRoutes) {
         var instance = this;
 
-        A.Array.each(screens, function(value) {
-            var path = value.path;
-
-            if (!A.instanceOf(path, RegExp)) {
-                path = new RegExp('^' + instance._regExpEscape(value.path) + '$');
+        A.Array.each(screenRoutes, function(value) {
+            if (!A.instanceOf(value, A.ScreenRoute)) {
+                value = new A.ScreenRoute({
+                    path: value.path,
+                    screen: value.screen
+                });
             }
 
-            instance.routes.push({
-                path: value.path,
-                regex: path,
-                screen: value.screen
-            });
+            instance.routes.push(value);
         });
     },
 
