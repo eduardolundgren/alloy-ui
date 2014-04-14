@@ -37,5 +37,11 @@
             "aui-surface-screen",
             "aui-url"
         ]
+    },
+
+    "aui-surface-screen-route": {
+        "requires": [
+            "aui-surface-screen"
+        ]
     }
 }
