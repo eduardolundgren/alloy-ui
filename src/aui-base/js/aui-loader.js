@@ -1167,7 +1167,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "event-delegate",
             "node-event-html5",
             "aui-surface-base",
-            "aui-surface-screen"
+            "aui-surface-screen",
+            "aui-surface-screen-route"
         ]
     },
     "aui-surface-base": {
@@ -1189,6 +1190,11 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-promise",
             "aui-surface-screen",
             "aui-url"
+        ]
+    },
+    "aui-surface-screen-route": {
+        "requires": [
+            "base-build"
         ]
     },
     "aui-swf-deprecated": {
@@ -1467,4 +1473,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '8673736ef9a573de9e715c2f1d6b6d15';
+YUI.Env[Y.version].md5 = 'd6a0308a3315b331082e2af268b1793a';
