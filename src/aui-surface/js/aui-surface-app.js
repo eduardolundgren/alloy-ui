@@ -81,7 +81,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
     /**
      * Adds one or more screens to the application.
      *
-     * @method addScreens
+     * @method addScreenRoutes
      * @param {Object} or {Array} screens Single object or an array of object. Each object should contain `path`
      *     and `screen`.
      *     The `path` should be a string or a regex that maps the navigation
@@ -90,7 +90,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      *         `{ path: /foo.+/, screen: Y.MyScreen }`
      * @chainable
      */
-    addScreens: function(screens) {
+    addScreenRoutes: function(screens) {
         this._registerRoutes(A.Array(screens));
         return this;
     },
@@ -150,14 +150,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
         path = path.substr(basePath.length);
 
         return A.Array.find(this.routes, function(route) {
-            var routePath = route.get('path');
-
-            if (Lang.isFunction(routePath)) {
-                return routePath(path);
-            }
-            else {
-                return path.search(routePath) > -1;
-            }
+            return route.matchesPath(path);
         });
     },
 
