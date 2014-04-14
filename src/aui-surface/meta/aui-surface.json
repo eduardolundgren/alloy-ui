@@ -20,7 +20,8 @@
             "event-delegate",
             "node-event-html5",
             "aui-surface-base",
-            "aui-surface-screen"
+            "aui-surface-screen",
+            "aui-surface-screen-route"
         ]
     },
 
@@ -41,7 +42,7 @@
 
     "aui-surface-screen-route": {
         "requires": [
-            "aui-surface-screen"
+            "base-build"
         ]
     }
 }

@@ -825,7 +825,8 @@
             "event-delegate",
             "node-event-html5",
             "aui-surface-base",
-            "aui-surface-screen"
+            "aui-surface-screen",
+            "aui-surface-screen-route"
         ]
     },
     "aui-surface-base": {
@@ -847,6 +848,11 @@
             "aui-promise",
             "aui-surface-screen",
             "aui-url"
+        ]
+    },
+    "aui-surface-screen-route": {
+        "requires": [
+            "base-build"
         ]
     },
     "aui-tabview": {
