@@ -1,5 +1,4 @@
-var Lang = A.Lang,
-    doc = A.config.doc,
+var doc = A.config.doc,
     win = A.config.win;
 
 A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
