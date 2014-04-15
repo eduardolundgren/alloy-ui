@@ -985,7 +985,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-undo-redo": {
         "requires": [
             "base",
-            "base-build"
+            "base-build",
+            "promise"
         ]
     },
     "aui-url": {
@@ -1050,4 +1051,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '78c500414c65dce8662f0394c6ca8e59';
+YUI.Env[Y.version].md5 = 'a68f31ddd34d151887add86e8a11f093';
