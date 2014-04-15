@@ -760,6 +760,13 @@
         ],
         "skinnable": true
     },
+    "aui-scrollspy": {
+        "requires": [
+            "aui-classnamemanager",
+            "base-build",
+            "node-core"
+        ]
+    },
     "aui-search": {
         "use": [
             "aui-search-tst"
