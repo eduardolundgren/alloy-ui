@@ -83,10 +83,9 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
                             promise.cancel(response.responseText);
                         },
                         success: function(id, response) {
-                            var frag = A.Node.create(response.responseText);
-
-                            instance._setTitleFromFragment(frag);
-
+                            var frag = A.Node.create('<div/>');
+                            frag.append(response.responseText);
+                            instance._setScreenTitleFromFragment(frag);
                             resolve(frag);
                         }
                     },
@@ -126,11 +125,11 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * Retrieves the title from the provided content and sets it to title
      * attribute of the class.
      *
-     * @method _setTitleFromFragment
+     * @method _setScreenTitleFromFragment
      * @param  {Node} frag The container from which the title should be
      *     retrieve.
      */
-    _setTitleFromFragment: function(frag) {
+    _setScreenTitleFromFragment: function(frag) {
         var title = frag.one(this.get('titleSelector'));
 
         if (title) {
