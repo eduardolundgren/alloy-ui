@@ -672,6 +672,33 @@ var FormBuilderField = A.Component.create({
             return A.Node.create(instance.getHTML());
         },
 
+
+        /**
+         * Gets all necessary attributes for cloning this field.
+         *
+         * @method getAttributesForCloning
+         * @return {Object}
+         */
+        getAttributesForCloning: function() {
+            // List of all non-property attributes that need to be cloned.
+            var attributes = {
+                hiddenAttributes: this.get('hiddenAttributes'),
+                readOnlyAttributes: this.get('readOnlyAttributes'),
+                localizationMap: this.get('localizationMap')
+            };
+
+            // All field properties should be cloned as well.
+            AArray.each(this.getProperties(), function(property) {
+                var name = property.attributeName;
+
+                if (AArray.indexOf(INVALID_CLONE_ATTRS, name) === -1) {
+                    attributes[name] = property.value;
+                }
+            });
+
+            return attributes;
+        },
+
         /**
          * Gets all necessary attributes for cloning this field.
          *
