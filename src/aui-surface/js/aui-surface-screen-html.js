@@ -1,5 +1,3 @@
-var Lang = A.Lang;
-
 A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     /**
      * Holds the IO request.
@@ -35,7 +33,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
 
         url.addParameters(this.get('urlParams'));
 
-        return this._loadContent(url.toString());
+        return this.loadContent(url.toString());
     },
 
     /**
@@ -60,18 +58,17 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     /**
      * Loads the content from server via single AJAX request.
      *
-     * @method _loadContent
+     * @method loadContent
      * @protected
      * @return {CancellablePromise} Promise, which should be resolved with the returned
      *     content from the server.
      */
-    _loadContent: function(path) {
-        var instance = this,
-            promise;
+    loadContent: function(path) {
+        var instance = this;
 
         instance.abortRequest();
 
-        promise = new A.CancellablePromise(
+        return new A.CancellablePromise(
             function(resolve) {
                 instance._request = A.io(path, {
                     headers: {
@@ -96,8 +93,6 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
                 instance.abortRequest();
             }
         );
-
-        return promise;
     },
 
     /**
@@ -113,7 +108,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
     _setUrlParams: function(val) {
         var params = val;
 
-        if (Lang.isString(val)) {
+        if (A.Lang.isString(val)) {
             params = {};
             params[val] = 1;
         }
@@ -147,7 +142,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
      * @return {Boolean} true if val is String or an Object.
      */
     _validateUrlParams: function(val) {
-        return Lang.isString(val) || Lang.isObject(val);
+        return A.Lang.isString(val) || A.Lang.isObject(val);
     }
 }, {
     ATTRS: {
@@ -159,7 +154,7 @@ A.HTMLScreen = A.Base.create('htmlScreen', A.Screen, [], {
          * @default GET
          **/
         method: {
-            validator: Lang.isString,
+            validator: A.Lang.isString,
             value: 'GET'
         },
 
