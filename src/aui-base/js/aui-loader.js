@@ -114,7 +114,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-component",
             "aui-widget-cssclass",
             "aui-widget-toggle"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-button-search-cancel": {
         "requires": [
@@ -194,6 +195,9 @@ Y.mix(YUI.Env[Y.version].modules, {
             "widget-base"
         ]
     },
+    "aui-css": {
+        "type": "css"
+    },
     "aui-datatable": {
         "use": [
             "aui-datatable-edit",
@@ -202,8 +206,18 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-datatable-property-list"
         ]
     },
+    "aui-datatable-body": {
+        "requires": [
+            "aui-classnamemanager",
+            "datatable-base",
+            "event-key",
+            "aui-event-base"
+        ],
+        "skinnable": true
+    },
     "aui-datatable-core": {
         "requires": [
+            "aui-datatable-body",
             "datatable-base",
             "event-key",
             "aui-event-base"
@@ -608,7 +622,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-widget-cssclass",
             "aui-widget-toggle",
             "aui-widget-toolbars"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-node": {
         "use": [
@@ -641,7 +656,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-node",
             "aui-component",
             "widget-htmlparser"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-palette": {
         "requires": [
@@ -684,14 +700,16 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-widget-position-align-suggestion",
             "aui-component",
             "aui-node-base"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-progressbar": {
         "requires": [
             "aui-node",
             "aui-component",
             "aui-aria"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-rating": {
         "use": [
@@ -844,7 +862,8 @@ Y.mix(YUI.Env[Y.version].modules, {
             "selector-css3",
             "tabview",
             "aui-component"
-        ]
+        ],
+        "skinnable": true
     },
     "aui-text-data-unicode": {
         "requires": [
