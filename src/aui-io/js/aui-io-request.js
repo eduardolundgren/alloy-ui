@@ -294,6 +294,9 @@ var IORequest = A.Component.create({
          * @type String
          */
         method: {
+            setter: function(value) {
+                return value.toLowerCase();
+            },
             valueFn: getDefault('method')
         },
 
