@@ -32,7 +32,7 @@ YUI.add('aui-button-tests', function(Y) {
         input.val('This is a test!');
 
         // TODO: Remove this when yeti is fixed to stop stealing focus from the test.
-        searchButtonCancel._syncButtonUI(input);
+        input.simulate('blur');
     }
 
     suite.add(new Y.Test.Case({
@@ -91,11 +91,26 @@ YUI.add('aui-button-tests', function(Y) {
             Y.all('input.clearable').each(function(input) {
                 assertPosition(input);
             });
+        },
+
+        'assert that input does not lose focus': function() {
+            var test = this,
+                inputNode = Y.one('.focused-input');
+
+            searchButtonCancel = new Y.ButtonSearchCancel({
+                trigger: '.focused-input'
+            });
+
+            Y.Assert.isUndefined(inputNode.getData('element-wrapped'), 'the input should not be wrapped until after blur');
+
+            inputNode.simulate('blur');
+
+            Y.Assert.isTrue(inputNode.getData('element-wrapped'), 'the input should be wrapped after blur');
         }
     }));
 
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['aui-button', 'aui-button-search-cancel', 'aui-node', 'test']
+    requires: ['aui-button', 'aui-button-search-cancel', 'aui-node', 'node-event-simulate', 'test']
 });
