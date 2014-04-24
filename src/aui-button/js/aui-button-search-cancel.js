@@ -95,6 +95,7 @@ var ButtonSearchCancel = A.Base.create('btn-search-cancel', A.Base, [], {
             container.delegate(
                 ['focus', 'input'],
                 A.debounce(instance._onUserInteraction, 50, instance), trigger),
+            container.delegate('blur', instance._onBlur, trigger, instance),
             // YUI implementation for the windowresize synthetic event do not
             // support Y.on('windowresize', fn, context) binding, therefore
             // should be wrapped using Y.bind.
@@ -114,8 +115,6 @@ var ButtonSearchCancel = A.Base.create('btn-search-cancel', A.Base, [], {
             button = element.getData('btn-search-cancel');
 
         if (!button) {
-            element.wrap('<span/>').ancestor().setStyle('position', 'relative');
-
             button = A.Node.create(
                 A.Lang.sub(
                     instance.TEMPLATE, {
@@ -132,6 +131,29 @@ var ButtonSearchCancel = A.Base.create('btn-search-cancel', A.Base, [], {
         }
 
         return button;
+    },
+
+    /**
+     * Fires when the input loses focus.
+     *
+     * @method _onBlur
+     * @param {EventFacade} event
+     * @protected
+     */
+    _onBlur: function(event) {
+        var instance = this,
+            target = event.target;
+
+        if (!target.getData('element-wrapped')) {
+            target.wrap('<span/>').ancestor().setStyles({
+                display: 'block',
+                position: 'relative'
+            });
+
+            instance._syncButtonUI(target);
+
+            target.setData('element-wrapped', true);
+        }
     },
 
     /**
