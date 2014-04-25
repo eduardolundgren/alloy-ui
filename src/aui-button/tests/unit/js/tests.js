@@ -24,8 +24,7 @@ YUI.add('aui-button-tests', function(Y) {
     }
 
     function fillInput(input) {
-        input.focus().val('This is a test!');
-        input.simulate('click');
+        input.val('This is a test!');
 
         // TODO: Remove this when yeti is fixed to stop stealing focus from the test.
         searchButtonCancel._syncButtonUI(input);
@@ -42,13 +41,11 @@ YUI.add('aui-button-tests', function(Y) {
                 trigger: '.clearable'
             });
 
-            inputNode.once('click', function(event) {
-                setTimeout(function() {
-                    test.resume(function() {
-                        assertPosition(inputNode);
-                    });
-                }, 800);
-            });
+            setTimeout(function() {
+                test.resume(function() {
+                    assertPosition(inputNode);
+                });
+            }, 800);
 
             Y.soon(function() {
                 fillInput(inputNode);
@@ -65,13 +62,11 @@ YUI.add('aui-button-tests', function(Y) {
                 trigger: '.clearable'
             });
 
-            inputNode.once('click', function(event) {
-                setTimeout(function() {
-                    test.resume(function() {
-                        assertPosition(inputNode);
-                    });
-                }, 800);
-            });
+            setTimeout(function() {
+                test.resume(function() {
+                    assertPosition(inputNode);
+                });
+            }, 800);
 
             Y.soon(function() {
                 fillInput(inputNode);
