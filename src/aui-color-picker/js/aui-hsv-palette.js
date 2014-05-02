@@ -37,7 +37,12 @@ var AColor = A.Color,
     CSS_CONTAINER = getClassName('hsv-container'),
     CSS_CONTAINER_CONTROLS = getClassName('hsv-container-controls'),
 
+    CSS_DEFAULT_SIZE = getClassName('hsv-default-size'),
+
     CSS_VIEW_CONTAINER = getClassName('hsv-view-container'),
+
+    CSS_HS_IMAGE_CONTAINER = getClassName('hsv-image-container'),
+    CSS_HS_IMAGE_WRAPPER = getClassName('hsv-image-wrapper'),
 
     CSS_HS_IMAGE_BACKDROP = getClassName('hsv-image-backdrop'),
     CSS_HS_VIEW_BACKDROP = getClassName('hsv-view-backdrop'),
@@ -45,13 +50,20 @@ var AColor = A.Color,
     CSS_HS_CONTAINER = getClassName('hsv-hs-container'),
     CSS_HS_THUMB = getClassName('hsv-hs-thumb'),
 
+    CSS_VALUE_CONTAINER = getClassName('hsv-value-container'),
+
     CSS_VALUE_SLIDER_CONTAINER = getClassName('hsv-value-slider-container'),
+    CSS_VALUE_SLIDER_WRAPPER = getClassName('hsv-value-slider-wrapper'),
 
     CSS_VALUE_CANVAS = getClassName('hsv-value-canvas'),
     CSS_VALUE_THUMB = getClassName('hsv-value-thumb'),
     CSS_VALUE_THUMB_IMAGE = getClassName('hsv-value-image'),
 
     CSS_RESULT_VIEW = getClassName('hsv-result-view'),
+
+    CSS_CONTROLS_WRAPPER = getClassName('hsv-controls-wrapper'),
+    CSS_HEX_WRAPPER = getClassName('hsv-hex-wrapper'),
+    CSS_RESULT_WRAPPER = getClassName('hsv-result-wrapper'),
 
     CSS_LABEL_VALUE_CONTAINER = getClassName('hsv-label-value-container'),
     CSS_LABEL_VALUE_HSV_CONTAINER = getClassName('hsv-label-value-hsv-container'),
@@ -85,19 +97,36 @@ var AColor = A.Color,
      * @constructor
      */
     HSVPalette = A.Base.create('hsv-palette', A.Widget, [A.WidgetCssClass, A.WidgetToggle], {
-        TPL_CONTAINER: '<div class="' + CSS_CONTAINER + ' {subClass}"><div>',
+        CSS_VALUE_RIGHT_SIDE_CONTAINER: 'col-sm-10 col-xs-10',
 
-        TPL_VIEW_CONTAINER: '<div class="' + CSS_VIEW_CONTAINER + '"><div>',
+        TPL_CONTAINER: '<div class="row ' + CSS_CONTAINER + ' {subClass}"></div>',
 
-        TPL_IMAGE_BACKDROP: '<div class="' + CSS_HS_IMAGE_BACKDROP + '"><div>',
+        TPL_VIEW_CONTAINER: '<div class="' + CSS_VIEW_CONTAINER + '"></div>',
 
-        TPL_VIEW_BACKDROP: '<div class="' + CSS_HS_VIEW_BACKDROP + '"><div>',
+        TPL_IMAGE_BACKDROP: '<div class="' + CSS_HS_IMAGE_BACKDROP + '"></div>',
 
-        TPL_HS_CONTAINER: '<div class="' + CSS_HS_CONTAINER + '"><div>',
+        TPL_IMAGE_WRAPPER: '<div class="col-xs-6 ' +
+            CSS_HS_IMAGE_WRAPPER + '"><div class="' +
+            CSS_HS_IMAGE_CONTAINER +'"></div></div>',
 
-        TPL_HS_THUMB: '<div class="' + CSS_HS_THUMB + '"><div>',
+        TPL_VIEW_BACKDROP: '<div class="' + CSS_HS_VIEW_BACKDROP + '"></div>',
 
-        TPL_VALUE_SLIDER_CONTAINER: '<div class="' + CSS_VALUE_SLIDER_CONTAINER + '"><div>',
+        TPL_HS_CONTAINER: '<div class="' + CSS_HS_CONTAINER + '"></div>',
+
+        TPL_HS_THUMB: '<div class="' + CSS_HS_THUMB + '"></div>',
+
+        TPL_VALUE_CONTAINER: '<div class="col-xs-6 ' + CSS_VALUE_CONTAINER + '"><div class="row"></div></div>',
+
+        TPL_VALUE_RIGHT_SIDE_CONTAINER: '<div>' +
+            '<div class="row"><div class="col-sm-6 col-xs-6 ' +
+            CSS_RESULT_WRAPPER + '"></div>' +
+            '<div class="col-sm-6 col-xs-6 ' + CSS_HEX_WRAPPER +
+            '"></div></div><div class="row ' + CSS_CONTROLS_WRAPPER +
+            '"></div></div>',
+
+        TPL_VALUE_SLIDER_WRAPPER: '<div class="col-sm-2 col-xs-2 ' +
+            CSS_VALUE_SLIDER_WRAPPER + '"><div class="' +
+            CSS_VALUE_SLIDER_CONTAINER +'"></div></div>',
 
         TPL_VALUE_CANVAS: '<span class="' + CSS_VALUE_CANVAS + '"></span>',
 
@@ -108,16 +137,17 @@ var AColor = A.Color,
 
         TPL_LABEL_VALUE_CONTAINER: '<div class="' + CSS_LABEL_VALUE_CONTAINER + ' {subClass}"></div>',
 
-        TPL_OUTPUT: '<div class="control-group ' + CSS_LABEL_VALUE + ' ' +
+        TPL_OUTPUT: '<div class="form-group ' + CSS_LABEL_VALUE + ' ' +
             CSS_LABEL_VALUE_HEX + '">' + '<label>{label}</label>' +
-            '<div class="controls">' + '<input class="' + CSS_VALUE +
+            '<input class="form-control ' + CSS_VALUE +
             '" data-type="{type}" type="text" maxlength="{maxlength}" value="{value}">' +
-            '</div>' + '</div>',
+            '</div>',
 
-        TPL_LABEL_VALUE: '<div class="control-group input-prepend input-append">' +
-            '<label class="add-on">{label}</label>' + '<input class="span2 ' + CSS_VALUE +
-            '" data-type="{type}" type="text" maxlength="{maxlength}" value="{value}">' +
-            '<label class="' + CSS_LABEL + '">{labelUnit}</label>' + '</div>',
+        TPL_LABEL_VALUE: '<div class="form-group input-prepend input-append">' +
+            '<label class="add-on col-sm-2 col-xs-2 control-label">{label}</label>' +
+            '<div class="col-sm-6 col-xs-6 form-control-wrapper"><input class="span2 form-control ' + CSS_VALUE +
+            '" data-type="{type}" type="number" maxlength="{maxlength}" value="{value}"></div>' +
+            '<label class="col-sm-2 col-xs-2 control-label ' + CSS_LABEL + '">{labelUnit}</label>' + '</div>',
 
         _outputType: 'hex',
 
@@ -181,6 +211,11 @@ var AColor = A.Color,
 
             instance._hsContainerWidth = instance._hsContainer.get('clientWidth');
             instance._hsContainerHeight = instance._hsContainer.get('clientHeight');
+
+            this._uiSetWidth(this.get('width'));
+
+            instance._updatePaletteThumbPosition(instance._hsContainer.getXY());
+
         },
 
         /**
@@ -800,23 +835,9 @@ var AColor = A.Color,
         _renderViewContainerContent: function() {
             var instance = this;
 
-            instance._renderImageBackdrop();
+            instance._renderImageContainer();
 
-            instance._renderHSContainer();
-
-            instance._renderThumb();
-
-            instance._renderValueSliderContainer();
-
-            instance._renderResultBackdrop();
-
-            instance._renderResultView();
-
-            if (instance.get('controls')) {
-                instance._renderFields();
-            }
-
-            instance._renderHexNode();
+            instance._renderValueContainer();
         },
 
         /**
@@ -873,9 +894,11 @@ var AColor = A.Color,
          * Renders hexNode.
          *
          * @method _renderHexNode
+         * @param {Node} container Container node where the contents
+         *     should be rendered.
          * @protected
          */
-        _renderHexNode: function() {
+        _renderHexNode: function(container) {
             var instance = this,
                 labelValueHexContainer,
                 hexContainerConfig;
@@ -892,7 +915,7 @@ var AColor = A.Color,
 
             instance._outputContainer = instance._renderOutputField(labelValueHexContainer, hexContainerConfig);
 
-            instance._viewContainer.appendChild(labelValueHexContainer);
+            container.appendChild(labelValueHexContainer);
 
             instance._labelValueRGBContainer = labelValueHexContainer;
         },
@@ -901,9 +924,11 @@ var AColor = A.Color,
          * Renders input fields.
          *
          * @method _renderFields
+         * @param {Node} container Container node where the contents
+         *     should be rendered.
          * @protected
          */
-        _renderFields: function() {
+        _renderFields: function(container) {
             var instance = this,
                 labelValueHSVContainer,
                 labelValueRGBContainer;
@@ -911,7 +936,8 @@ var AColor = A.Color,
             labelValueHSVContainer = A.Node.create(
                 Lang.sub(
                     instance.TPL_LABEL_VALUE_CONTAINER, {
-                        subClass: CSS_LABEL_VALUE_HSV_CONTAINER
+                        subClass: CSS_LABEL_VALUE_HSV_CONTAINER +
+                            ' form-horizontal col-sm-6 col-xs-6'
                     }
                 )
             );
@@ -919,7 +945,8 @@ var AColor = A.Color,
             labelValueRGBContainer = A.Node.create(
                 Lang.sub(
                     instance.TPL_LABEL_VALUE_CONTAINER, {
-                        subClass: CSS_LABEL_VALUE_RGB_CONTAINER
+                        subClass: CSS_LABEL_VALUE_RGB_CONTAINER +
+                            ' form-horizontal col-sm-6 col-xs-6'
                     }
                 )
             );
@@ -986,8 +1013,8 @@ var AColor = A.Color,
                 }
             );
 
-            instance._viewContainer.appendChild(labelValueHSVContainer);
-            instance._viewContainer.appendChild(labelValueRGBContainer);
+            container.appendChild(labelValueHSVContainer);
+            container.appendChild(labelValueRGBContainer);
 
             instance._labelValueHSVContainer = labelValueHSVContainer;
             instance._labelValueRGBContainer = labelValueRGBContainer;
@@ -1002,9 +1029,32 @@ var AColor = A.Color,
         _renderImageBackdrop: function() {
             var instance = this;
 
-            instance._hsImageBackdrop = instance._viewContainer.appendChild(
+            instance._hsImageBackdrop = instance._hsImageContainer.appendChild(
                 instance.TPL_IMAGE_BACKDROP
             );
+        },
+
+        /**
+         * Renders the image container and its contents.
+         *
+         * @method _renderImageContainer
+         * @protected
+         */
+        _renderImageContainer: function() {
+            var imageContainer;
+
+            imageContainer = this._viewContainer.appendChild(
+                this.TPL_IMAGE_WRAPPER
+            );
+            this._hsImageContainer = imageContainer.one(
+                '.' + CSS_HS_IMAGE_CONTAINER
+            );
+
+            this._renderImageBackdrop();
+
+            this._renderHSContainer();
+
+            this._renderThumb();
         },
 
         /**
@@ -1016,9 +1066,44 @@ var AColor = A.Color,
         _renderHSContainer: function() {
             var instance = this;
 
-            instance._hsContainer = instance._viewContainer.appendChild(
+            instance._hsContainer = instance._hsImageContainer.appendChild(
                 instance.TPL_HS_CONTAINER
             );
+        },
+
+        _renderValueContainer: function() {
+            this._valueContainer = this._viewContainer.appendChild(
+                this.TPL_VALUE_CONTAINER
+            );
+            this._valueContainer = this._valueContainer.one('.row');
+
+            this._renderValueSliderContainer();
+
+            this._renderValueRightSideContainer();
+        },
+
+        _renderValueRightSideContainer: function() {
+            var controlsWrapper,
+                hexWrapper,
+                resultWrapper,
+                rightSideContainer;
+
+            rightSideContainer = this._valueContainer.appendChild(
+                this.TPL_VALUE_RIGHT_SIDE_CONTAINER
+            );
+            rightSideContainer.addClass(this.CSS_VALUE_RIGHT_SIDE_CONTAINER);
+
+            resultWrapper = rightSideContainer.one('.' + CSS_RESULT_WRAPPER);
+            this._renderResultBackdrop(resultWrapper);
+            this._renderResultView(resultWrapper);
+
+            hexWrapper = rightSideContainer.one('.' + CSS_HEX_WRAPPER);
+            this._renderHexNode(hexWrapper);
+
+            if (this.get('controls')) {
+                controlsWrapper = rightSideContainer.one('.' + CSS_CONTROLS_WRAPPER);
+                this._renderFields(controlsWrapper);
+            }
         },
 
         /**
@@ -1028,23 +1113,26 @@ var AColor = A.Color,
          * @protected
          */
         _renderValueSliderContainer: function() {
-            var instance = this;
-
-            instance._valueSliderContainer = instance._viewContainer.appendChild(
-                instance.TPL_VALUE_SLIDER_CONTAINER
+            this._valueSliderWrapper = this._valueContainer.appendChild(
+                this.TPL_VALUE_SLIDER_WRAPPER
             );
+            this._valueSliderContainer = this._valueSliderWrapper.one(
+                '.' + CSS_VALUE_SLIDER_CONTAINER
+            )
         },
 
         /**
          * Renders results backdrop.
          *
          * @method _renderResultBackdrop
+         * @param {Node} container Container node where the contents
+         *     should be rendered.
          * @protected
          */
-        _renderResultBackdrop: function() {
+        _renderResultBackdrop: function(container) {
             var instance = this;
 
-            instance._resultViewBackdrop = instance._viewContainer.appendChild(
+            instance._resultViewBackdrop = container.appendChild(
                 instance.TPL_VIEW_BACKDROP
             );
         },
@@ -1053,12 +1141,14 @@ var AColor = A.Color,
          * Render results view.
          *
          * @method _renderResultView
+         * @param {Node} container Container node where the contents
+         *     should be rendered.
          * @protected
          */
-        _renderResultView: function() {
+        _renderResultView: function(container) {
             var instance = this;
 
-            instance._resultView = instance._viewContainer.appendChild(
+            instance._resultView = container.appendChild(
                 instance.TPL_RESULT_VIEW
             );
         },
@@ -1072,7 +1162,7 @@ var AColor = A.Color,
         _renderThumb: function() {
             var instance = this;
 
-            instance._colorThumb = instance._viewContainer.appendChild(
+            instance._colorThumb = instance._hsImageContainer.appendChild(
                 instance.TPL_HS_THUMB
             );
         },
@@ -1116,6 +1206,23 @@ var AColor = A.Color,
             rgbColor = instance._calculateRGBColor(hue, saturation, 100);
 
             instance._valueSliderContainer.setStyle('backgroundColor', rgbColor);
+        },
+
+        /**
+         * Set the `width` attribute on the UI. This is called
+         * automatically whenever the `width` attribute changes.
+         *
+         * @method _uiSetWidth
+         * @protected
+         */
+        _uiSetWidth: function(val) {
+            if (val) {
+                this._paletteContainer.width(val);
+                this._paletteContainer.removeClass(CSS_DEFAULT_SIZE);
+            } else {
+                this._paletteContainer.removeAttribute('width');
+                this._paletteContainer.addClass(CSS_DEFAULT_SIZE);
+            }
         },
 
         /**
@@ -1547,7 +1654,16 @@ var AColor = A.Color,
          * @type {String}
          * @static
          */
-        NS: 'hsv-palette'
+        NS: 'hsv-palette',
+
+        /**
+         * Static property used to define the UI attributes.
+         *
+         * @property UI_ATTRS
+         * @type Array
+         * @static
+         */
+        UI_ATTRS: ['width']
     });
 
 A.HSVPalette = HSVPalette;
