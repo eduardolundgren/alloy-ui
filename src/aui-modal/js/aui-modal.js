@@ -57,7 +57,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
 
         eventHandles = [
             A.after(instance._afterFillHeight, instance, 'fillHeight'),
-            instance.after('resize:end', A.bind(instance._syncResizeDimensions, instance)),
             instance.after('draggableChange', instance._afterDraggableChange),
             instance.after('resizableChange', instance._afterResizableChange),
             instance.after('visibleChange', instance._afterVisibleChange)
@@ -276,21 +275,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
         instance.plug(A.Plugin.Resize, instance._addBubbleTargets(resizable));
 
         A.before(instance._beforeResizeCorrectDimensions, instance.resize, '_correctDimensions', instance);
-    },
-
-    /**
-     * Sync width/height dimensions on resize.
-     *
-     * @method _syncResizeDimensions
-     * @param event
-     * @protected
-     */
-    _syncResizeDimensions: function(event) {
-        var instance = this,
-            resize = event.info;
-
-        instance.set('width', resize.offsetWidth);
-        instance.set('height', resize.offsetHeight);
     }
 }, {
 
