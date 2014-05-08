@@ -166,10 +166,22 @@ var Carousel = A.Component.create({
          */
         playing: {
             value: true
+        },
+
+        /**
+         * Determines if the carousel should be responsive. That is, if its
+         * width should change according to the viewport size.
+         *
+         * @attribute responsive
+         * @default true
+         * @type Boolean
+         */
+        responsive: {
+            value: true
         }
     },
 
-    UI_ATTRS: ['pauseOnHover'],
+    UI_ATTRS: ['pauseOnHover', 'responsive'],
 
     prototype: {
         animation: null,
@@ -352,6 +364,7 @@ var Carousel = A.Component.create({
             var instance = this;
 
             instance._updateNodeSelection();
+            instance._updateImagesResponsiveness();
         },
 
         /**
@@ -733,6 +746,21 @@ var Carousel = A.Component.create({
                     instance._createIntervalRotationTask();
                 }
             }
+
+            this._updateSizes();
+        },
+
+        /**
+         * Sets the height on the widget's bounding box element
+         *
+         * @method _uiSetHeight
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetHeight: function(val) {
+            if (!this.get('responsive')) {
+                A.Carousel.superclass._uiSetHeight.call(this, val);
+            }
         },
 
         /**
@@ -754,6 +782,100 @@ var Carousel = A.Component.create({
             else {
                 (new A.EventHandle(this.hoverEventHandles)).detach();
                 this.hoverEventHandles = null;
+            }
+        },
+
+        /**
+         * Updates the UI according to the `responsive` attribute
+         *
+         * @method _uiSetResponsive
+         * @param {Boolean} val The value of the property.
+         * @protected
+         */
+        _uiSetResponsive: function(val) {
+            if (val) {
+                if (!this._resizeHandle) {
+                    this._resizeHandle = A.on('windowresize', A.bind(this._updateSizes, this));
+                }
+
+                this.get('boundingBox').addClass('row');
+
+                this.get('boundingBox').setStyle('width', '');
+                this.get('boundingBox').setStyle('height', '');
+            }
+            else {
+                if (this._resizeHandle) {
+                    this._resizeHandle.detach();
+                }
+
+                this.get('boundingBox').removeClass('row');
+
+                this.get('boundingBox').setStyle('width', this.get('width'));
+                this.get('boundingBox').setStyle('height', this.get('height'));
+            }
+
+            this._updateImagesResponsiveness();
+            this._updateSizes();
+        },
+
+        /**
+         * Sets the width on the widget's bounding box element
+         *
+         * @method _uiSetWidth
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetWidth: function(val) {
+            if (!this.get('responsive')) {
+                A.Carousel.superclass._uiSetWidth.call(this, val);
+            }
+        },
+
+        /**
+         * Updates the carousel's image nodes to work according to the
+         * `responsive` attribute value.
+         *
+         * @method _updateImagesResponsiveness
+         * @protected
+         */
+        _updateImagesResponsiveness: function() {
+            var style;
+
+            if (this.get('responsive')) {
+                this.nodeSelection.addClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    style = {
+                        height: image.getStyle('height'),
+                        width: image.getStyle('width')
+                    };
+
+                    image.setStyle('height', 'inherit');
+                    image.setStyle('width', '');
+
+                    if (image.getStyle('background-image') !== 'none') {
+                        A.mix(style, {
+                            'background-repeat': image.getStyle('background-repeat'),
+                            'background-size': image.getStyle('background-size')
+                        });
+
+                        image.setStyle('background-repeat', 'no-repeat');
+                        image.setStyle('background-size', 'contain');
+                    }
+
+                    if (!image.getData('unresponsiveStyle')) {
+                        image.setData('unresponsiveStyle', style);
+                    }
+                });
+            }
+            else {
+                this.nodeSelection.removeClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    if (image.getData('unresponsiveStyle')) {
+                        image.setStyles(image.getData('unresponsiveStyle'));
+                    }
+                });
             }
         },
 
@@ -830,15 +952,38 @@ var Carousel = A.Component.create({
          * @protected
          */
         _updateNodeSelection: function() {
-            var instance = this;
-
-            var itemSelector = instance.get('itemSelector');
-
-            var nodeSelection = instance.get('contentBox').all(itemSelector);
+            var instance = this,
+                itemSelector = instance.get('itemSelector'),
+                nodeSelection = instance.get('contentBox').all(itemSelector);
 
             nodeSelection.addClass(CSS_ITEM);
 
             instance.nodeSelection = nodeSelection;
+        },
+
+        /**
+         * Scales the carousel to fit on the screen, based on the current image's
+         * original size. If the `responsive` attribute is set to true this function
+         * won't do anything.
+         *
+         * @method _updateSizes
+         * @protected
+         */
+        _updateSizes: function() {
+            var boundingBox = this.get('boundingBox'),
+                boundingBoxWidth = parseInt(boundingBox.getComputedStyle('width')),
+                height,
+                image = this.nodeSelection.item(this.get('activeIndex')),
+                imageOriginalDimensions = image.getData('unresponsiveStyle'),
+                width;
+
+            if (!this.get('responsive')) {
+                return;
+            }
+
+            width = this.get('width') ? this.get('width') : parseInt(imageOriginalDimensions.width);
+            height = this.get('height') ? this.get('height') : parseInt(imageOriginalDimensions.height);
+            boundingBox.setStyle('height', ((height * boundingBoxWidth) / width) + 'px');
         },
 
         _intervalRotationTask: null
