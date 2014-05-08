@@ -21,7 +21,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
     activePath: null,
 
     /**
-     * Holds the document hotizontal scroll position when the navigation using
+     * Holds the document horizontal scroll position when the navigation using
      * back or forward happens to be restored after the surfaces are updated.
      *
      * @property docScrollX
@@ -66,15 +66,6 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      * @protected
      */
     screens: null,
-
-    /**
-     * Holds the scroll event handle.
-     *
-     * @property scrollHandle
-     * @type {Object}
-     * @private
-     */
-    scrollHandle: null,
 
     /**
      * Map that index the surfaces instances by the surface id.
@@ -191,7 +182,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      */
     navigate: function(path, opt_replaceHistory) {
         if (this.pendingRequest) {
-            this.pendingRequest.cancel('Navigation cancelled');
+            this.pendingRequest.cancel('Navigation canceled');
             this.pendingRequest = null;
         }
         if (path === this.activePath) {
@@ -199,7 +190,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
             return;
         }
         if (this.activeScreen && this.activeScreen.beforeDeactivate()) {
-            A.log('Navigation cancelled by active screen', 'info');
+            A.log('Navigation canceled by active screen', 'info');
             return;
         }
 
@@ -223,6 +214,11 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
     _defStartNavigateFn: function(event) {
         var instance = this;
 
+        if (!event.replaceHistory) {
+            instance.docScrollX = win.pageXOffset;
+            instance.docScrollY = win.pageYOffset;
+        }
+
         this._doNavigate(event.path, event.replaceHistory).thenAlways(function() {
             instance.fire('endNavigate', {
                 path: event.path
@@ -236,7 +232,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      * @method  _doNavigate
      * @param {String} path Path containing the querystring part.
      * @param {Boolean} opt_replaceHistory Replaces browser history.
-     * @return {Promise} Returns a pending request cancellable promise.
+     * @return {Promise} Returns a pending request cancelable promise.
      */
     _doNavigate: function(path, opt_replaceHistory) {
         var instance = this,
@@ -384,28 +380,6 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
     },
 
     /**
-     * Lock the document scroll in order to avoid the browser native back and
-     * forward navigation to change the scroll position. Surface app takes care
-     * of updating it when surfaces are ready.
-     *
-     * @method _lockScroll
-     * @private
-     */
-    _lockScroll: function() {
-        var instance = this,
-            docScrollX = A.DOM.docScrollX(),
-            docScrollY = A.DOM.docScrollY();
-
-        instance._unlockScroll();
-
-        instance.scrollHandle = A.once('scroll', function() {
-            instance.docScrollX = A.DOM.docScrollX();
-            instance.docScrollY = A.DOM.docScrollY();
-            win.scrollTo(docScrollX, docScrollY);
-        });
-    },
-
-    /**
      * Intercepts document clicks and test link elements in order to decide
      * whether Surface app can navigate.
      *
@@ -453,7 +427,7 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
 
         if (state && state.surface) {
             A.log('History navigation to [' + state.path + ']', 'info');
-            this._lockScroll();
+
             this.navigate(state.path, true);
         }
     },
@@ -510,24 +484,10 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      * @private
      */
     _syncScrollPosition: function(opt_replaceHistory) {
-        this._unlockScroll();
-        win.scrollTo(
-            opt_replaceHistory ? this.docScrollX : 0,
-            opt_replaceHistory ? this.docScrollY : 0
-        );
-    },
+        var x = opt_replaceHistory ? this.docScrollX : 0;
+        var y = opt_replaceHistory ? this.docScrollY : 0;
 
-    /**
-     * Unlock the document scroll.
-     *
-     * @method _unlockScroll
-     * @private
-     */
-    _unlockScroll: function() {
-        if (this.scrollHandle) {
-            this.scrollHandle.detach();
-            this.scrollHandle = null;
-        }
+        win.scrollTo(x, y);
     },
 
     /**
