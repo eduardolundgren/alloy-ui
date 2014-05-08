@@ -16,8 +16,10 @@ YUI.add('aui-carousel-tests', function(Y) {
         setUp: function() {
             this.createCarousel({
                 contentBox: '#content',
+                height: 300,
                 intervalTime: 1,
-                itemSelector: '> div'
+                itemSelector: '> div,img',
+                width: 940
             });
         },
 
@@ -26,7 +28,11 @@ YUI.add('aui-carousel-tests', function(Y) {
         },
 
         createCarousel: function(config) {
-            this._container.setHTML('<div id="content"><div></div><div></div><div></div></div>');
+            var content = Y.Node.create('<div id="content"></div>'),
+                images = Y.one('#images');
+
+            content.setHTML(images.getHTML());
+            this._container.append(content);
 
             this._carousel = new Y.Carousel(config).render();
         },
@@ -450,10 +456,113 @@ YUI.add('aui-carousel-tests', function(Y) {
             this._carousel.destroy();
             this.createCarousel({
                 contentBox: '#content',
-                playing: false
+                height: 300,
+                playing: false,
+                width: 940
             });
 
             this.assertPaused();
+        },
+
+        'should scale to the viewport\'s width if `responsive` is true': function() {
+            var instance = this,
+                initialHeight = 300,
+                initialWidth = 940;
+
+            this._carousel.destroy();
+
+            this._container.setStyle('width', '470px');
+            this.createCarousel({
+                contentBox: '#content',
+                imageHeight: initialHeight,
+                itemSelector: '> div,img',
+                imageWidth: initialWidth
+            });
+
+            Y.Assert.areEqual(
+                '150px',
+                this._carousel.get('boundingBox').getStyle('height'),
+                'Height should have scaled to fit the current width'
+            );
+
+            // Now let's simulate a resize by changing the container's width
+            // and triggering the resize event on the window.
+            this._container.setStyle('width', '940px');
+            if (Y.UA.ie === 8) {
+                // Can't simulate a resize on IE8's window object, so
+                // calling the function directly here.
+                this._carousel._updateHeight();
+            }
+            else {
+                Y.one(Y.config.win).simulate('resize');
+            }
+            this.wait(function() {
+                Y.Assert.areEqual(
+                    '300px',
+                    instance._carousel.get('boundingBox').getStyle('height'),
+                    'Height should have scaled to fit the current width'
+                );
+            }, Y.config.windowResizeDelay || 100);
+        },
+
+        'should be able to change responsiveness dynamically': function() {
+            var initialHeight = 300,
+                initialWidth = 940;
+
+            this._carousel.destroy();
+
+            this._container.setStyle('width', '470px');
+            this.createCarousel({
+                contentBox: '#content',
+                imageHeight: initialHeight,
+                itemSelector: '> div,img',
+                imageWidth: initialWidth
+            });
+
+            this._carousel.set('height', initialHeight);
+            this._carousel.set('width', initialWidth);
+            Y.Assert.areEqual(
+                '300px',
+                this._carousel.get('boundingBox').getStyle('height'),
+                'Height should have gone back to the initial value'
+            );
+
+            this._carousel.set('height', null);
+            this._carousel.set('width', null);
+            Y.Assert.areEqual(
+                '150px',
+                this._carousel.get('boundingBox').getStyle('height'),
+                'Height should have scaled back to fit the container'
+            );
+        },
+
+        'should change image width/height dynamically': function() {
+            var initialHeight = 300,
+                initialWidth = 940;
+
+            this._carousel.destroy();
+
+            this._container.setStyle('width', '470px');
+            this.createCarousel({
+                contentBox: '#content',
+                imageHeight: initialHeight,
+                itemSelector: '> div,img',
+                imageWidth: initialWidth
+            });
+
+            this._carousel.set('imageHeight', 500);
+            Y.Assert.areEqual(
+                '250px',
+                this._carousel.get('boundingBox').getStyle('height'),
+                'Height should have scaled to fit the container'
+            );
+
+            this._carousel.set('imageWidth', 470);
+            Y.Assert.areEqual(
+                '500px',
+                this._carousel.get('boundingBox').getStyle('height'),
+                'Height should have scaled to fit the container'
+            );
         }
     }));
 

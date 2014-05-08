@@ -99,6 +99,28 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Height of the images being used in the carousel.
+         *
+         * @attribute imageHeight
+         * @default 200
+         * @type Number
+         */
+        imageHeight: {
+            value: 200
+        },
+
+        /**
+         * Width of the images being used in the carousel.
+         *
+         * @attribute imageWidth
+         * @default 600
+         * @type Number
+         */
+        imageWidth: {
+            value: 600
+        },
+
+        /**
          * Interval time in seconds between an item transition.
          *
          * @attribute intervalTime
@@ -193,6 +215,16 @@ var Carousel = A.Component.create({
                     opacity: 1
                 }
             });
+        },
+
+        /**
+         * Destructor lifecycle implementation.
+         *
+         * @method destructor
+         * @protected
+         */
+        destructor: function() {
+            this._detachResponsiveEvents();
         },
 
         /**
@@ -352,6 +384,7 @@ var Carousel = A.Component.create({
             var instance = this;
 
             instance._updateNodeSelection();
+            instance._updateImagesResponsiveness();
         },
 
         /**
@@ -489,6 +522,18 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Detaches all events related to responsiveness.
+         *
+         * @method _detachResponsiveEvents
+         * @protected
+         */
+        _detachResponsiveEvents: function() {
+            if (this._responsiveHandles) {
+                (new A.EventHandle(this._responsiveHandles)).detach();
+            }
+        },
+
+        /**
          * Checks if the mouse is inside the menu region.
          *
          * @method  _isMouseInsideMenu
@@ -499,6 +544,16 @@ var Carousel = A.Component.create({
             var region = this.get('nodeMenu').get('region');
             return (region.left > event.clientX || event.clientX > region.right ||
                 region.top > event.clientY || event.clientY > region.bottom);
+        },
+
+        /**
+         * Checks if the carousel is responsive.
+         *
+         * @method _isResponsive
+         * @protected
+         */
+        _isResponsive: function() {
+            return !this.get('width');
         },
 
         /**
@@ -830,6 +885,19 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Sets the height on the widget's bounding box element
+         *
+         * @method _uiSetHeight
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetHeight: function(val) {
+            A.Carousel.superclass._uiSetHeight.call(this, val);
+
+            this._updateHeight();
+        },
+
+        /**
          * Sets `pauseOnHover` on the UI.
          *
          * @method _uiSetPauseOnHover
@@ -851,6 +919,91 @@ var Carousel = A.Component.create({
             else {
                 (new A.EventHandle(this.hoverEventHandles)).detach();
                 this.hoverEventHandles = null;
+            }
+        },
+
+        /**
+         * Sets the width on the widget's bounding box element
+         *
+         * @method _uiSetWidth
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetWidth: function(val) {
+            A.Carousel.superclass._uiSetWidth.call(this, val);
+
+            if (val) {
+                this._detachResponsiveEvents();
+
+                this.get('boundingBox').removeClass('row');
+
+                this.get('boundingBox').setStyle('width', this.get('width'));
+                this.get('boundingBox').setStyle('height', this.get('height'));
+            }
+            else {
+                if (!this._responsiveHandles) {
+                    this._responsiveHandles = [
+                        A.on('windowresize', A.bind(this._updateHeight, this)),
+                        this.after('imageWidthChange', this._updateHeight),
+                        this.after('imageHeightChange', this._updateHeight)
+                    ];
+                }
+
+                this.get('boundingBox').addClass('row');
+
+                this.get('boundingBox').setStyle('width', '');
+                this.get('boundingBox').setStyle('height', '');
+            }
+
+            this._updateImagesResponsiveness();
+            this._updateHeight();
+        },
+
+        /**
+         * Updates the carousel's image nodes to be responsive or not, depending
+         * on the current configuration.
+         *
+         * @method _updateImagesResponsiveness
+         * @protected
+         */
+        _updateImagesResponsiveness: function() {
+            var style;
+
+            if (this._isResponsive()) {
+                this.nodeSelection.addClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    style = {
+                        height: image.getStyle('height'),
+                        width: image.getStyle('width')
+                    };
+
+                    image.setStyle('height', 'inherit');
+                    image.setStyle('width', '');
+
+                    if (image.getStyle('backgroundImage') !== 'none') {
+                        A.mix(style, {
+                            'backgroundRepeat': image.getStyle('backgroundRepeat'),
+                            'backgroundSize': image.getStyle('backgroundSize')
+                        });
+
+                        image.setStyle('backgroundRepeat', 'no-repeat');
+                        image.setStyle('backgroundSize', 'contain');
+                    }
+
+                    if (!image.getData('unresponsiveStyle')) {
+                        image.setData('unresponsiveStyle', style);
+                    }
+                });
+            }
+            else {
+                this.nodeSelection.removeClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    if (image.getData('unresponsiveStyle')) {
+                        image.setStyles(image.getData('unresponsiveStyle'));
+                    }
+                });
             }
         },
 
@@ -927,15 +1080,36 @@ var Carousel = A.Component.create({
          * @protected
          */
         _updateNodeSelection: function() {
-            var instance = this;
-
-            var itemSelector = instance.get('itemSelector');
-
-            var nodeSelection = instance.get('contentBox').all(itemSelector);
+            var instance = this,
+                itemSelector = instance.get('itemSelector'),
+                nodeSelection = instance.get('contentBox').all(itemSelector);
 
             nodeSelection.addClass(CSS_ITEM);
 
             instance.nodeSelection = nodeSelection;
+        },
+
+        /**
+         * Scales the carousel to fit on the screen, based on the current image's
+         * original size. If the carousel's width was set to a fixed value this
+         * function won't do anything though.
+         *
+         * @method _updateHeight
+         * @protected
+         */
+        _updateHeight: function() {
+            var boundingBox = this.get('boundingBox'),
+                boundingBoxWidth = parseInt(boundingBox.getComputedStyle('width'), 10),
+                height,
+                width;
+
+            if (!this._isResponsive()) {
+                return;
+            }
+
+            width = this.get('imageWidth');
+            height = this.get('height') ? this.get('height') : this.get('imageHeight');
+            boundingBox.setStyle('height', ((height * boundingBoxWidth) / width) + 'px');
         },
 
         _intervalRotationTask: null

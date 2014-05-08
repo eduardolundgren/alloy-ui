@@ -2,6 +2,7 @@
     "aui-carousel": {
         "requires": [
             "anim",
+            "event-resize",
             "node-event-delegate",
             "aui-component"
         ],
