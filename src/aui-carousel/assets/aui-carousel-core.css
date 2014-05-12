@@ -1,6 +1,7 @@
 .carousel {
     margin-left: 0;
     margin-right: 0;
+    overflow: hidden;
     position: relative;
 }
 

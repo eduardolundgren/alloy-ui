@@ -7,5 +7,15 @@
             "aui-component"
         ],
         "skinnable": true
+    },
+
+    "aui-carousel-swipe": {
+        "requires": [
+            "aui-carousel",
+            "base-build",
+            "scrollview",
+            "scrollview-paginator"
+        ],
+        "skinnable": true
     }
 }
