@@ -24,6 +24,7 @@ var Lang = A.Lang,
 
     CSS_ALPHA_CANVAS = getClassName('hsv-alpha-canvas'),
     CSS_ALPHA_SLIDER_CONTAINER = getClassName('hsv-alpha-slider-container'),
+    CSS_ALPHA_SLIDER_WRAPPER = getClassName('hsv-alpha-slider-wrapper'),
     CSS_ALPHA_THUMB = getClassName('hsv-alpha-thumb'),
     CSS_ALPHA_THUMB_IMAGE = getClassName('hsv-alpha-image'),
 
@@ -39,9 +40,13 @@ var Lang = A.Lang,
      * @constructor
      */
     HSVAPalette = A.Base.create('hsva-palette', A.HSVPalette, [], {
+        CSS_VALUE_RIGHT_SIDE_CONTAINER: 'col-sm-8 col-xs-8',
+
         TPL_ALPHA_CANVAS: '<span class="' + CSS_ALPHA_CANVAS + '"></span>',
 
-        TPL_ALPHA_SLIDER_CONTAINER: '<div class="' + CSS_ALPHA_SLIDER_CONTAINER + '"><div>',
+        TPL_ALPHA_SLIDER_WRAPPER: '<div class="col-sm-2 col-xs-2 ' +
+            CSS_ALPHA_SLIDER_WRAPPER + '"><div class="' +
+            CSS_ALPHA_SLIDER_CONTAINER +'"></div></div>',
 
         TPL_ALPHA_THUMB: '<span class="' + CSS_ALPHA_THUMB + '"><span class="' + CSS_ALPHA_THUMB_IMAGE +
             '"></span></span>',
@@ -456,10 +461,14 @@ var Lang = A.Lang,
          * @protected
          */
         _renderAlphaSliderContainer: function() {
-            var instance = this;
+            var instance = this,
+                sliderWrapper;
 
-            instance._alphaSliderContainer = instance._viewContainer.appendChild(
-                instance.TPL_ALPHA_SLIDER_CONTAINER
+            sliderWrapper = A.Node.create(this.TPL_ALPHA_SLIDER_WRAPPER);
+            instance._valueSliderWrapper.insert(sliderWrapper, 'after');
+
+            instance._alphaSliderContainer = sliderWrapper.one(
+                '.' + CSS_ALPHA_SLIDER_CONTAINER
             );
         },
 
@@ -472,7 +481,7 @@ var Lang = A.Lang,
         _renderFields: function() {
             var instance = this;
 
-            A.HSVAPalette.superclass._renderFields.call(instance);
+            A.HSVAPalette.superclass._renderFields.apply(instance, arguments);
 
             instance._aContainer = instance._renderField(
                 instance._labelValueHSVContainer, {
