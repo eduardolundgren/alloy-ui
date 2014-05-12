@@ -7,5 +7,14 @@
             "aui-component"
         ],
         "skinnable": true
+    },
+
+    "aui-carousel-swipe": {
+        "requires": [
+            "aui-carousel",
+            "aui-widget-swipe",
+            "base-build"
+        ],
+        "skinnable": true
     }
 }

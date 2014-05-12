@@ -54,6 +54,14 @@ var Lang = A.Lang,
  * @include http://alloyui.com/examples/carousel/basic-markup.html
  * @include http://alloyui.com/examples/carousel/basic.js
  */
+
+/**
+ * Fired when a new image will be shown.
+ *
+ * @event showImage
+ * @preventable _defShowImageFn
+ */
+
 var Carousel = A.Component.create({
     /**
      * Static property provides a string to identify the class.
@@ -213,6 +221,12 @@ var Carousel = A.Component.create({
                 duration: instance.get('animationTime'),
                 to: {
                     opacity: 1
+                }
+            });
+
+            this.publish({
+                showImage: {
+                    defaultFn: this._defShowImageFn
                 }
             });
         },
@@ -522,6 +536,49 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * The default function for the `showImage` event.
+         * It will properly show the image, animating it if requested.
+         *
+         * @method _defShowImageFn
+         * @param {EventFacade} event
+         * @protected
+         */
+        _defShowImageFn: function(event) {
+            var activeIndex = this.get('activeIndex'),
+                hasPrevious = !Lang.isUndefined(event.prevVal),
+                newImage = this.nodeSelection.item(activeIndex),
+                oldImage,
+                onEnd;
+
+            newImage.addClass(CSS_ITEM_ACTIVE);
+
+            if (hasPrevious) {
+                oldImage = this.nodeSelection.item(event.prevVal);
+                oldImage.removeClass(CSS_ITEM_ACTIVE);
+
+                this.animation.stop();
+
+                if (event.animate) {
+                    newImage.setStyle('opacity', '0');
+
+                    oldImage.addClass(CSS_ITEM_TRANSITION);
+
+                    onEnd = this.animation.on(
+                        'end',
+                        function() {
+                            oldImage.removeClass(CSS_ITEM_TRANSITION);
+
+                            onEnd.detach();
+                        }
+                    );
+
+                    this.animation.set('node', newImage);
+                    this.animation.run();
+                }
+            }
+        },
+
+        /*
          * Detaches all events related to responsiveness.
          *
          * @method _detachResponsiveEvents
@@ -554,52 +611,6 @@ var Carousel = A.Component.create({
          */
         _isResponsive: function() {
             return !this.get('width');
-        },
-
-        /**
-         * Fire when animation ends.
-         *
-         * @method _onAnimationEnd
-         * @param event
-         * @param newImage
-         * @param oldImage
-         * @param newMenuItem
-         * @param oldMenuItem
-         * @protected
-         */
-        _onAnimationEnd: function(event, newImage, oldImage) {
-            if (oldImage) {
-                oldImage.removeClass(CSS_ITEM_TRANSITION);
-            }
-
-            newImage.setStyle('opacity', '1');
-        },
-
-        /**
-         * Fire when animation starts.
-         *
-         * @method _onAnimationStart
-         * @param event
-         * @param newImage
-         * @param oldImage
-         * @param newMenuItem
-         * @param oldMenuItem
-         * @protected
-         */
-        _onAnimationStart: function(event, newImage, oldImage, newMenuItem, oldMenuItem) {
-            newImage.addClass(CSS_ITEM_ACTIVE);
-
-            if (newMenuItem) {
-                newMenuItem.addClass(CSS_MENU_ACTIVE);
-            }
-
-            if (oldImage) {
-                oldImage.replaceClass(CSS_ITEM_ACTIVE, CSS_ITEM_TRANSITION);
-            }
-
-            if (oldMenuItem) {
-                oldMenuItem.removeClass(CSS_MENU_ACTIVE);
-            }
         },
 
         /**
@@ -771,7 +782,7 @@ var Carousel = A.Component.create({
                 items: items.join(' ')
             }));
 
-            instance.get('contentBox').appendChild(menu);
+            instance.get('boundingBox').appendChild(menu);
 
             return menu;
         },
@@ -818,69 +829,27 @@ var Carousel = A.Component.create({
          * @protected
          */
         _uiSetActiveIndex: function(newVal, objOptions) {
-            var instance = this;
+            var newMenuItem = this.menuNodes.item(newVal),
+                oldMenuItem;
 
-            var oldImage = null;
-            var oldMenuItem = null;
-            var onStart = null;
-            var onEnd = null;
-
-            var newImage = instance.nodeSelection.item(newVal);
-
-            var menuNodes = instance.menuNodes;
-
-            var newMenuItem = menuNodes.item(newVal);
-
-            instance.animation.set('node', newImage);
+            if (newMenuItem) {
+                newMenuItem.addClass(CSS_MENU_ACTIVE);
+            }
 
             if (objOptions && !Lang.isUndefined(objOptions.prevVal)) {
-                var prevVal = objOptions.prevVal;
-
-                newImage.setStyle('opacity', '0');
-
-                oldMenuItem = menuNodes.item(prevVal);
-                oldImage = instance.nodeSelection.item(prevVal);
-
-                oldImage.replaceClass(CSS_ITEM_ACTIVE, CSS_ITEM_TRANSITION);
-
-                instance.animation.stop();
-            }
-            else {
-                newImage.addClass(CSS_ITEM_ACTIVE);
-
-                newImage.setStyle('opacity', '1');
+                oldMenuItem = this.menuNodes.item(objOptions.prevVal);
+                if (oldMenuItem) {
+                    oldMenuItem.removeClass(CSS_MENU_ACTIVE);
+                }
             }
 
-            onStart = instance.animation.on(
-                'start',
-                function(event) {
-                    instance._onAnimationStart(event, newImage, oldImage, newMenuItem, oldMenuItem);
+            this.fire('showImage', {
+                animate: objOptions && objOptions.animate,
+                prevVal: objOptions && objOptions.prevVal
+            });
 
-                    onStart.detach();
-                }
-            );
-
-            onEnd = instance.animation.on(
-                'end',
-                function(event) {
-                    instance._onAnimationEnd(event, newImage, oldImage, newMenuItem, oldMenuItem);
-
-                    onEnd.detach();
-                }
-            );
-
-            if (objOptions) {
-                if (objOptions.animate) {
-                    instance.animation.run();
-                }
-                else {
-                    instance.animation.fire('start');
-                    instance.animation.fire('end');
-                }
-
-                if (objOptions.src === UI_SRC && objOptions.animate) {
-                    instance._createIntervalRotationTask();
-                }
+            if (objOptions && objOptions.src === UI_SRC && objOptions.animate) {
+                this._createIntervalRotationTask();
             }
         },
 
