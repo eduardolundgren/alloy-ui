@@ -56,7 +56,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
             eventHandles;
 
         eventHandles = [
-            A.after(instance._afterFillHeight, instance, 'fillHeight'),
             instance.after('draggableChange', instance._afterDraggableChange),
             instance.after('resizableChange', instance._afterResizableChange),
             instance.after('visibleChange', instance._afterVisibleChange)
@@ -99,19 +98,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
         return A.mix(config, {
             bubbleTargets: instance
         });
-    },
-
-    /**
-     * Fire after `maxHeight` CSS property changes.
-     *
-     * @method _afterFillHeight
-     * @param event
-     * @protected
-     */
-    _afterFillHeight: function() {
-        var instance = this;
-
-        instance._fillMaxHeight(instance.get('height'));
     },
 
     /**
@@ -181,23 +167,6 @@ A.Modal = A.Base.create('modal', A.Widget, [
         else if (!instance._userInteractionHandle) {
             instance._userInteractionHandle = instance.once(
                 ['click', 'mousemove'], instance._onUserInitInteraction, instance);
-        }
-    },
-
-    /**
-     * Set `maxHeight` CSS property.
-     *
-     * @method _fillMaxHeight
-     * @param height
-     * @protected
-     */
-    _fillMaxHeight: function(height) {
-        var instance = this,
-            fillHeight = instance.get('fillHeight'),
-            node = instance.getStdModNode(fillHeight, true);
-
-        if (node) {
-            node.setStyle('maxHeight', height);
         }
     },
 
