@@ -3,10 +3,7 @@ YUI.add('module-tests', function(Y) {
     var suite = new Y.Test.Suite('aui-property-builder');
 
     suite.add(new Y.Test.Case({
-        name: 'Automated Tests',
-        'test is empty': function() {
-            Y.Assert.fail('No Tests Provided For This Module');
-        }
+        name: 'Automated Tests'
     }));
 
     Y.Test.Runner.add(suite);
