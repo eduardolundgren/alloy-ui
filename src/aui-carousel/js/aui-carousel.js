@@ -11,6 +11,7 @@ var Lang = A.Lang,
     CSS_ITEM = getCN('carousel', 'item'),
     CSS_ITEM_ACTIVE = getCN('carousel', 'item', 'active'),
     CSS_ITEM_TRANSITION = getCN('carousel', 'item', 'transition'),
+    CSS_MENU = getCN('carousel', 'menu'),
     CSS_MENU_ACTIVE = getCN('carousel', 'menu', 'active'),
     CSS_MENU_INDEX = getCN('carousel', 'menu', 'index'),
     CSS_MENU_ITEM = getCN('carousel', 'menu', 'item'),
@@ -20,6 +21,10 @@ var Lang = A.Lang,
     CSS_MENU_PREV = getCN('carousel', 'menu', 'prev'),
     CSS_MENU_ITEM_DEFAULT = [CSS_MENU_ITEM, CSS_MENU_INDEX].join(' '),
     CSS_MENU_ITEM_ACTIVE = [CSS_MENU_ITEM, CSS_MENU_INDEX, CSS_MENU_ACTIVE].join(' '),
+    CSS_OUTSIDE_MENU = getCN('carousel', 'outside', 'menu'),
+
+    NODE_MENU_INSIDE = 'inside',
+    NODE_MENU_OUTSIDE = 'outside',
 
     SELECTOR_MENU_INDEX = '.' + CSS_MENU_INDEX,
     SELECTOR_MENU_PAUSE = '.' + CSS_MENU_PAUSE,
@@ -166,6 +171,18 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Position of the menu.
+         *
+         * @attribute nodeMenuPosition
+         * @default 'inside'
+         * @type String
+         */
+        nodeMenuPosition: {
+            value: NODE_MENU_INSIDE,
+            validator: '_validateNodeMenuPosition'
+        },
+
+        /**
          * Determines if `A.Carousel` will pause on mouse enter or play when
          * mouse leave.
          *
@@ -190,17 +207,17 @@ var Carousel = A.Component.create({
         }
     },
 
-    UI_ATTRS: ['pauseOnHover'],
+    UI_ATTRS: ['pauseOnHover', 'nodeMenuPosition'],
 
     prototype: {
         TPL_ITEM: '<li><a class="' + CSS_MENU_ITEM + ' {cssClasses}">{index}</a></li>',
 
-        TPL_MENU: '<menu>' +
+        TPL_MENU: '<div class="' + CSS_MENU + '"><menu>' +
             '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PLAY + '"></a></li>' +
             '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PREV + '"></a></li>' +
             '{items}' +
             '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_NEXT + '"></a></li>' +
-            '</menu>',
+            '</menu></div>',
 
         animation: null,
         nodeSelection: null,
@@ -845,6 +862,19 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Sets `nodeMenuPosition` on the UI.
+         *
+         * @method _uiSetNodeMenuPosition
+         * @param {String} val The value of the property.
+         * @protected
+         */
+        _uiSetNodeMenuPosition: function(val) {
+            this.get('boundingBox').toggleClass(CSS_OUTSIDE_MENU, val === NODE_MENU_OUTSIDE);
+
+            this._updateHeight();
+        },
+
+        /**
          * Sets `pauseOnHover` on the UI.
          *
          * @method _uiSetPauseOnHover
@@ -1048,6 +1078,7 @@ var Carousel = A.Component.create({
          */
         _updateHeight: function() {
             var boundingBox = this.get('boundingBox'),
+                boundingBoxVerticalPadding,
                 boundingBoxWidth = parseInt(boundingBox.getComputedStyle('width'), 10),
                 height,
                 width;
@@ -1058,7 +1089,24 @@ var Carousel = A.Component.create({
 
             width = this.get('imageWidth');
             height = this.get('height') ? this.get('height') : this.get('imageHeight');
-            boundingBox.setStyle('height', ((height * boundingBoxWidth) / width) + 'px');
+            boundingBoxVerticalPadding = parseInt(boundingBox.getStyle('padding-top') || 0, 10) +
+                parseInt(boundingBox.getStyle('padding-bottom') || 0, 10);
+            boundingBox.setStyle(
+                'height',
+                ((height * boundingBoxWidth) / width) + boundingBoxVerticalPadding + 'px'
+            );
+        },
+
+        /**
+         * Validates the given value for the `nodeMenuPosition` attribute.
+         *
+         * @method _validateNodeMenuPosition
+         * @param {String} val The value to be validated
+         * @return {Boolean} `true` if the value is valid or `false` otherwise
+         * @protected
+         */
+        _validateNodeMenuPosition: function(val) {
+            return val === NODE_MENU_INSIDE || val === NODE_MENU_OUTSIDE;
         },
 
         _intervalRotationTask: null
