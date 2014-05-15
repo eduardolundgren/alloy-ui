@@ -23,22 +23,22 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    // Force YUI build
-                    // $ grunt build:yui
-                    if (process.argv[2].indexOf('yui') !== -1) {
+                // Force YUI build
+                // $ grunt build:yui
+                if (process.argv[2].indexOf('yui') !== -1) {
+                    mainCallback();
+                }
+                // Check if YUI build is updated and skip to AUI build if necessary
+                // $ grunt build
+                else {
+                    exports._checkYuiCache(function(val) {
+                        isYuiBuildUpdated = val;
                         mainCallback();
-                    }
-                    // Check if YUI build is updated and skip to AUI build if necessary
-                    // $ grunt build
-                    else {
-                        exports._checkYuiCache(function(val) {
-                            isYuiBuildUpdated = val;
-                            mainCallback();
-                        }, target);
-                    }
+                    }, target);
+                }
             },
             function(mainCallback) {
-                    exports._setShifterArgs(mainCallback, target, isYuiBuildUpdated);
+                exports._setShifterArgs(mainCallback, target, isYuiBuildUpdated);
             }],
             function(err) {
                 if (err) {

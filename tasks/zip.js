@@ -20,16 +20,15 @@ module.exports = function(grunt) {
         grunt.applyCliConfig(TASK.name, target);
 
         async.series([
-                function(mainCallback) {
-                    exports._getCurrentGitHashCommit(function(val) {
-                        sha = val;
-                        mainCallback();
-                    });
-                },
-                function(mainCallback) {
-                    exports._setZipComment(mainCallback, target, sha);
-                }
-            ],
+            function(mainCallback) {
+                exports._getCurrentGitHashCommit(function(val) {
+                    sha = val;
+                    mainCallback();
+                });
+            },
+            function(mainCallback) {
+                exports._setZipComment(mainCallback, target, sha);
+            }],
             function(err) {
                 if (err) {
                     done(false);

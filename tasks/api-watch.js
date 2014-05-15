@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._runYuidoc(mainCallback);
+                exports._runYuidoc(mainCallback);
             }],
             function(err) {
                 if (err) {

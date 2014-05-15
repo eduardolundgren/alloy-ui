@@ -18,7 +18,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._runYogi(mainCallback);
+                exports._runYogi(mainCallback);
             }],
             function(err) {
                 if (err) {

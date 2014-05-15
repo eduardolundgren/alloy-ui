@@ -19,7 +19,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._initDependencies(mainCallback);
+                exports._initDependencies(mainCallback);
             }],
             function(err) {
                 if (err) {

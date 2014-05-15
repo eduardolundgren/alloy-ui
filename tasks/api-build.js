@@ -17,7 +17,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._buildYuidoc(mainCallback);
+                exports._buildYuidoc(mainCallback);
             }],
             function(err) {
                 if (err) {

@@ -16,7 +16,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._setShifterArgs(mainCallback);
+                exports._setShifterArgs(mainCallback);
             }],
             function(err) {
                 if (err) {

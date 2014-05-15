@@ -19,24 +19,24 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    grunt.log.ok('Go to branch');
-                    exports._gitGoToBranch(mainCallback);
+                grunt.log.ok('Go to branch');
+                exports._gitGoToBranch(mainCallback);
             },
             function(mainCallback) {
-                    grunt.log.ok('Move folder');
-                    exports._moveFolder(mainCallback);
+                grunt.log.ok('Move folder');
+                exports._moveFolder(mainCallback);
             },
             function(mainCallback) {
-                    grunt.log.ok('Add folder');
-                    exports._gitAddFolder(mainCallback);
+                grunt.log.ok('Add folder');
+                exports._gitAddFolder(mainCallback);
             },
             function(mainCallback) {
-                    grunt.log.ok('Commit changes');
-                    exports._gitCommit(mainCallback);
+                grunt.log.ok('Commit changes');
+                exports._gitCommit(mainCallback);
             },
             function(mainCallback) {
-                    grunt.log.ok('Push changes');
-                    exports._gitPushToBranch(mainCallback);
+                grunt.log.ok('Push changes');
+                exports._gitPushToBranch(mainCallback);
             }],
             function(err) {
                 if (err) {

@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 
         async.series([
             function(mainCallback) {
-                    exports._setYuiConfig(mainCallback);
+                exports._setYuiConfig(mainCallback);
             }],
             function(err) {
                 if (err) {
