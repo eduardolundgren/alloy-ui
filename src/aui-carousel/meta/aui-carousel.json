@@ -17,5 +17,16 @@
             "scrollview-paginator"
         ],
         "skinnable": true
+    },
+
+    "aui-carousel-touch": {
+        "requires": [
+            "aui-carousel-swipe",
+            "base-build"
+        ],
+        "condition": {
+            "trigger": "aui-carousel",
+            "ua": "touchEnabled"
+        }
     }
 }
