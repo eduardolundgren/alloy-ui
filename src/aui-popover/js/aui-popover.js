@@ -39,8 +39,8 @@ A.Popover = A.Base.create('popover', A.Widget, [
     A.WidgetToolbars,
     A.WidgetModality,
     A.WidgetPositionAlign,
-    A.WidgetPositionAlignSuggestion,
     A.WidgetPositionConstrain,
+    A.WidgetPositionAlignSuggestion,
     A.WidgetStack,
     A.WidgetTransition,
     A.WidgetTrigger

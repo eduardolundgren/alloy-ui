@@ -153,17 +153,34 @@ A.mix(PositionAlignSuggestion.prototype, {
     _findBestPosition: function(node) {
         var instance = this,
             position = instance.get('position'),
-            testPositions = [position, 'top', 'bottom', 'left', 'right'];
+            testPositions = [position, 'top', 'bottom', 'right', 'left'];
 
-        testPositions = A.Array.dedupe(testPositions);
+        if (!node || A.Node.one(node).inRegion(A.DOM.viewportRegion(), true)) {
+            testPositions = A.Array.dedupe(testPositions);
 
-        A.Array.some(testPositions, function(testPosition) {
-            if (instance._canWidgetAlignToNode(node, testPosition)) {
-                position = testPosition;
+            A.Array.some(testPositions, function(testPosition) {
+                if (instance._canWidgetAlignToNode(node, testPosition)) {
+                    position = testPosition;
 
-                return true;
+                    return true;
+                }
+            });
+
+        }
+        else {
+            if (instance._getRegion(node).top < instance._getRegion().top) {
+                position = 'bottom';
             }
-        });
+            else if (instance._getRegion(node).bottom > instance._getRegion().bottom) {
+                position = 'top';
+            }
+            else if (instance._getRegion(node).right > instance._getRegion().right) {
+                position = 'left';
+            }
+            else if (instance._getRegion(node).left < instance._getRegion().left) {
+                position = 'right';
+            }
+        }
 
         return position;
     },
@@ -205,7 +222,7 @@ A.mix(PositionAlignSuggestion.prototype, {
         var instance = this,
             position;
 
-        if (!instance.get('constrain') || !instance.get('rendered')) {
+        if (!instance.get('constrain')) {
             return;
         }
 

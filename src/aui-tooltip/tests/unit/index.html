@@ -9,6 +9,11 @@
 
         <script src="../../../../build/aui/aui.js"></script>
         <script src="js/tests.js"></script>
+        <style type="text/css">
+            .tooltip.top {
+                padding-top: 20px;
+            }
+</style>
     </head>
     <body class="yui3-skin-sam">
         <div id="logger"></div>
@@ -42,12 +47,30 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col col-lg-12 col-md-12 col-sm-12">
+                <h1>AUI Responsive Tooltip Tests</h1>
+
+                <p>
+                    <button class="btn btn-lg btn-primary" id="triggerResize" title="One fine body…">#triggerResize</button>
+                </p>
+                <p>
+                    <button class="btn btn-lg btn-primary" id="triggerWidth" title="One fine body…">#triggerResize</button>
+                </p>
+                <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+                <p>
+                    <button class="btn btn-lg btn-primary" id="triggerScroll" title="One fine body…">#triggerScroll</button>
+                </p>
+                <br/><br/><br/><br/><br/><br/><br/><br/>
+            </div>
+        </div>
+
         <div id="noTrigger">Something</div>
         <script>
         YUI({
             coverage: ['aui-tooltip-base'],
             filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-        }).use('test-console', 'test', 'aui-tooltip-tests', function(Y) {
+        }).use('test-console', 'test', 'aui-tooltip-tests', 'node-screen', function(Y) {
 
             (new Y.Test.Console()).render('#logger');
 

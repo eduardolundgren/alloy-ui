@@ -14,6 +14,9 @@
     #delegate {
         width: 100px;
     }
+    .btn-lg, .btn-group-lg > .btn {
+        margin: 2px;
+    }
     </style>
 </head>
 <body>
@@ -45,6 +48,7 @@
 
          new Y.Tooltip({
             trigger: '#triggerTop',
+            width: '500px',
             duration: 0.5, // in seconds
             delay: { // in milliseconds
                 show: 0,
@@ -54,12 +58,14 @@
 
         new Y.Tooltip({
             animated: false,
+            width: '500px',
             position: 'bottom',
             trigger: '#triggerBottom'
         }).render();
 
         new Y.Tooltip({
             trigger: '#triggerHelp',
+            width: '500px',
             cssClass: 'tooltip-help',
             opacity: 1,
             delay: {

@@ -34,8 +34,8 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
     A.WidgetToggle,
     A.WidgetAutohide,
     A.WidgetPositionAlign,
-    A.WidgetPositionAlignSuggestion,
     A.WidgetPositionConstrain,
+    A.WidgetPositionAlignSuggestion,
     A.WidgetTransition,
     A.WidgetTrigger
 ], {
@@ -50,6 +50,8 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
         var instance = this;
 
         A.after(instance._afterUiSetTrigger, instance, '_uiSetTrigger');
+        A.after(instance._afterConstrain, instance, 'constrain');
+        A.on('scroll', A.debounce(instance._onScroll, 300, instance));
     },
 
     /**
@@ -85,6 +87,7 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
                 'hover',
                 A.bind(instance._onBoundingBoxMouseenter, instance),
                 A.bind(instance._onBoundingBoxMouseleave, instance));
+                A.on('windowresize', A.bind(instance.suggestAlignment, instance, trigger));
         }
 
         instance.get('boundingBox').on(
@@ -121,9 +124,7 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
      * @protected
      */
     _afterUiSetTrigger: function(val) {
-        var instance = this;
-
-        instance.suggestAlignment(val);
+        this.suggestAlignment(val);
     },
 
     /**
@@ -169,9 +170,7 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
      * @protected
      */
     _onBoundingBoxMouseenter: function() {
-        var instance = this;
-
-        instance.show();
+        this.show();
     },
 
     /**
@@ -182,9 +181,52 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
      * @protected
      */
     _onBoundingBoxMouseleave: function() {
-        var instance = this;
+        this.hide();
+    },
 
-        instance.hide();
+    /**
+     * Fired after the window is resized.
+     *
+     * @method _onResize
+     * @protected
+     */
+    _onResize: function() {
+        this.suggestAlignment(this.get('trigger'));
+    },
+
+    /**
+     * Scroll event listener function.
+     *
+     * @method _onScroll
+     * @protected
+     */
+    _onScroll: function() {
+        this.suggestAlignment(this.get('trigger'));
+    },
+
+    /**
+     * Fire after `constrain` property changes.
+     *
+     * @method _afterConstrain
+     * @protected
+     */
+    _afterConstrain: function() {
+        this.suggestAlignment(this.get('trigger'));
+    },
+
+    /**
+     * Set the `width` attribute on the UI.
+     *
+     * @method _uiSetWidth
+     * @protected
+     */
+    _uiSetWidth: function(val) {
+        A.Tooltip.superclass._uiSetWidth.call(this, val);
+        this.get('contentBox').setStyle('max-width', val);
+
+        if (!val) {
+            A.on('windowresize', A.bind(this._onResize, this));
+        }
     },
 
     _widgetUiSetVisible: A.Widget.prototype._uiSetVisible
