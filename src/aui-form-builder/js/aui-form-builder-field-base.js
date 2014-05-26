@@ -421,8 +421,8 @@ var FormBuilderField = A.Component.create({
                 return A.Node.create(
                     L.sub(
                         TPL_LABEL, {
-                            id: instance.get('id'),
-                            label: instance.get('label')
+                            id: A.Escape.html(instance.get('id')),
+                            label: A.Escape.html(instance.get('label'))
                         }
                     )
                 );
@@ -492,7 +492,7 @@ var FormBuilderField = A.Component.create({
      * @return {String}
      */
     buildFieldId: function(id) {
-        return 'fields' + '_' + 'field' + '_' + id;
+        return A.Escape.html('fields' + '_' + 'field' + '_' + id);
     },
 
     /**
@@ -504,7 +504,7 @@ var FormBuilderField = A.Component.create({
      * @return {String}
      */
     buildFieldName: function(type) {
-        return type + (++A.Env._uidx);
+        return A.Escape.html(type + (++A.Env._uidx));
     },
 
     /**
