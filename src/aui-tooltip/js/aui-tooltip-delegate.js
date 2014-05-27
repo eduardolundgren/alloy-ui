@@ -82,9 +82,9 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
                 bindDOMEvents: false,
                 duration: instance.get('duration'),
                 formatter: instance.get('formatter'),
+                html: instance.get('html'),
                 opacity: instance.get('opacity'),
                 position: instance.get('position'),
-                unescapeValue: instance.get('unescapeValue'),
                 visible: false,
                 zIndex: instance.get('zIndex')
             });
@@ -163,6 +163,19 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
             writeOnce: true
         },
 
+        /**
+         * Insert HTML into the tooltip. If false, text will be used to insert
+         * content into the DOM. Use text if you're worried about XSS attacks.
+         *
+         * @attribute html
+         * @default false
+         * @type {Boolean}
+         */
+        html: {
+            value: false,
+            validator: Lang.isBoolean
+        },
+
         formatter: A.Tooltip.ATTRS.formatter,
 
         /**
@@ -205,19 +218,6 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
             validator: Lang.isString,
             value: 'mouseenter',
             writeOnce: true
-        },
-
-        /**
-         * Unescape the tooltip content allowing arbitary HTML to be
-         * inserted inside the tooltip without being escaped as plain text.
-         *
-         * @attribute unescapeValue
-         * @default false
-         * @type Boolean
-         */
-        unescapeValue: {
-            value: false,
-            validator: A.Lang.isBoolean
         },
 
         /**

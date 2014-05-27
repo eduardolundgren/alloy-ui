@@ -158,10 +158,13 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
             trigger.removeAttribute('title').setAttribute('data-title', title);
         }
 
-        value = trigger && title || instance.get('bodyContent');
+        value = instance.get('bodyContent');
 
-        if (!instance.get('unescapeValue')) {
-            value = A.Escape.html(value);
+        if (title) {
+            if (!instance.get('html')) {
+                title = A.Escape.html(title);
+            }
+            value = title;
         }
 
         instance.setStdModContent(A.WidgetStdMod.BODY, value);
@@ -248,6 +251,19 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
         },
 
         /**
+         * Insert HTML into the tooltip. If false, text will be used to insert
+         * content into the DOM. Use text if you're worried about XSS attacks.
+         *
+         * @attribute html
+         * @default false
+         * @type {Boolean}
+         */
+        html: {
+            value: false,
+            validator: Lang.isBoolean
+        },
+
+        /**
          * Determine the opacity.
          *
          * @attribute opacity
@@ -268,19 +284,6 @@ A.Tooltip = A.Base.create('tooltip', A.Widget, [
         triggerShowEvent: {
             validator: Lang.isString,
             value: 'mouseenter'
-        },
-
-        /**
-         * Unescape the tooltip content allowing arbitary HTML to be
-         * inserted inside the tooltip without being escaped as plain text.
-         *
-         * @attribute unescapeValue
-         * @default false
-         * @type Boolean
-         */
-        unescapeValue: {
-            value: false,
-            validator: A.Lang.isBoolean
         }
     },
 
