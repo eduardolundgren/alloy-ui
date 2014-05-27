@@ -2,9 +2,31 @@
     "aui-carousel": {
         "requires": [
             "anim",
+            "event-resize",
             "node-event-delegate",
             "aui-component"
         ],
         "skinnable": true
+    },
+
+    "aui-carousel-swipe": {
+        "requires": [
+            "aui-carousel",
+            "base-build",
+            "scrollview",
+            "scrollview-paginator"
+        ],
+        "skinnable": true
+    },
+
+    "aui-carousel-touch": {
+        "requires": [
+            "aui-carousel-swipe",
+            "base-build"
+        ],
+        "condition": {
+            "trigger": "aui-carousel",
+            "ua": "touchEnabled"
+        }
     }
 }

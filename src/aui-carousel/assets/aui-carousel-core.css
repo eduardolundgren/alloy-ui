@@ -1,8 +1,21 @@
 .carousel {
+    margin-left: 0;
+    margin-right: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.carousel.carousel-outside-menu {
+    padding-bottom: 24px;
+}
+
+.carousel-content {
+    height: 100%;
     position: relative;
 }
 
 .carousel-item {
+    padding: 0;
     position: absolute;
     z-index: 1;
 }
@@ -15,6 +28,16 @@
     z-index: 3;
 }
 
+.carousel.carousel-outside-menu .carousel-menu {
+    text-align: center;
+}
+
+.carousel.carousel-outside-menu .carousel-menu menu {
+    background: none;
+    display: inline-block;
+    position: static;
+}
+
 .carousel menu {
     background: #000;
     bottom: 6px;
@@ -24,6 +47,8 @@
     padding: 3px;
     right: 6px;
     z-index: 4;
+    -webkit-user-select: none;
+    -moz-user-select: none;
 }
 
 .carousel menu li, .carousel menu a {
@@ -68,6 +93,10 @@
 
 .carousel-menu-active {
     background: #FFF;
+}
+
+.carousel.carousel-outside-menu .carousel-menu-active {
+    background: #aaa;
 }
 
 .carousel-hidden {

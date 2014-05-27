@@ -11,6 +11,7 @@ var Lang = A.Lang,
     CSS_ITEM = getCN('carousel', 'item'),
     CSS_ITEM_ACTIVE = getCN('carousel', 'item', 'active'),
     CSS_ITEM_TRANSITION = getCN('carousel', 'item', 'transition'),
+    CSS_MENU = getCN('carousel', 'menu'),
     CSS_MENU_ACTIVE = getCN('carousel', 'menu', 'active'),
     CSS_MENU_INDEX = getCN('carousel', 'menu', 'index'),
     CSS_MENU_ITEM = getCN('carousel', 'menu', 'item'),
@@ -20,20 +21,15 @@ var Lang = A.Lang,
     CSS_MENU_PREV = getCN('carousel', 'menu', 'prev'),
     CSS_MENU_ITEM_DEFAULT = [CSS_MENU_ITEM, CSS_MENU_INDEX].join(' '),
     CSS_MENU_ITEM_ACTIVE = [CSS_MENU_ITEM, CSS_MENU_INDEX, CSS_MENU_ACTIVE].join(' '),
+    CSS_OUTSIDE_MENU = getCN('carousel', 'outside', 'menu'),
+
+    NODE_MENU_INSIDE = 'inside',
+    NODE_MENU_OUTSIDE = 'outside',
 
     SELECTOR_MENU_INDEX = '.' + CSS_MENU_INDEX,
     SELECTOR_MENU_PAUSE = '.' + CSS_MENU_PAUSE,
     SELECTOR_MENU_PLAY = '.' + CSS_MENU_PLAY,
     SELECTOR_MENU_PLAY_OR_PAUSE = [SELECTOR_MENU_PLAY, SELECTOR_MENU_PAUSE].join(),
-
-    TPL_ITEM = '<li><a class="' + CSS_MENU_ITEM + ' {cssClasses}">{index}</a></li>',
-
-    TPL_MENU = '<menu>' +
-        '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PLAY + '"></a></li>' +
-        '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PREV + '"></a></li>' +
-        '{items}' +
-        '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_NEXT + '"></a></li>' +
-        '</menu>',
 
     UI_SRC = A.Widget.UI_SRC,
 
@@ -54,6 +50,14 @@ var Lang = A.Lang,
  * @include http://alloyui.com/examples/carousel/basic-markup.html
  * @include http://alloyui.com/examples/carousel/basic.js
  */
+
+/**
+ * Fired when a new image will be shown.
+ *
+ * @event showImage
+ * @preventable _defShowImageFn
+ */
+
 var Carousel = A.Component.create({
     /**
      * Static property provides a string to identify the class.
@@ -96,6 +100,28 @@ var Carousel = A.Component.create({
          */
         animationTime: {
             value: 0.5
+        },
+
+        /**
+         * Height of the images being used in the carousel.
+         *
+         * @attribute imageHeight
+         * @default 200
+         * @type Number
+         */
+        imageHeight: {
+            value: 200
+        },
+
+        /**
+         * Width of the images being used in the carousel.
+         *
+         * @attribute imageWidth
+         * @default 600
+         * @type Number
+         */
+        imageWidth: {
+            value: 600
         },
 
         /**
@@ -145,6 +171,18 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * Position of the menu.
+         *
+         * @attribute nodeMenuPosition
+         * @default 'inside'
+         * @type String
+         */
+        nodeMenuPosition: {
+            value: NODE_MENU_INSIDE,
+            validator: '_validateNodeMenuPosition'
+        },
+
+        /**
          * Determines if `A.Carousel` will pause on mouse enter or play when
          * mouse leave.
          *
@@ -169,9 +207,18 @@ var Carousel = A.Component.create({
         }
     },
 
-    UI_ATTRS: ['pauseOnHover'],
+    UI_ATTRS: ['pauseOnHover', 'nodeMenuPosition'],
 
     prototype: {
+        TPL_ITEM: '<li><a class="' + CSS_MENU_ITEM + ' {cssClasses}">{index}</a></li>',
+
+        TPL_MENU: '<div class="' + CSS_MENU + '"><menu>' +
+            '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PLAY + '"></a></li>' +
+            '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PREV + '"></a></li>' +
+            '{items}' +
+            '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_NEXT + '"></a></li>' +
+            '</menu></div>',
+
         animation: null,
         nodeSelection: null,
         nodeMenu: null,
@@ -191,6 +238,12 @@ var Carousel = A.Component.create({
                 duration: instance.get('animationTime'),
                 to: {
                     opacity: 1
+                }
+            });
+
+            this.publish({
+                showImage: {
+                    defaultFn: this._defShowImageFn
                 }
             });
         },
@@ -352,6 +405,7 @@ var Carousel = A.Component.create({
             var instance = this;
 
             instance._updateNodeSelection();
+            instance._updateImagesResponsiveness();
         },
 
         /**
@@ -489,6 +543,49 @@ var Carousel = A.Component.create({
         },
 
         /**
+         * The default function for the `showImage` event.
+         * It will properly show the image, animating it if requested.
+         *
+         * @method _defShowImageFn
+         * @param {EventFacade} event
+         * @protected
+         */
+        _defShowImageFn: function(event) {
+            var activeIndex = this.get('activeIndex'),
+                hasPrevious = !Lang.isUndefined(event.prevVal),
+                newImage = this.nodeSelection.item(activeIndex),
+                oldImage,
+                onEnd;
+
+            newImage.addClass(CSS_ITEM_ACTIVE);
+
+            if (hasPrevious) {
+                oldImage = this.nodeSelection.item(event.prevVal);
+                oldImage.removeClass(CSS_ITEM_ACTIVE);
+
+                this.animation.stop();
+
+                if (event.animate) {
+                    newImage.setStyle('opacity', '0');
+
+                    oldImage.addClass(CSS_ITEM_TRANSITION);
+
+                    onEnd = this.animation.on(
+                        'end',
+                        function() {
+                            oldImage.removeClass(CSS_ITEM_TRANSITION);
+
+                            onEnd.detach();
+                        }
+                    );
+
+                    this.animation.set('node', newImage);
+                    this.animation.run();
+                }
+            }
+        },
+
+        /**
          * Checks if the mouse is inside the menu region.
          *
          * @method  _isMouseInsideMenu
@@ -502,49 +599,13 @@ var Carousel = A.Component.create({
         },
 
         /**
-         * Fire when animation ends.
+         * Checks if the carousel is responsive.
          *
-         * @method _onAnimationEnd
-         * @param event
-         * @param newImage
-         * @param oldImage
-         * @param newMenuItem
-         * @param oldMenuItem
+         * @method _isResponsive
          * @protected
          */
-        _onAnimationEnd: function(event, newImage, oldImage) {
-            if (oldImage) {
-                oldImage.removeClass(CSS_ITEM_TRANSITION);
-            }
-
-            newImage.setStyle('opacity', '1');
-        },
-
-        /**
-         * Fire when animation starts.
-         *
-         * @method _onAnimationStart
-         * @param event
-         * @param newImage
-         * @param oldImage
-         * @param newMenuItem
-         * @param oldMenuItem
-         * @protected
-         */
-        _onAnimationStart: function(event, newImage, oldImage, newMenuItem, oldMenuItem) {
-            newImage.addClass(CSS_ITEM_ACTIVE);
-
-            if (newMenuItem) {
-                newMenuItem.addClass(CSS_MENU_ACTIVE);
-            }
-
-            if (oldImage) {
-                oldImage.replaceClass(CSS_ITEM_ACTIVE, CSS_ITEM_TRANSITION);
-            }
-
-            if (oldMenuItem) {
-                oldMenuItem.removeClass(CSS_MENU_ACTIVE);
-            }
+        _isResponsive: function() {
+            return !this.get('width');
         },
 
         /**
@@ -705,18 +766,18 @@ var Carousel = A.Component.create({
 
             for (i = 0; i < len; i++) {
                 items.push(
-                    Lang.sub(TPL_ITEM, {
+                    Lang.sub(this.TPL_ITEM, {
                         cssClasses: activeIndex === i ? CSS_MENU_ITEM_ACTIVE : CSS_MENU_ITEM_DEFAULT,
                         index: i
                     })
                 );
             }
 
-            var menu = A.Node.create(Lang.sub(TPL_MENU, {
+            var menu = A.Node.create(Lang.sub(this.TPL_MENU, {
                 items: items.join(' ')
             }));
 
-            instance.get('contentBox').appendChild(menu);
+            instance.get('boundingBox').appendChild(menu);
 
             return menu;
         },
@@ -763,70 +824,54 @@ var Carousel = A.Component.create({
          * @protected
          */
         _uiSetActiveIndex: function(newVal, objOptions) {
-            var instance = this;
+            var newMenuItem = this.menuNodes.item(newVal),
+                oldMenuItem;
 
-            var oldImage = null;
-            var oldMenuItem = null;
-            var onStart = null;
-            var onEnd = null;
-
-            var newImage = instance.nodeSelection.item(newVal);
-
-            var menuNodes = instance.menuNodes;
-
-            var newMenuItem = menuNodes.item(newVal);
-
-            instance.animation.set('node', newImage);
+            if (newMenuItem) {
+                newMenuItem.addClass(CSS_MENU_ACTIVE);
+            }
 
             if (objOptions && !Lang.isUndefined(objOptions.prevVal)) {
-                var prevVal = objOptions.prevVal;
-
-                newImage.setStyle('opacity', '0');
-
-                oldMenuItem = menuNodes.item(prevVal);
-                oldImage = instance.nodeSelection.item(prevVal);
-
-                oldImage.replaceClass(CSS_ITEM_ACTIVE, CSS_ITEM_TRANSITION);
-
-                instance.animation.stop();
-            }
-            else {
-                newImage.addClass(CSS_ITEM_ACTIVE);
-
-                newImage.setStyle('opacity', '1');
-            }
-
-            onStart = instance.animation.on(
-                'start',
-                function(event) {
-                    instance._onAnimationStart(event, newImage, oldImage, newMenuItem, oldMenuItem);
-
-                    onStart.detach();
-                }
-            );
-
-            onEnd = instance.animation.on(
-                'end',
-                function(event) {
-                    instance._onAnimationEnd(event, newImage, oldImage, newMenuItem, oldMenuItem);
-
-                    onEnd.detach();
-                }
-            );
-
-            if (objOptions) {
-                if (objOptions.animate) {
-                    instance.animation.run();
-                }
-                else {
-                    instance.animation.fire('start');
-                    instance.animation.fire('end');
-                }
-
-                if (objOptions.src === UI_SRC && objOptions.animate) {
-                    instance._createIntervalRotationTask();
+                oldMenuItem = this.menuNodes.item(objOptions.prevVal);
+                if (oldMenuItem) {
+                    oldMenuItem.removeClass(CSS_MENU_ACTIVE);
                 }
             }
+
+            this.fire('showImage', {
+                animate: objOptions && objOptions.animate,
+                prevVal: objOptions && objOptions.prevVal
+            });
+
+            if (objOptions && objOptions.src === UI_SRC && objOptions.animate) {
+                this._createIntervalRotationTask();
+            }
+        },
+
+        /**
+         * Sets the height on the widget's bounding box element
+         *
+         * @method _uiSetHeight
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetHeight: function(val) {
+            A.Carousel.superclass._uiSetHeight.call(this, val);
+
+            this._updateHeight();
+        },
+
+        /**
+         * Sets `nodeMenuPosition` on the UI.
+         *
+         * @method _uiSetNodeMenuPosition
+         * @param {String} val The value of the property.
+         * @protected
+         */
+        _uiSetNodeMenuPosition: function(val) {
+            this.get('boundingBox').toggleClass(CSS_OUTSIDE_MENU, val === NODE_MENU_OUTSIDE);
+
+            this._updateHeight();
         },
 
         /**
@@ -851,6 +896,93 @@ var Carousel = A.Component.create({
             else {
                 (new A.EventHandle(this.hoverEventHandles)).detach();
                 this.hoverEventHandles = null;
+            }
+        },
+
+        /**
+         * Sets the width on the widget's bounding box element
+         *
+         * @method _uiSetWidth
+         * @protected
+         * @param {String | Number} val
+         */
+        _uiSetWidth: function(val) {
+            A.Carousel.superclass._uiSetWidth.call(this, val);
+
+            if (val) {
+                if (this._responsiveHandles) {
+                    (new A.EventHandle(this._responsiveHandles)).detach();
+                }
+
+                this.get('boundingBox').removeClass('row');
+
+                this.get('boundingBox').setStyle('width', this.get('width'));
+                this.get('boundingBox').setStyle('height', this.get('height'));
+            }
+            else {
+                if (!this._responsiveHandles) {
+                    this._responsiveHandles = [
+                        A.on('windowresize', A.bind(this._updateHeight, this)),
+                        this.after('imageWidthChange', this._updateHeight),
+                        this.after('imageHeightChange', this._updateHeight)
+                    ];
+                }
+
+                this.get('boundingBox').addClass('row');
+
+                this.get('boundingBox').setStyle('width', '');
+                this.get('boundingBox').setStyle('height', '');
+            }
+
+            this._updateImagesResponsiveness();
+            this._updateHeight();
+        },
+
+        /**
+         * Updates the carousel's image nodes to be responsive or not, depending
+         * on the current configuration.
+         *
+         * @method _updateImagesResponsiveness
+         * @protected
+         */
+        _updateImagesResponsiveness: function() {
+            var style;
+
+            if (this._isResponsive()) {
+                this.nodeSelection.addClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    style = {
+                        height: image.getStyle('height'),
+                        width: image.getStyle('width')
+                    };
+
+                    image.setStyle('height', 'inherit');
+                    image.setStyle('width', '');
+
+                    if (image.getStyle('backgroundImage') !== 'none') {
+                        A.mix(style, {
+                            'backgroundRepeat': image.getStyle('backgroundRepeat'),
+                            'backgroundSize': image.getStyle('backgroundSize')
+                        });
+
+                        image.setStyle('backgroundRepeat', 'no-repeat');
+                        image.setStyle('backgroundSize', 'contain');
+                    }
+
+                    if (!image.getData('unresponsiveStyle')) {
+                        image.setData('unresponsiveStyle', style);
+                    }
+                });
+            }
+            else {
+                this.nodeSelection.removeClass('col-xs-12');
+
+                this.nodeSelection.each(function(image) {
+                    if (image.getData('unresponsiveStyle')) {
+                        image.setStyles(image.getData('unresponsiveStyle'));
+                    }
+                });
             }
         },
 
@@ -927,15 +1059,54 @@ var Carousel = A.Component.create({
          * @protected
          */
         _updateNodeSelection: function() {
-            var instance = this;
-
-            var itemSelector = instance.get('itemSelector');
-
-            var nodeSelection = instance.get('contentBox').all(itemSelector);
+            var instance = this,
+                itemSelector = instance.get('itemSelector'),
+                nodeSelection = instance.get('contentBox').all(itemSelector);
 
             nodeSelection.addClass(CSS_ITEM);
 
             instance.nodeSelection = nodeSelection;
+        },
+
+        /**
+         * Scales the carousel to fit on the screen, based on the current image's
+         * original size. If the carousel's width was set to a fixed value this
+         * function won't do anything though.
+         *
+         * @method _updateHeight
+         * @protected
+         */
+        _updateHeight: function() {
+            var boundingBox = this.get('boundingBox'),
+                boundingBoxVerticalPadding,
+                boundingBoxWidth = parseInt(boundingBox.getComputedStyle('width'), 10),
+                height,
+                width;
+
+            if (!this._isResponsive()) {
+                return;
+            }
+
+            width = this.get('imageWidth');
+            height = this.get('height') ? this.get('height') : this.get('imageHeight');
+            boundingBoxVerticalPadding = parseInt(boundingBox.getStyle('padding-top') || 0, 10) +
+                parseInt(boundingBox.getStyle('padding-bottom') || 0, 10);
+            boundingBox.setStyle(
+                'height',
+                ((height * boundingBoxWidth) / width) + boundingBoxVerticalPadding + 'px'
+            );
+        },
+
+        /**
+         * Validates the given value for the `nodeMenuPosition` attribute.
+         *
+         * @method _validateNodeMenuPosition
+         * @param {String} val The value to be validated
+         * @return {Boolean} `true` if the value is valid or `false` otherwise
+         * @protected
+         */
+        _validateNodeMenuPosition: function(val) {
+            return val === NODE_MENU_INSIDE || val === NODE_MENU_OUTSIDE;
         },
 
         _intervalRotationTask: null
