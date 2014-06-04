@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
     <script src="../../build/aui/aui.js"></script>
     <style>
+        #content {
+            height: 2000px;
+        }
+
         .modal-content {
             overflow: hidden;
         }
@@ -14,20 +18,29 @@
 </head>
 <body class="yui3-skin-sam">
     <h1>AlloyUI - Modal</h1>
-    <div id="content"></div>
+    <div id="content">
+        <p>
+            destroyOnHide: <span id="destroyOnHideValue"></span>
+        </p>
+        <p>
+            parentScrollable: <span id="parentScrollableValue"></span>
+        </p>
+        <button class="btn btn-default" id="showDialog">Show Dialog</button>
+        <button class="btn btn-default" id="createNewDialog">Create Dialog</button>
+        <button class="btn btn-default" id="destroyOnHideToggle">Toggle destroyOnHide</button>
+        <button class="btn btn-default" id="parentScrollableToggle">Toggle parentScrollable</button>
+    </div>
     <script>
-    YUI({ filter:'raw' }).use('aui-modal', 'resize-proxy', function(Y) {
-
-        console.time('How long does it take?');
-
-        var modal = new Y.Modal({
+    YUI({ filter:'raw' }).use('aui-modal', 'aui-node', 'resize-proxy', function(Y) {
+        var config = {
             bodyContent: 'One fine body…',
             centered: true,
             cssClass: 'foo',
-            destroyOnHide: true,
+            // destroyOnHide: true,
             headerContent: '<h3>Modal header</h3>',
             // height: 400,
             modal: true,
+            parentScrollable: false,
             render: '#content',
             visible: true,
             // draggable: false,
@@ -48,7 +61,11 @@
             //         { icon: 'Footer' }
             //     ]
             // }
-        }).render();
+        };
+
+        console.time('How long does it take?');
+
+        var modal = new Y.Modal(config).render();
 
         modal.addToolbar([
             {
@@ -68,6 +85,40 @@
 
         console.timeEnd('How long does it take?');
 
+        var destroyOnHideValue =  Y.one('#destroyOnHideValue');
+        var parentScrollableValue = Y.one('#parentScrollableValue');
+
+        destroyOnHideValue.html(modal.get('destroyOnHide'));
+        parentScrollableValue.html(modal.get('parentScrollable'));
+
+        Y.one('#createNewDialog').on('click', function() {
+            if (modal.get('destroyed')) {
+                modal = new Y.Modal(config).render();
+
+                destroyOnHideValue.html(modal.get('destroyOnHide'));
+                parentScrollableValue.html(modal.get('parentScrollable'));
+            }
+        });
+
+        Y.one('#destroyOnHideToggle').on('click', function() {
+            var destroyOnHide = !modal.get('destroyOnHide');
+
+            modal.set('destroyOnHide', destroyOnHide);
+
+            destroyOnHideValue.html(destroyOnHide);
+        });
+
+        Y.one('#parentScrollableToggle').on('click', function() {
+            var parentScrollable = !modal.get('parentScrollable');
+
+            modal.set('parentScrollable', parentScrollable);
+
+            parentScrollableValue.html(parentScrollable);
+        });
+
+        Y.one('#showDialog').on('click', function() {
+            modal.show();
+        });
     });
     </script>
 </body>
