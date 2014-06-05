@@ -28,37 +28,37 @@
     </div>
     <script>
     YUI({ filter:'raw' }).use('aui-modal', 'aui-node', 'resize-proxy', function(Y) {
-        var config = {
-                bodyContent: 'One fine body…',
-                centered: true,
-                cssClass: 'foo',
-                // destroyOnHide: true,
-                headerContent: '<h3>Modal header</h3>',
-                // height: 400,
-                modal: true,
-                render: '#content',
-                visible: true,
-                // draggable: false,
-                // resizable: {
-                //     handles: 'br, r',
-                //     plugins: [
-                //         { fn: Y.Plugin.ResizeProxy }
-                //     ]
-                // },
-                // toolbars: {
-                //     header: [
-                //         { icon: 'glyphicon glyphicon-camera' },
-                //     ],
-                //     body: [
-                //         { label: 'Body' }
-                //     ],
-                //     footer: [
-                //         { icon: 'Footer' }
-                //     ]
-                // }
-            };
-
         console.time('How long does it take?');
+
+        var config = {
+            bodyContent: 'One fine body…',
+            centered: true,
+            cssClass: 'foo',
+            // destroyOnHide: true,
+            headerContent: '<h3>Modal header</h3>',
+            // height: 400,
+            modal: true,
+            render: '#content',
+            visible: true
+            // draggable: false,
+            // resizable: {
+            //     handles: 'br, r',
+            //     plugins: [
+            //         { fn: Y.Plugin.ResizeProxy }
+            //     ]
+            // },
+            // toolbars: {
+            //     header: [
+            //         { icon: 'glyphicon glyphicon-camera' },
+            //     ],
+            //     body: [
+            //         { label: 'Body' }
+            //     ],
+            //     footer: [
+            //         { icon: 'Footer' }
+            //     ]
+            // }
+        };
 
         var modal = new Y.Modal(config).render();
 
