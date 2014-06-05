@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
     <script src="../../build/aui/aui.js"></script>
     <style>
+        #content {
+            height: 2000px;
+        }
+
         .modal-content {
             overflow: hidden;
         }
@@ -14,22 +18,28 @@
 </head>
 <body class="yui3-skin-sam">
     <h1>AlloyUI - Modal</h1>
-    <div id="content"></div>
+    <div id="content">
+        <p>
+            destroyOnHide: <span id="destroyOnHideValue"></span>
+        </p>
+        <button class="btn btn-default" id="showDialog">Show Dialog</button>
+        <button class="btn btn-default" id="createNewDialog">Create Dialog</button>
+        <button class="btn btn-default" id="destroyOnHideToggle">Toggle destroyOnHide</button>
+    </div>
     <script>
-    YUI({ filter:'raw' }).use('aui-modal', 'resize-proxy', function(Y) {
-
+    YUI({ filter:'raw' }).use('aui-modal', 'aui-node', 'resize-proxy', function(Y) {
         console.time('How long does it take?');
 
-        var modal = new Y.Modal({
+        var config = {
             bodyContent: 'One fine body…',
             centered: true,
             cssClass: 'foo',
-            destroyOnHide: true,
+            // destroyOnHide: true,
             headerContent: '<h3>Modal header</h3>',
             // height: 400,
             modal: true,
             render: '#content',
-            visible: true,
+            visible: true
             // draggable: false,
             // resizable: {
             //     handles: 'br, r',
@@ -48,7 +58,9 @@
             //         { icon: 'Footer' }
             //     ]
             // }
-        }).render();
+        };
+
+        var modal = new Y.Modal(config).render();
 
         modal.addToolbar([
             {
@@ -68,6 +80,45 @@
 
         console.timeEnd('How long does it take?');
 
+        var destroyOnHideValue =  Y.one('#destroyOnHideValue');
+
+        destroyOnHideValue.html(modal.get('destroyOnHide'));
+
+        Y.one('#createNewDialog').on('click', function() {
+            if (modal.get('destroyed')) {
+                modal = new Y.Modal(config).render();
+
+                modal.addToolbar([
+                    {
+                        label: 'Cancel',
+                        on: {
+                            click: function() { modal.hide(); }
+                        }
+                    },
+                    {
+                        label: 'Okay',
+                        on: {
+                            click: function() { alert('This is the primary action!'); }
+                        },
+                        primary: true
+                    }
+                ]);
+
+                destroyOnHideValue.html(modal.get('destroyOnHide'));
+            }
+        });
+
+        Y.one('#destroyOnHideToggle').on('click', function() {
+            var destroyOnHide = !modal.get('destroyOnHide');
+
+            modal.set('destroyOnHide', destroyOnHide);
+
+            destroyOnHideValue.html(destroyOnHide);
+        });
+
+        Y.one('#showDialog').on('click', function() {
+            modal.show();
+        });
     });
     </script>
 </body>

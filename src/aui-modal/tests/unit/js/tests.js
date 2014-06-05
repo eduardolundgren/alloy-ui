@@ -8,6 +8,8 @@ YUI.add('aui-modal-tests', function(Y) {
         modal,
         boundingBox,
 
+        CSS_MODAL_OPEN = Y.getClassName('modal-open'),
+
         ERROR_PLUGIN_AVAILABLE = '{0} plugin should not be available',
         ERROR_PLUGIN_MISSING = '{0} plugin was not plugged',
         ERROR_PLUGIN_OVERRIDEN = '{0} attribute should not be overriden',
@@ -143,8 +145,57 @@ YUI.add('aui-modal-tests', function(Y) {
 
     }));
 
+    //--------------------------------------------------------------------------
+    // Test Case for Scroll
+    //--------------------------------------------------------------------------
+
+    suite.add(new Y.Test.Case({
+
+        name: 'Scroll',
+
+        setUp: function() {
+            if (modal) {
+                modal.destroy();
+            }
+
+            modal = new Y.Modal().render('#modal');
+
+            boundingBox = modal.get('boundingBox');
+        },
+
+        tearDown: function() {
+            modal.destroy();
+
+            modal = null;
+            boundingBox = null;
+        },
+
+        //----------------------------------------------------------------------
+        // Tests
+        //----------------------------------------------------------------------
+
+        // Tests: AUI-1336
+        'check modal-open class after visibleChange': function() {
+            var elements = Y.all('body,html');
+
+            modal.show();
+
+            var modalOpen = elements.hasClass(CSS_MODAL_OPEN);
+
+            Y.Assert.isTrue(modalOpen[0]);
+            Y.Assert.isTrue(modalOpen[1]);
+
+            modal.hide();
+
+            modalOpen = elements.hasClass(CSS_MODAL_OPEN);
+
+            Y.Assert.isFalse(modalOpen[0]);
+            Y.Assert.isFalse(modalOpen[1]);
+        }
+    }));
+
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['aui-modal', 'node-event-simulate', 'test']
+    requires: ['aui-modal', 'aui-node-base', 'node-event-simulate', 'test']
 });
