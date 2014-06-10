@@ -5,6 +5,12 @@
             "jsfiles": [
                 "js/aui-modal.js"
             ]
+        },
+
+        "aui-modal-desktop": {
+            "jsfiles": [
+                "js/aui-modal-desktop.js"
+            ]
         }
     }
 }

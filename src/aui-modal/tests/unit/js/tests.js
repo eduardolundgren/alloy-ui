@@ -13,7 +13,10 @@ YUI.add('aui-modal-tests', function(Y) {
         ERROR_PLUGIN_AVAILABLE = '{0} plugin should not be available',
         ERROR_PLUGIN_MISSING = '{0} plugin was not plugged',
         ERROR_PLUGIN_OVERRIDEN = '{0} attribute should not be overriden',
-        ERROR_PLUGIN_PLUGGED = '{0} plugin should not be already plugged';
+        ERROR_PLUGIN_PLUGGED = '{0} plugin should not be already plugged',
+
+        UA = Y.UA,
+        TOUCH_ENABLED = UA.touchEnabled;
 
     //--------------------------------------------------------------------------
     // Test Case for Plug/Unplug
@@ -44,33 +47,38 @@ YUI.add('aui-modal-tests', function(Y) {
         //----------------------------------------------------------------------
 
         'toggle resize functionality': function() {
-            if (!Y.UA.touchEnabled) {
-                Y.Assert.isUndefined(modal.resize, Y.Lang.sub(ERROR_PLUGIN_OVERRIDEN, ['resize']));
-                Y.Assert.isUndefined(
-                    modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['resize']));
-
-                boundingBox.simulate('click');
+            if (UA.mobile) {
+                Y.Assert.isUndefined(modal.get('resizable'), Y.Lang.sub(ERROR_PLUGIN_AVAILABLE, ['resize']));
             }
+            else {
+                if (!TOUCH_ENABLED) {
+                    Y.Assert.isUndefined(modal.resize, Y.Lang.sub(ERROR_PLUGIN_OVERRIDEN, ['resize']));
+                    Y.Assert.isUndefined(
+                        modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['resize']));
 
-            Y.Assert.isNotUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_MISSING, ['resize']));
+                    boundingBox.simulate('click');
+                }
 
-            modal.set('resizable', false);
-            Y.Assert.isUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_AVAILABLE, ['resize']));
+                Y.Assert.isNotUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_MISSING, ['resize']));
 
-            modal.set('resizable', true);
+                modal.set('resizable', false);
+                Y.Assert.isUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_AVAILABLE, ['resize']));
 
-            if (!Y.UA.touchEnabled) {
-                Y.Assert.isUndefined(
-                    modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['resize']));
+                modal.set('resizable', true);
 
-                boundingBox.simulate('click');
+                if (!TOUCH_ENABLED) {
+                    Y.Assert.isUndefined(
+                        modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['resize']));
+
+                    boundingBox.simulate('click');
+                }
+
+                Y.Assert.isNotUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_MISSING, ['resize']));
             }
-
-            Y.Assert.isNotUndefined(modal.hasPlugin('resize'), Y.Lang.sub(ERROR_PLUGIN_MISSING, ['resize']));
         },
 
         'toggle drag functionality': function() {
-            if (!Y.UA.touchEnabled) {
+            if (!TOUCH_ENABLED) {
                 Y.Assert.isUndefined(modal.dd, Y.Lang.sub(ERROR_PLUGIN_OVERRIDEN, ['dd']));
                 Y.Assert.isUndefined(modal.hasPlugin('dd'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['dd']));
 
@@ -84,7 +92,7 @@ YUI.add('aui-modal-tests', function(Y) {
 
             modal.set('draggable', true);
 
-            if (!Y.UA.touchEnabled) {
+            if (!TOUCH_ENABLED) {
                 Y.Assert.isUndefined(modal.hasPlugin('dd'), Y.Lang.sub(ERROR_PLUGIN_PLUGGED, ['dd']));
 
                 boundingBox.simulate('click');
