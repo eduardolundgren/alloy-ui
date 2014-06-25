@@ -115,6 +115,8 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
      * @protected
      */
     initializer: function() {
+        var instance = this;
+
         this.routes = [];
         this.surfaces = {};
         this.screens = {};
@@ -128,7 +130,11 @@ A.SurfaceApp = A.Base.create('surface-app', A.Base, [], {
             endNavigate: {}
         });
         A.on('scroll', A.debounce(this._onScroll, 50, this));
-        A.on('popstate', this._onPopState, win, this);
+
+        this.on('domready', function() {
+            A.on('popstate', instance._onPopState, win, instance);
+        });
+
         A.delegate('click', this._onDocClick, doc, this.get('linkSelector'), this);
     },
 
