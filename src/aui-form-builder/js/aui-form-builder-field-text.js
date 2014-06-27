@@ -75,7 +75,7 @@ var FormBuilderTextField = A.Component.create({
         width: {
             setter: function(val) {
                 val = L.String.toLowerCase(val);
-                return (val in WIDTH_VALUES_MAP) ? val : 'small';
+                return (WIDTH_VALUES_MAP[val]) ? val : 'small';
             }
         }
 
