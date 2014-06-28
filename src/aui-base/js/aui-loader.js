@@ -504,6 +504,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-dialog-iframe-deprecated": {
         "requires": [
             "plugin",
+            "array-invoke",
             "aui-base-deprecated",
             "aui-loading-mask-deprecated"
         ],
@@ -1617,4 +1618,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '9a8e6df28a3d5a40c2b870453cf6675e';
+YUI.Env[Y.version].md5 = 'fe1db62802b89adeecc5cd8ffb24cea8';
