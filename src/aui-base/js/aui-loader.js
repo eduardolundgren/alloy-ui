@@ -262,12 +262,12 @@ Y.mix(YUI.Env[Y.version].modules, {
     "aui-color-picker-base-deprecated": {
         "requires": [
             "dd-drag",
+            "panel",
             "slider",
             "aui-button-item-deprecated",
             "aui-color-util-deprecated",
             "aui-form-base-deprecated",
-            "aui-overlay-context-deprecated",
-            "aui-panel-deprecated"
+            "aui-overlay-context-deprecated"
         ],
         "skinnable": true
     },
@@ -1739,4 +1739,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = '00f5c273748c54b4f0e7214a605aa000';
+YUI.Env[Y.version].md5 = '67a3f3ecf05d4ce6334a17305982eaf0';
