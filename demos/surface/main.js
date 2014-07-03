@@ -92,53 +92,55 @@ YUI({
     });
 
 
-    /**
-     * App
-     */
-    window.app = new Y.SurfaceApp({
-        linkSelector: 'a',
-        basePath: '/demos/surface',
-        on: {
-            startNavigate: function(event) {
-                console.log(event);
-            },
-            endNavigate: function(event) {
-                console.log(event);
+    this.on('domready', function() {
+        /**
+         * App
+         */
+        var app = new Y.SurfaceApp({
+            linkSelector: 'a',
+            basePath: '/demos/surface',
+            on: {
+                startNavigate: function(event) {
+                    console.log(event);
+                },
+                endNavigate: function(event) {
+                    console.log(event);
+                }
             }
-        }
-    });
+        });
 
-    app.addScreenRoutes([
-        {
-            path: '/dummy',
-            screen: Y.DummyScreen
-        },
-        {
-            path: '/about',
-            screen: Y.HTMLScreen
-        },
-        {
-            path: /^\/\w+\?sid=[0-9]+/,
-            screen: Y.SurfaceScreen
-        },
-        {
-            path: function(value) {
-                return value === '/home';
+        app.addScreenRoutes([
+            {
+                path: '/dummy',
+                screen: Y.DummyScreen
             },
-            screen: Y.HomeScreen
-        }
-    ]);
+            {
+                path: '/about',
+                screen: Y.HTMLScreen
+            },
+            {
+                path: /^\/\w+\?sid=[0-9]+/,
+                screen: Y.SurfaceScreen
+            },
+            {
+                path: function(value) {
+                    return value === '/home';
+                },
+                screen: Y.HomeScreen
+            }
+        ]);
 
-    app.addSurfaces([
-        new Y.Surface({
-            id: 'header',
-            transition: fade
-        }),
-        'nav',
-        'info',
-        'surface1',
-        'surface2'
-    ]);
+        app.addSurfaces([
+            new Y.Surface({
+                id: 'header',
+                transition: fade
+            }),
+            'nav',
+            'info',
+            'surface1',
+            'surface2'
+        ]);
 
-    app.dispatch();
+        app.dispatch();
+    });
 });

@@ -24,16 +24,20 @@
 </div>
 <div id="logger"></div>
 <div style="height:10000px;width:10000px;"></div>
+<iframe src="http://www.youtube.com/embed/G5aDDMpHZhY"></iframe>
 <script>
-YUI({
-    coverage: ['aui-surface-app', 'aui-surface-base', 'aui-surface-screen', 'aui-surface-screen-html', 'aui-surface-screen-route'],
-    filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
-}).use('test-console', 'test', 'aui-surface-tests', function(Y) {
+YUI().use('aui-base', function(Y) {
+    Y.ready(function() {
+        YUI({
+            coverage: ['aui-surface-app', 'aui-surface-base', 'aui-surface-screen', 'aui-surface-screen-html', 'aui-surface-screen-route'],
+            filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+        }).use('test-console', 'test','aui-surface-tests', function(Y) {
+            (new Y.Test.Console()).render('#logger');
 
-    (new Y.Test.Console()).render('#logger');
-
-    Y.Test.Runner.setName('aui-surface');
-    Y.Test.Runner.run();
+            Y.Test.Runner.setName('aui-surface');
+            Y.Test.Runner.run();
+        });
+    });
 });
 </script>
 </body>
