@@ -227,4 +227,4 @@ var FormBuilderButtonField = A.Component.create({
 
 A.FormBuilderButtonField = FormBuilderButtonField;
 
-A.namespace('FormBuilder.types').button = A.FormBuilderButtonField;
+A.FormBuilder.types.button = A.FormBuilderButtonField;

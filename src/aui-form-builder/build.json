@@ -7,7 +7,7 @@
             ]
         },
 
-        "aui-form-builder": {
+        "aui-form-builder-impl": {
             "jsfiles": [
                 "js/aui-form-builder.js"
             ]
