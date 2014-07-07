@@ -361,7 +361,7 @@ var SchedulerView = A.Component.create({
          * @param {EventFacade} event
          * @protected
          */
-        _afterVisibleChange: function(event) { },
+        _afterVisibleChange: function(event) {},
 
         /**
          * Sets this `SchedulerView`'s `scheduler` object to the given value.
