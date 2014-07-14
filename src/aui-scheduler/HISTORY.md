@@ -10,3 +10,4 @@
 
 * [AUI-1163](https://issues.liferay.com/browse/AUI-1163) Remove unnecessary constants
 * [AUI-1085](https://issues.liferay.com/browse/AUI-1085) Update Scheduler View Table to show abbreviated weekday names
+* [AUI-1451](https://issues.liferay.com/browse/AUI-1451) Create afterVisibileChange handler in the base view module
