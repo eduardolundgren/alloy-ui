@@ -62,6 +62,7 @@ var Lang = A.Lang,
 
     CSS_SCHEDULER_VIEW_DAY_COLDATA = getCN('scheduler-view', 'coldata'),
     CSS_SCHEDULER_VIEW_DAY_COLGRID = getCN('scheduler-view', 'colgrid'),
+    CSS_SCHEDULER_VIEW_DAY_CURRENT_TIME = getCN('scheduler-view', 'day', 'current', 'time'),
     CSS_SCHEDULER_VIEW_DAY_GRID = getCN('scheduler-view', 'grid'),
     CSS_SCHEDULER_VIEW_DAY_GRID_CONTAINER = getCN('scheduler-view', 'grid', 'container'),
     CSS_SCHEDULER_VIEW_DAY_HEADER_COL = getCN('scheduler-view', 'day', 'header', 'col'),
@@ -82,6 +83,9 @@ var Lang = A.Lang,
     CSS_SCHEDULER_VIEW_DAY_TABLE_COLDAY = getCN('scheduler-view', 'day', 'table', 'colday'),
     CSS_SCHEDULER_VIEW_DAY_TABLE_COLTIME = getCN('scheduler-view', 'day', 'table', 'coltime'),
     CSS_SCHEDULER_VIEW_DAY_TABLE_TIME = getCN('scheduler-view', 'day', 'table', 'time'),
+
+    TPL_SCHEDULER_VIEW_DAY_CURRENT_TIME = '<div class="' + CSS_SCHEDULER_VIEW_DAY_CURRENT_TIME +
+        '"></div>',
 
     TPL_SCHEDULER_VIEW_DAY_RESIZER = '<div class="' + CSS_SCHEDULER_VIEW_DAY_RESIZER + '">' +
         '<div class="' + [CSS_SCHEDULER_VIEW_DAY_ICON_GRIP_HORIZONTAL, CSS_SCHEDULER_VIEW_DAY_RESIZER_ICON].join(' ') +
@@ -172,6 +176,18 @@ var SchedulerDayView = A.Component.create({
          */
         bodyContent: {
             value: ''
+        },
+
+        /**
+         * Contains the function that returns the `currentTime` node.
+         *
+         * @attribute currentTimeNode
+         * return {Node}
+         */
+        currentTimeNode: {
+            valueFn: function() {
+                return A.Node.create(TPL_SCHEDULER_VIEW_DAY_CURRENT_TIME);
+            }
         },
 
         /**
@@ -459,6 +475,7 @@ var SchedulerDayView = A.Component.create({
     HTML_PARSER: {
         colDaysNode: getNodeListHTMLParser('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COLDAY, 1),
         colHeaderDaysNode: getNodeListHTMLParser('.' + CSS_SCHEDULER_VIEW_DAY_HEADER_DAY, 2),
+        currentTimeNode: '.' + CSS_SCHEDULER_VIEW_DAY_CURRENT_TIME,
         headerTableNode: '.' + CSS_SCHEDULER_VIEW_DAY_HEADER_TABLE,
         headerViewLabelNode: '.' + CSS_SCHEDULER_VIEW_DAY_HEADER_VIEW_LABEL,
         markercellsNode: getNodeListHTMLParser('.' + CSS_SCHEDULER_VIEW_DAY_MARKERCELL, 24),
@@ -490,6 +507,7 @@ var SchedulerDayView = A.Component.create({
 
             instance.colDaysNode = instance.get('colDaysNode');
             instance.colHeaderDaysNode = instance.get('colHeaderDaysNode');
+            instance.currentTimeNode = instance.get('currentTimeNode');
             instance.headerTableNode = instance.get('headerTableNode');
             instance.markercellsNode = instance.get('markercellsNode');
             instance.resizerNode = instance.get('resizerNode');
@@ -509,6 +527,20 @@ var SchedulerDayView = A.Component.create({
                     instance.get('headerViewConfig')
                 );
             }
+        },
+
+        /**
+         * Destructor implementation. Lifecycle.
+         *
+         * @method destructor
+         * @protected
+         */
+        destructor: function() {
+            if (this._eventHandles) {
+                (new A.EventHandle(this._eventHandles)).detach();
+            }
+
+            clearInterval(this._currentTimeInterval);
         },
 
         /**
@@ -541,31 +573,36 @@ var SchedulerDayView = A.Component.create({
         bindUI: function() {
             var instance = this;
 
-            instance.headerTableNode.delegate(
-                'click', A.bind(instance._onClickDaysHeader, instance), '.' + CSS_SCHEDULER_VIEW_DAY_HEADER_DAY);
+            this._eventHandles = [
+                instance.headerTableNode.delegate(
+                    'click', A.bind(instance._onClickDaysHeader, instance), '.' + CSS_SCHEDULER_VIEW_DAY_HEADER_DAY),
 
-            instance.columnData.delegate(
-                'mousedown', A.bind(instance._onMouseDownTableCol, instance), '.' +
-                CSS_SCHEDULER_VIEW_DAY_TABLE_COL);
+                instance.columnData.delegate(
+                    'mousedown', A.bind(instance._onMouseDownTableCol, instance), '.' +
+                    CSS_SCHEDULER_VIEW_DAY_TABLE_COL),
 
-            instance.columnData.delegate(
-                'mouseenter', A.bind(instance._onMouseEnterEvent, instance), '.' + CSS_SCHEDULER_EVENT);
+                instance.columnData.delegate(
+                    'mouseenter', A.bind(instance._onMouseEnterEvent, instance), '.' + CSS_SCHEDULER_EVENT),
 
-            instance.columnData.delegate(
-                'mouseleave', A.bind(instance._onMouseLeaveEvent, instance), '.' + CSS_SCHEDULER_EVENT);
+                instance.columnData.delegate(
+                    'mouseleave', A.bind(instance._onMouseLeaveEvent, instance), '.' + CSS_SCHEDULER_EVENT),
 
-            instance.columnData.delegate(
-                'mousemove', A.bind(instance._onMouseMoveTableCol, instance), '.' +
-                CSS_SCHEDULER_VIEW_DAY_TABLE_COLDAY);
+                instance.columnData.delegate(
+                    'mousemove', A.bind(instance._onMouseMoveTableCol, instance), '.' +
+                    CSS_SCHEDULER_VIEW_DAY_TABLE_COLDAY),
 
-            instance.columnData.delegate(
-                'mouseup', A.bind(instance._onMouseUpTableCol, instance), '.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL);
+                instance.columnData.delegate(
+                    'mouseup', A.bind(instance._onMouseUpTableCol, instance), '.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL),
 
-            instance.on('drag:end', instance._onEventDragEnd);
-            instance.on('drag:start', instance._onEventDragStart);
-            instance.on('drag:tickAlignY', instance._dragTickAlignY);
-            instance.on('schedulerChange', instance._onSchedulerChange);
-            instance.after('drag:align', instance._afterDragAlign);
+                instance.on('drag:end', instance._onEventDragEnd),
+                instance.on('drag:start', instance._onEventDragStart),
+                instance.on('drag:tickAlignY', instance._dragTickAlignY),
+                instance.on('schedulerChange', instance._onSchedulerChange),
+                instance.after('drag:align', instance._afterDragAlign),
+                instance.after('visibleChange', instance._afterVisibleChange)
+            ];
+
+            this._bindCurrentTimeInterval();
         },
 
         /**
@@ -580,6 +617,8 @@ var SchedulerDayView = A.Component.create({
             SchedulerDayView.superclass.syncUI.apply(this, arguments);
 
             instance.gridContainer.attr('colspan', instance.get('days'));
+
+            instance.syncCurrentTimeUI();
 
             instance._setupDragDrop();
         },
@@ -822,6 +861,7 @@ var SchedulerDayView = A.Component.create({
             });
 
             instance.syncHeaderViewUI();
+            instance.syncCurrentTimeUI();
         },
 
         /**
@@ -839,6 +879,27 @@ var SchedulerDayView = A.Component.create({
                 columnNode.toggleClass(
                     CSS_SCHEDULER_TODAY, !DateMath.isDayOverlap(columnDate, todayDate));
             });
+
+            this.syncCurrentTimeUI();
+        },
+
+        /**
+         * Syncs the `SchedulerView` current time marker. Lifecycle.
+         *
+         * @method syncCurrentTimeUI
+         */
+        syncCurrentTimeUI: function() {
+            var currentTimeNode = this.get('currentTimeNode'),
+                todayColumn = this.colDaysNode.get('parentNode').one('.' + CSS_SCHEDULER_TODAY);
+
+            if (todayColumn) {
+                todayColumn.one('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM).append(currentTimeNode);
+
+                currentTimeNode.setStyle('top', this.calculateTop(new Date()) + 'px');
+            }
+            else {
+                currentTimeNode.remove();
+            }
         },
 
         /**
@@ -1073,6 +1134,30 @@ var SchedulerDayView = A.Component.create({
             }
 
             dd.actXY[0] = null;
+        },
+
+        /**
+         * Fired after the `visible` attribute changes.
+         *
+         * @method _afterVisibleChange
+         * @protected
+         */
+        _afterVisibleChange: function() {
+            clearInterval(this._currentTimeInterval);
+
+            if (this.get('visible')) {
+                this._bindCurrentTimeInterval();
+            }
+        },
+
+        /**
+         * Binds the listener that updates the current time marker every minute.
+         *
+         * @method _bindCurrentTimeInterval
+         * @protected
+         */
+        _bindCurrentTimeInterval: function() {
+            this._currentTimeInterval = setInterval(A.bind(this.syncCurrentTimeUI, this), 60000);
         },
 
         /**

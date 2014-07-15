@@ -38,8 +38,11 @@
     border-top: 1px solid #ddd;
     color: #aba9aa;
     height: 52px;
-    margin-top: -1px;
     padding-right: 4px;
+}
+
+.scheduler-view-day-table-time:first-child {
+    margin-top: -1px;
 }
 
 .scheduler-view-day-header-table {
@@ -55,6 +58,17 @@
 
 .scheduler-view-day-content .yui3-widget-bd {
     height: 600px;
+}
+
+.scheduler-view-day-current-time {
+    border-top: 2px solid #ff7f6e;
+    height: 0;
+    left: 0;
+    position: absolute;
+    margin-top: -2px;
+    overflow: hidden;
+    width: 100%;
+    z-index: 1000;
 }
 
 .scheduler-view-day-resizer {
