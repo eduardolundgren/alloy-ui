@@ -44,17 +44,17 @@ var CSS_SCHEDULER_VIEW_ = A.getClassName('scheduler-base', 'view', ''),
 
     TPL_SCHEDULER_CONTROLS = '<div class="col col-lg-7 col-md-7 col-sm-7 ' + CSS_SCHEDULER_CONTROLS + '"></div>',
     TPL_SCHEDULER_HD = '<div class="row ' + CSS_SCHEDULER_HD + '"></div>',
-    TPL_SCHEDULER_ICON_NEXT = '<button type="button" class="' + [CSS_ICON, CSS_SCHEDULER_ICON_NEXT, CSS_BTN,
+    TPL_SCHEDULER_ICON_NEXT = '<button tabindex="-1" type="button" class="' + [CSS_ICON, CSS_SCHEDULER_ICON_NEXT, CSS_BTN,
         CSS_BTN_DEFAULT].join(' ') + '"><span class="' + CSS_ICON_CHEVRON_RIGHT + '"></span></button>',
-    TPL_SCHEDULER_ICON_PREV = '<button type="button" class="' + [CSS_ICON, CSS_SCHEDULER_ICON_PREV, CSS_BTN,
+    TPL_SCHEDULER_ICON_PREV = '<button tabindex="-1" type="button" class="' + [CSS_ICON, CSS_SCHEDULER_ICON_PREV, CSS_BTN,
         CSS_BTN_DEFAULT].join(' ') + '"><span class="' + CSS_ICON_CHEVRON_LEFT + '"></span></button>',
-    TPL_SCHEDULER_NAV = '<div class="btn-group"></div>',
+    TPL_SCHEDULER_NAV = '<div class="btn-group" tabindex="{tabIndex}"></div>',
     TPL_SCHEDULER_TODAY = '<button type="button" class="' + [CSS_SCHEDULER_TODAY, CSS_BTN, CSS_BTN_DEFAULT].join(' ') +
         '">{today}</button>',
     TPL_SCHEDULER_VIEW = '<button type="button" class="' + [CSS_SCHEDULER_VIEW, CSS_SCHEDULER_VIEW_].join(' ') +
-        '{name}" data-view-name="{name}">{label}</button>',
+        '{name}" data-view-name="{name}" tabindex="-1">{label}</button>',
     TPL_SCHEDULER_VIEW_DATE = '<span class="' + CSS_SCHEDULER_VIEW_DATE + '"></span>',
-    TPL_SCHEDULER_VIEWS = '<div class="col col-lg-5 col-md-5 col-sm-5 ' + CSS_SCHEDULER_VIEWS + '"></div>';
+    TPL_SCHEDULER_VIEWS = '<div class="col col-lg-5 col-md-5 col-sm-5 ' + CSS_SCHEDULER_VIEWS + '" tabindex="{tabIndex}"></div>';
 
 /**
  * A base class for `SchedulerEvents`.
@@ -527,8 +527,26 @@ var SchedulerBase = A.Component.create({
 
         navNode: {
             valueFn: function() {
-                return A.Node.create(TPL_SCHEDULER_NAV);
+                var instance = this;
+
+                return A.Node.create(
+                    A.Lang.sub(TPL_SCHEDULER_NAV, {
+                        tabIndex: instance.get('navTabIndex')
+                    })
+                );
             }
+        },
+
+        /**
+        * Specify the tab order for the Nav.
+        *
+        * @attribute navTabIndex
+        * @default 0
+        * @type Number
+        */
+        navTabIndex: {
+            validator: isNumber,
+            value: 0
         },
 
         /**
@@ -554,7 +572,13 @@ var SchedulerBase = A.Component.create({
 
         viewsNode: {
             valueFn: function() {
-                return A.Node.create(TPL_SCHEDULER_VIEWS);
+                var instance = this;
+
+                return A.Node.create(
+                    A.Lang.sub(TPL_SCHEDULER_VIEWS, {
+                        tabIndex: instance.get('navTabIndex')
+                    })
+                );
             }
         }
     },
@@ -753,7 +777,8 @@ var SchedulerBase = A.Component.create({
                 boundingBox: instance.viewsNode,
                 on: {
                     selectionChange: A.bind(instance._onButtonGroupSelectionChange, instance)
-                }
+                },
+                tabIndex: instance.get('navTabIndex')
             }).render();
         },
 
@@ -845,6 +870,8 @@ var SchedulerBase = A.Component.create({
             instance.controlsNode.delegate('click', instance._onClickNextIcon, '.' + CSS_SCHEDULER_ICON_NEXT,
                 instance);
             instance.controlsNode.delegate('click', instance._onClickToday, '.' + CSS_SCHEDULER_TODAY, instance);
+            instance.viewsNode.delegate('key', A.bind(instance._onArrowKeyViews, instance), 'down:37,39');
+            instance.navNode.delegate('key', A.bind(instance._onArrowKeyNav, instance), 'down:37,39');
         },
 
         /**
@@ -892,6 +919,49 @@ var SchedulerBase = A.Component.create({
             }
 
             return date;
+        },
+
+        /**
+         * Handles 'key' events on the navNode.
+         *
+         * @method _onArrowKeyNav
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onArrowKeyNav: function(event) {
+            var instance = this,
+                activeView = instance.get('activeView');
+
+            if (event.isKey('left')) {
+                instance._onClickPrevIcon(event);
+            }
+            else {
+                instance._onClickNextIcon(event);
+            }
+        },
+
+        /**
+         * Handles 'key' events on the viewsNode.
+         *
+         * @method _onArrowKeyViews
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onArrowKeyViews: function(event) {
+            var instance = this,
+                keyCode = event.keyCode,
+                oldActiveTrigger = instance.viewsNode.one('.active'),
+                newActiveTrigger = oldActiveTrigger.next();
+
+            if (event.isKey('left')) {
+                newActiveTrigger = oldActiveTrigger.previous()
+            }
+
+            if (newActiveTrigger) {
+                var newViewName = newActiveTrigger.getData('view-name');
+
+                instance.set('activeView', instance.getViewByName(newViewName));
+            }
         },
 
         /**

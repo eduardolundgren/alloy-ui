@@ -129,7 +129,7 @@ var Lang = A.Lang,
         '</table>',
 
     TPL_SCHEDULER_VIEW_DAY_HEADER_DAY = '<th class="' + CSS_SCHEDULER_VIEW_DAY_HEADER_DAY +
-        '" data-colnumber="{colNumber}"><a href="#">&nbsp;</a></th>',
+        '" data-colnumber="{colNumber}"><a href="#" tabindex="-1">&nbsp;</a></th>',
     TPL_SCHEDULER_VIEW_DAY_HEADER_DAY_FIRST = '<td class="' + [CSS_SCHEDULER_VIEW_DAY_HEADER_DAY,
         CSS_SCHEDULER_VIEW_DAY_HEADER_DAY_FIRST].join(' ') + '"></td>';
 
