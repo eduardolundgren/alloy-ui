@@ -60,6 +60,8 @@ var Lang = A.Lang,
     CSS_SCHEDULER_TODAY = getCN('scheduler', 'today'),
     CSS_SCHEDULER_TODAY_HD = getCN('scheduler', 'today', 'hd'),
 
+    CSS_SCHEDULER_VIEW_SCROLLABLE = getCN('scheduler-view', 'scrollable'),
+
     CSS_SCHEDULER_VIEW_DAY_COLDATA = getCN('scheduler-view', 'coldata'),
     CSS_SCHEDULER_VIEW_DAY_COLGRID = getCN('scheduler-view', 'colgrid'),
     CSS_SCHEDULER_VIEW_DAY_GRID = getCN('scheduler-view', 'grid'),
@@ -822,6 +824,20 @@ var SchedulerDayView = A.Component.create({
             });
 
             instance.syncHeaderViewUI();
+        },
+
+        /**
+         * Scrolls to given date.
+         *
+         * @method scrollToDate
+         * @param {Date} date The date to scroll to
+         */
+        scrollToDate: function(date) {
+            var scrollNode = this.get('boundingBox').one('.' + CSS_SCHEDULER_VIEW_SCROLLABLE);
+
+            if (this.get('scrollable') && scrollNode) {
+                scrollNode.set('scrollTop', this.calculateTop(date));
+            }
         },
 
         /**
