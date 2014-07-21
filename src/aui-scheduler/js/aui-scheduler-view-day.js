@@ -1265,7 +1265,7 @@ var SchedulerDayView = A.Component.create({
             if (instance._enterKeyDown) {
                 event.target = activeDescendant;
 
-                instance._spoofKeyToMouseEvent(event);
+                instance._normalizeEvent(event);
 
                 instance._onMouseMoveTableCol(event);
             }
@@ -1507,7 +1507,7 @@ var SchedulerDayView = A.Component.create({
 
             instance._enterKeyDown = true;
 
-            instance._spoofKeyToMouseEvent(event);
+            instance._normalizeEvent(event);
 
             instance._onMouseDownTableCol(event);
         },
@@ -1538,7 +1538,7 @@ var SchedulerDayView = A.Component.create({
             if (instance._enterKeyDown) {
                 instance._enterKeyDown = false;
 
-                instance._spoofKeyToMouseEvent(event);
+                instance._normalizeEvent(event);
 
                 instance._onMouseUpTableCol(event);
             }
@@ -1814,10 +1814,10 @@ var SchedulerDayView = A.Component.create({
          * Sets properties on key event so it can be passed to mouse
          * event handlers.
          *
-         * @method _spoofKeyToMouseEvent
+         * @method _normalizeEvent
          * @protected
          */
-        _spoofKeyToMouseEvent: function(event) {
+        _normalizeEvent: function(event) {
             var instance = this;
             var target = event.target;
             var colNumber = parseInt(target.getData('colnumber'));
