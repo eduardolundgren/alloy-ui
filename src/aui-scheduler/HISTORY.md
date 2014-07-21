@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1527](https://issues.liferay.com/browse/AUI-1527) add base keyboard navigation
 * [AUI-1370](https://issues.liferay.com/browse/AUI-1370) Add ability to set an event's border color, style, and width
 
 ## [2.5.0](https://github.com/liferay/alloy-ui/releases/tag/2.5.0)
