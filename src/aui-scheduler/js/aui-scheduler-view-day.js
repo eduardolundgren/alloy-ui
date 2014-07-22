@@ -1298,6 +1298,24 @@ var SchedulerDayView = A.Component.create({
         },
 
         /**
+         * Binds the listener that focuses the last focused tableNode element after
+         * `recorder` fires `save`.
+         *
+         * @method _bindFocusOnRecorderSave
+         * @protected
+         */
+        _bindFocusOnRecorderSave: function() {
+            var instance = this,
+                focusManager = instance.tableNode.focusManager,
+                scheduler = instance.get('scheduler'),
+                recorder = scheduler.get('eventRecorder');
+
+            recorder.on('save', function(event) {
+                this.popover.onceAfter('visibleChange', focusManager.focus, focusManager);
+            });
+        },
+
+        /**
          * Binds the `Plugin.NodeFocusManager` that handles day view
          * table node keyboard navigation.
          *
@@ -1312,6 +1330,8 @@ var SchedulerDayView = A.Component.create({
 
                 instance.descendantChangeHandler = instance.tableNode.focusManager.after(
                     'activeDescendantChange', instance._afterActiveDescendantChange, instance);
+
+                instance._bindFocusOnRecorderSave();
             }
             else {
                 if (instance.descendantChangeHandler) {
