@@ -114,6 +114,11 @@
     height: 25px;
 }
 
+.scheduler-view-marker-child:focus {
+    background-color: white;
+    border: 1px solid rgb(54, 108, 217);
+}
+
 .scheduler-view-marker-division {
     border-bottom: 1px dotted #ddd;
     border-top: 1px solid #ddd;
