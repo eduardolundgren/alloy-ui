@@ -7,6 +7,7 @@
 
 var Lang = A.Lang,
     isFunction = Lang.isFunction,
+    isObject = Lang.isObject,
     isString = Lang.isString,
 
     DateMath = A.DataType.DateMath,
@@ -165,6 +166,35 @@ var SchedulerTableView = A.Component.create({
          */
         fixedHeight: {
             value: true
+        },
+
+        /**
+        * Defines the keyboard configuration object for
+        * `Plugin.NodeFocusManager`.
+        *
+        * @attribute tableFocusmanager
+        * @default {
+        *    activeDescendant: 0,
+        *    circular: false,
+        *    descendants: '.' + CSS_SVT_COLGRID,
+        *    keys: {
+        *        next: 'down:40',
+        *        previous: 'down:38'
+        *    }
+        * }
+        * @type {Object}
+        */
+        tableFocusmanager: {
+            value: {
+                activeDescendant: 0,
+                circular: false,
+                descendants: '.' + CSS_SVT_COLGRID,
+                keys: {
+                    next: 'down:39',
+                    previous: 'down:37'
+                }
+            },
+            validator: isObject
         },
 
         /**
@@ -354,6 +384,12 @@ var SchedulerTableView = A.Component.create({
 
             instance.rowsContainerNode.delegate('click', A.bind(instance._onClickMore, instance), '.' +
                 CSS_SVT_MORE);
+
+            instance.tableRowContainer.delegate(
+                'key', A.bind(instance._onEnterKeyDown, instance), 'down:13', '.' + CSS_SVT_COLGRID);
+
+            instance.tableRowContainer.delegate(
+                'key', A.bind(instance._onEnterKeyUp, instance), 'up:13', '.' + CSS_SVT_COLGRID);
         },
 
         /**
@@ -377,6 +413,8 @@ var SchedulerTableView = A.Component.create({
 
             instance.colHeaderDaysNode.appendTo(instance.columnDayHeader);
             instance.tableRows.appendTo(instance.tableRowContainer);
+
+            instance._bindNodeFocusManager();
         },
 
         /**
@@ -767,6 +805,44 @@ var SchedulerTableView = A.Component.create({
         },
 
         /**
+         * Handles 'activeDescendantChange' events coming from the
+         * NodeFocusManager.
+         *
+         * @method _afterActiveDescendantChange
+         * @param {EventFacade} event
+         * @protected
+         */
+        _afterActiveDescendantChange: function(event) {
+            var instance = this,
+                newVal = event.newVal,
+                focusManager = event.target,
+                activeDescendant = focusManager.get('descendants').item(newVal);
+
+            if (instance._enterKeyDown) {
+                event.target = activeDescendant;
+
+                instance._normalizeEvent(event);
+
+                instance._onMouseMoveGrid(event);
+            }
+        },
+
+        /**
+         * Binds the `Plugin.NodeFocusManager` that handles table keyboard
+         * navigation.
+         *
+         * @method _bindDayFocusManager
+         * @protected
+         */
+        _bindNodeFocusManager: function() {
+            var instance = this;
+
+            instance.tableRowContainer.plug(A.Plugin.NodeFocusManager, instance.get('tableFocusmanager'));
+
+            instance.tableRowContainer.focusManager.after('activeDescendantChange', instance._afterActiveDescendantChange, instance);
+        },
+
+        /**
          * Returns this `SchedulerTableView`'s date ending interval.
          *
          * @method _findCurrentIntervalEnd
@@ -1009,6 +1085,41 @@ var SchedulerTableView = A.Component.create({
         },
 
         /**
+         * Handles 'keyDown' event on the tableRowContainer.
+         *
+         * @method _onEnterKeyDown
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onEnterKeyDown: function(event) {
+            var instance = this;
+
+            instance._enterKeyDown = true;
+
+            instance._normalizeEvent(event);
+
+            instance._onMouseDownGrid(event);
+
+        },
+
+        /**
+         * Handles 'keyUp' event on the tableRowContainer.
+         *
+         * @method _onEnterKeyUp
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onEnterKeyUp: function(event) {
+            var instance = this;
+
+            instance._enterKeyDown = false;
+
+            instance._normalizeEvent(event);
+
+            instance._onMouseUpGrid(event);
+        },
+
+        /**
          * Renders this `SchedulerViewTable` event's `overlay` component.
          *
          * @method _renderEventsOverlay
@@ -1035,6 +1146,22 @@ var SchedulerTableView = A.Component.create({
 
             instance.eventsOverlay.bodyNode.delegate('click', A.bind(instance.hideEventsOverlay, instance), '.' +
                 CSS_SVT_EVENTS_OVERLAY_NODE_CLOSE);
+        },
+
+        /**
+         * Sets properties on key event so it can be passed to mouse
+         * event handlers.
+         *
+         * @method _normalizeEvent
+         * @protected
+         */
+        _normalizeEvent: function(event) {
+            var instance = this;
+            var target = event.target;
+            var centerXY = target.getCenterXY();
+
+            event.pageX = centerXY[0];
+            event.pageY = centerXY[1];
         },
 
         /**
