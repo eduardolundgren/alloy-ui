@@ -265,7 +265,7 @@ var ProgressBar = A.Component.create({
                 };
 
                 if (instance.get('label')) {
-                    ariaConfig.label = 'label';
+                    ariaConfig.attributes.label = 'label';
                 }
 
                 instance.plug(A.Plugin.Aria, ariaConfig);
