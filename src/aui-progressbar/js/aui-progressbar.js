@@ -264,21 +264,18 @@ var ProgressBar = A.Component.create({
          * @protected
          */
         syncUI: function() {
-            var instance = this,
-                boundingBox = instance.get('boundingBox');
-
-            boundingBox.setAttribute('tabindex', instance.get('tabindex'));
+            var instance = this;
 
             if (instance.get('useARIA')) {
-                var attributes = {
-                    value: 'valuenow',
-                    max: 'valuemax',
-                    min: 'valuemin',
-                    orientation: 'orientation'
-                };
+                instance.get('boundingBox').setAttribute('tabindex', instance.get('tabindex'));
 
                 instance.plug(A.Plugin.Aria, {
-                    attributes: attributes,
+                    attributes: {
+                        value: 'valuenow',
+                        max: 'valuemax',
+                        min: 'valuemin',
+                        orientation: 'orientation'
+                    },
                     roleName: 'progressbar'
                 });
             }
