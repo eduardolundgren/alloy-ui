@@ -9,6 +9,13 @@
         "skinnable": true
     },
 
+    "aui-carousel-accessibility": {
+        "requires": [
+            "aui-aria",
+            "aui-carousel"
+        ]
+    },
+
     "aui-carousel-swipe": {
         "requires": [
             "aui-carousel",
