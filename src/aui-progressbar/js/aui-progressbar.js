@@ -255,15 +255,20 @@ var ProgressBar = A.Component.create({
             var instance = this;
 
             if (instance.get('useARIA')) {
-                instance.plug(A.Plugin.Aria, {
+                var ariaConfig = {
                     attributes: {
                         value: 'valuenow',
                         max: 'valuemax',
                         min: 'valuemin',
-                        orientation: 'orientation',
-                        label: 'label'
+                        orientation: 'orientation'
                     }
-                });
+                };
+
+                if (instance.get('label')) {
+                    ariaConfig.label = 'label';
+                }
+
+                instance.plug(A.Plugin.Aria, ariaConfig);
             }
         },
 
