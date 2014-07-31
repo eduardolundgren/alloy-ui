@@ -832,6 +832,12 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-node-base"
         ]
     },
+    "aui-node-accessible": {
+        "requires": [
+            "aui-node-base",
+            "event-custom-base"
+        ]
+    },
     "aui-node-base": {
         "requires": [
             "array-extras",
