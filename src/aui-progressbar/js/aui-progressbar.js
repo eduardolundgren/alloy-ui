@@ -169,6 +169,18 @@ var ProgressBar = A.Component.create({
         },
 
         /**
+         * Specify the tab order of elements.
+         *
+         * @attribute tabIndex
+         * @default 1
+         * @type Number
+         */
+        tabindex: {
+            value: 1,
+            validator: isNumber
+        },
+
+        /**
          * DOM Node to display the text of the progressbar. If not
          * specified try to query using HTML_PARSER an element inside
          * contentBox which matches `aui-progressbar-text`.
@@ -255,14 +267,16 @@ var ProgressBar = A.Component.create({
             var instance = this;
 
             if (instance.get('useARIA')) {
+                instance.get('boundingBox').setAttribute('tabindex', instance.get('tabindex'));
+
                 instance.plug(A.Plugin.Aria, {
                     attributes: {
                         value: 'valuenow',
                         max: 'valuemax',
                         min: 'valuemin',
-                        orientation: 'orientation',
-                        label: 'label'
-                    }
+                        orientation: 'orientation'
+                    },
+                    roleName: 'progressbar'
                 });
             }
         },
