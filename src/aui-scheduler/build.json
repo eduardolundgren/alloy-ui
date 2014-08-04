@@ -22,6 +22,12 @@
             ]
         },
 
+        "aui-scheduler-view-accessibility": {
+            "jsfiles": [
+                "js/aui-scheduler-view-accessibility.js"
+            ]
+        },
+
         "aui-scheduler-view-agenda": {
             "jsfiles": [
                 "js/aui-scheduler-view-agenda.js"

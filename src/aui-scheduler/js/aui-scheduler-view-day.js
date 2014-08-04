@@ -77,6 +77,7 @@ var Lang = A.Lang,
     CSS_SCHEDULER_VIEW_DAY_HEADER_VIEW_LABEL = getCN('scheduler-view', 'day', 'header', 'view', 'label'),
     CSS_SCHEDULER_VIEW_DAY_ICON_GRIP_HORIZONTAL = getCN('scheduler-view', 'icon', 'grip', 'horizontal'),
     CSS_SCHEDULER_VIEW_DAY_MARKER_DIVISION = getCN('scheduler-view', 'marker', 'division'),
+    CSS_SCHEDULER_VIEW_DAY_MARKER_CHILD = getCN('scheduler-view', 'marker', 'child'),
     CSS_SCHEDULER_VIEW_DAY_MARKERCELL = getCN('scheduler-view', 'markercell'),
     CSS_SCHEDULER_VIEW_DAY_MARKERS = getCN('scheduler-view', 'markers'),
     CSS_SCHEDULER_VIEW_DAY_RESIZER = getCN('scheduler-view', 'day', 'resizer'),
@@ -98,8 +99,8 @@ var Lang = A.Lang,
         '</div>',
 
     TPL_SCHEDULER_VIEW_DAY_MARKERCELL = '<div class="' + CSS_SCHEDULER_VIEW_DAY_MARKERCELL + '">' +
-        '<div class="' + CSS_SCHEDULER_VIEW_DAY_MARKER_DIVISION + '"></div>' +
-        '</div>',
+        '<div class="' + [CSS_SCHEDULER_VIEW_DAY_MARKER_DIVISION, CSS_SCHEDULER_VIEW_DAY_MARKER_CHILD].join(' ') + '" data-colnumber="0"></div>' +
+        '<div class="' + CSS_SCHEDULER_VIEW_DAY_MARKER_CHILD + '" data-colnumber="0"></div></div>',
 
     TPL_SCHEDULER_VIEW_DAY_HEADER_VIEW_LABEL = '<span class="' + CSS_SCHEDULER_VIEW_DAY_HEADER_VIEW_LABEL +
         '">{label}</span>',
@@ -1447,7 +1448,7 @@ var SchedulerDayView = A.Component.create({
             if (recorder && !scheduler.get('disabled')) {
                 recorder.hidePopover();
 
-                if (target.test('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM)) {
+                if (target.test('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM) || target.test(instance.get('markerNodeClass'))) {
                     this._prepareEventCreation(event);
                 }
                 else if (target.test(
