@@ -165,6 +165,8 @@ ButtonExt.prototype = {
         var instance = this;
 
         instance._uiSetIcon(instance.get('icon'));
+
+        instance._setButtonRole();
     },
 
     /**
@@ -191,6 +193,18 @@ ButtonExt.prototype = {
         var instance = this;
 
         instance._uiSetIconAlign(event.newVal);
+    },
+
+    /**
+     * Sets the role attribute on the bounding box to 'button';
+     *
+     * @method setButtonRole
+     */
+    _setButtonRole: function() {
+        var instance = this;
+        var boundingBox = instance.get('boundingBox');
+
+        boundingBox.setAttribute('role', 'button');
     },
 
     /**
@@ -408,7 +422,9 @@ A.mix(ButtonGroup.prototype, {
      * @protected
      */
     renderUI: function() {
-        var instance = this;
+        var instance = this,
+            boundingBox = instance.get('boundingBox'),
+            type = instance.get('type');
 
         instance.getButtons().each(function(button) {
             if (!button.button && !A.instanceOf(A.Widget.getByNode(button), A.Button)) {
@@ -416,6 +432,7 @@ A.mix(ButtonGroup.prototype, {
                 // A.Plugin.Button doesn't current allow augmentation, therefore
                 // it can't add A.ButtonExt extra attributes to it.
                 button.addClass(A.ButtonCore.CLASS_NAMES.BUTTON_DEFAULT);
+                button.setAttribute('role', 'option');
 
                 if (A.Button.hasWidgetLazyConstructorData(button)) {
                     new A.Button(A.Button.getWidgetLazyConstructorFromNodeData(button));
@@ -426,6 +443,15 @@ A.mix(ButtonGroup.prototype, {
                 }
             }
         });
+
+        boundingBox.setAttrs({
+            'aria-multiselectable': (type === 'checkbox') ? true : false,
+            role: 'listbox'
+        });
+
+        instance.syncAriaSelected(instance.getButtons());
+
+        instance.after('selectionChange', instance._afterSelectionChange);
     },
 
     /**
@@ -438,6 +464,20 @@ A.mix(ButtonGroup.prototype, {
         var instance = this;
 
         return instance.toggleSelect(items, true);
+    },
+
+    /**
+     * Updates the 'aria-selected' attribute on all buttons.
+     *
+     * @method syncAriaSelected
+     * @param {Array} buttons
+     */
+    syncAriaSelected: function(buttons) {
+        buttons.each(function(button) {
+            var selected = button.hasClass(A.ButtonGroup.CLASS_NAMES.SELECTED);
+
+            button.setAttribute('aria-selected', selected);
+        });
     },
 
     /**
@@ -497,5 +537,18 @@ A.mix(ButtonGroup.prototype, {
         var instance = this;
 
         return instance.toggleSelect(items, false);
+    },
+
+    /**
+     * Fires after 'selectionChange' event.
+     *
+     * @method _afterSelectionChange
+     * @param {EventFacade} event
+     * @protected
+     */
+    _afterSelectionChange: function(event) {
+        var instance = this;
+
+        instance.syncAriaSelected(instance.getButtons());
     }
 }, true);
