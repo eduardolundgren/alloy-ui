@@ -45,10 +45,11 @@ YUI.add('aui-surface-tests', function(Y) {
 
             instance.queryStringRoute = /^\/querystring\?p=\w+$/;
             instance.originalPath = instance.getCurrentPath();
+            instance.originalDefaultTitle = 'default';
 
             instance.app = new Y.SurfaceApp({
                 basePath: '/base',
-                defaultTitle: 'default',
+                defaultTitle: instance.getOriginalDefaultTitle(),
                 linkSelector: 'a'
             });
 
@@ -570,6 +571,25 @@ YUI.add('aui-surface-tests', function(Y) {
                         );
                         instance.app.set('basePath', '/base');
                     });
+                });
+            });
+            instance.wait();
+        },
+
+        'should update empty screen content': function() {
+            var instance = this;
+
+            instance.app.addScreenRoutes({
+                path: '/empty',
+                screen: Y.EmptyScreen
+            });
+
+            instance.app.set('defaultTitle', '');
+
+            instance.app.navigate('/base/empty').then(function() {
+                instance.resume(function() {
+                    instance.assertNavigation('/base/empty', '');
+                    instance.app.set('defaultTitle', instance.getOriginalDefaultTitle());
                 });
             });
             instance.wait();
