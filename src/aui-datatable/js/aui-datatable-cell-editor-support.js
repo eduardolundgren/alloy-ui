@@ -120,6 +120,7 @@ A.mix(CellEditorSupport.prototype, {
      * Fires after '_onSelectionKey'. Opens editor of 'activeCell' on key press.
      *
      * @method _afterSelectionKey
+     * @param {EventFacade} event
      * @protected
      */
     _afterSelectionKey: function(event) {
@@ -151,7 +152,7 @@ A.mix(CellEditorSupport.prototype, {
                 editor.on({
                     visibleChange: A.bind(instance._onEditorVisibleChange, instance),
                     save: A.bind(instance._onEditorSave, instance),
-                    cancel: A.bind(instance._refocusActiveCell, instance)
+                    cancel: A.bind(instance._onEditorCancel, instance)
                 });
 
                 editor.set('zIndex', CellEditorSupport.EDITOR_ZINDEX);
@@ -162,6 +163,18 @@ A.mix(CellEditorSupport.prototype, {
 
             editor.show().move(alignNode.getXY());
         }
+    },
+
+    /**
+     * Invoked when the editor fires the 'cancel' event.
+     *
+     * @method _onEditorCancel
+     * @protected
+     */
+    _onEditorCancel: function() {
+        var instance = this;
+
+        instance._refocusActiveCell();
     },
 
     /**

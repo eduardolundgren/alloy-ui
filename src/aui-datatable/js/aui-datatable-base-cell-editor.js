@@ -581,8 +581,6 @@ BaseCellEditor = A.Component.create({
             var instance = this;
 
             instance._handleCancelEvent();
-
-            instance.hide();
         },
 
         /**
