@@ -11,6 +11,7 @@ var L = A.Lang,
 
     getCN = A.getClassName,
 
+    CSS_RADIO = getCN('radio'),
     CSS_FIELD = getCN('field'),
     CSS_FIELD_CHOICE = getCN('field', 'choice'),
     CSS_FIELD_RADIO = getCN('field', 'radio'),
@@ -20,9 +21,9 @@ var L = A.Lang,
 
     TPL_OPTIONS_CONTAINER = '<div class="' + CSS_FORM_BUILDER_FIELD_OPTIONS_CONTAINER + '"></div>',
     TPL_RADIO =
-        '<div><input id="{id}" class="' + [CSS_FIELD, CSS_FIELD_CHOICE, CSS_FIELD_RADIO, CSS_FORM_BUILDER_FIELD_NODE].join(
-            ' ') +
-        '" name="{name}" type="radio" value="{value}" {checked} {disabled} /><label class="field-label" for="{id}">{label}</label></div>';
+        '<div class="' + CSS_RADIO + '"><label class="field-label" for="{id}"><input id="{id}" class="' +
+        [CSS_FIELD, CSS_FIELD_CHOICE, CSS_FIELD_RADIO, CSS_FORM_BUILDER_FIELD_NODE].join(' ') +
+        '" name="{name}" type="radio" value="{value}" {checked} {disabled} />{label}</label></div>';
 
 /**
  * A base class for `A.FormBuilderRadioField`.
@@ -34,15 +35,6 @@ var L = A.Lang,
  * @constructor
  */
 var FormBuilderRadioField = A.Component.create({
-
-    /**
-     * Static property provides a string to identify the class.
-     *
-     * @property NAME
-     * @type String
-     * @static
-     */
-    NAME: 'form-builder-radio-field',
 
     /**
      * Static property used to define the default attribute
@@ -93,6 +85,15 @@ var FormBuilderRadioField = A.Component.create({
      * @static
      */
     EXTENDS: A.FormBuilderMultipleChoiceField,
+
+    /**
+     * Static property provides a string to identify the class.
+     *
+     * @property NAME
+     * @type String
+     * @static
+     */
+    NAME: 'form-builder-radio-field',
 
     prototype: {
 
