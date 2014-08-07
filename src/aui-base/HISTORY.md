@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1576](https://issues.liferay.com/browse/AUI-1576) A.Lang.String.Uncamelize method drops letters from the string
 * [AUI-1558](https://issues.liferay.com/browse/AUI-1558) Create unit test for padNumber
 * [AUI-1551](https://issues.liferay.com/browse/AUI-1551) Create unit test for camelize
 
