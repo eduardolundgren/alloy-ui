@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1577](https://issues.liferay.com/browse/AUI-1577) Inconsistent string truncation in aui-base-lang
 * [AUI-1558](https://issues.liferay.com/browse/AUI-1558) Create unit test for padNumber
 * [AUI-1551](https://issues.liferay.com/browse/AUI-1551) Create unit test for camelize
 
