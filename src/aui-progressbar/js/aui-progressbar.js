@@ -254,21 +254,22 @@ var ProgressBar = A.Component.create({
         syncUI: function() {
             var instance = this;
 
+            var label = '';
+
+            if (instance.get('label')) {
+                label = 'label';
+            }
+
             if (instance.get('useARIA')) {
-                var ariaConfig = {
+                instance.plug(A.Plugin.Aria, {
                     attributes: {
                         value: 'valuenow',
                         max: 'valuemax',
                         min: 'valuemin',
-                        orientation: 'orientation'
+                        orientation: 'orientation',
+                        label: label
                     }
-                };
-
-                if (instance.get('label')) {
-                    ariaConfig.attributes.label = 'label';
-                }
-
-                instance.plug(A.Plugin.Aria, ariaConfig);
+                });
             }
         },
 
