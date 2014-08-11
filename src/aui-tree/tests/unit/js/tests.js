@@ -3,7 +3,6 @@ YUI.add('module-tests', function(Y) {
     var suite = new Y.Test.Suite('aui-tree');
 
     var createNewTreeView = function() {
-
         return new Y.TreeView({
             children: [
                 {
@@ -80,7 +79,7 @@ YUI.add('module-tests', function(Y) {
             Y.Assert.areSame(0, node.childrenLength, 'node.childrenLength should return 0.');
         },
 
-        'appendChild() should regester the TreeNode in the Parent TreeNode and Owner TreeView index attribute': function() {
+        'appendChild() should register the TreeNode in the Parent TreeNode and Owner TreeView index attribute': function() {
             var treeView = new Y.TreeView();
 
             var childTreeNode = new Y.TreeNode({
@@ -98,13 +97,13 @@ YUI.add('module-tests', function(Y) {
 
             Y.Assert.isTrue(
                 treeViewIndex.hasOwnProperty('root'),
-                'treeViewIndex object should have a "root" property');
+                'treeViewIndex object should have a \'root\' property');
             Y.Assert.isTrue(
                 treeViewIndex.hasOwnProperty('child'),
-                'treeViewIndex object should have a "child" property');
+                'treeViewIndex object should have a \'child\' property');
             Y.Assert.isTrue(
                 rootTreeNodeIndex.hasOwnProperty('child'),
-                'rootTreeNodeIndex object should have a "child" property');
+                'rootTreeNodeIndex object should have a \'child\' property');
         },
 
         'removeChild() should remove child TreeNode': function() {
@@ -170,11 +169,323 @@ YUI.add('module-tests', function(Y) {
             var node = new Y.TreeNode();
 
             Y.Assert.isFalse(tree.isRegistered(node), 'TreeNode should be registered in TreeView');
+        },
+
+        /**
+         * @tests AUI-1141
+         */
+        'TreeNodeView created from HTML Markup should display icon-minus when expanded': function() {
+            var test = this;
+            var treeViewComponent = Y.one('#createFromHTMLMarkupTest').clone().appendTo(document.body);
+
+            var treeView = new Y.TreeView({
+                boundingBox: treeViewComponent,
+                contentBox: treeViewComponent.one('> ul'),
+                type: 'normal'
+            }).render();
+
+            var children = treeView.getChildren(true);
+            var lazyRenderTimeout = children.length * 50;
+
+            setTimeout(function() {
+                test.resume(function() {
+                    Y.each(children, function(node) {
+                        if (node.get('rendered') && !node.get('leaf')) {
+                            var hitArea = node.get('hitAreaEl');
+
+                            hitArea.simulate('click');
+
+                            Y.Assert.isTrue(hitArea.hasClass('icon-minus'), hitArea +
+                                ' does not have class icon-minus.');
+                        }
+                    }, true);
+                });
+
+                treeViewComponent.remove();
+            }, lazyRenderTimeout);
+
+            test.wait(lazyRenderTimeout);
+        },
+
+        'TreeNodeView created from HTML Markup should display icon-plus when collapsed': function() {
+            var test = this;
+            var treeViewComponent = Y.one('#createFromHTMLMarkupTest').clone().appendTo(document.body);
+
+            var treeView = new Y.TreeView({
+                boundingBox: treeViewComponent,
+                contentBox: treeViewComponent.one('> ul'),
+                type: 'normal'
+            }).render();
+
+            var children = treeView.getChildren(true);
+            var lazyRenderTimeout = children.length * 50;
+
+            setTimeout(function() {
+                test.resume(function() {
+                    Y.each(children, function(node) {
+                        if (node.get('rendered') && !node.get('leaf')) {
+                            var hitArea = node.get('hitAreaEl');
+
+                            Y.Assert.isTrue(hitArea.hasClass('icon-plus'), hitArea +
+                                ' does not have class icon-plus.');
+                        }
+                    }, true);
+                });
+
+                treeViewComponent.remove();
+            }, lazyRenderTimeout);
+
+            test.wait(lazyRenderTimeout);
+        },
+
+        /**
+         * @tests AUI-1156
+         */
+        'Display \'Load More Results\' link for TreeNodes': function() {
+            var childTreeNode,
+                hitAreaNodeList,
+                rootHitArea,
+                rootTreeNode,
+                rootTreeNodeBB,
+                treeView;
+
+            treeView = new Y.TreeView();
+
+            childTreeNode = [
+                {
+                    id: 'child-one',
+                    io: 'assets/pages.html',
+                    label: 'child-one',
+                    paginator: {
+                        limit: 3,
+                        offsetParam: 'start',
+                        start: 0,
+                        total: 6
+                    },
+                    type: 'io'
+                },
+                {
+                    label: 'child-two'
+                },
+                {
+                    label: 'child-three'
+                },
+                {
+                    label: 'child-four'
+                }
+            ];
+
+            rootTreeNode = new Y.TreeNode({
+                children: childTreeNode,
+                id: 'root-one',
+                label: 'root-one'
+            });
+
+            treeView.appendChild(rootTreeNode);
+
+            treeView.render();
+
+            rootTreeNodeBB = rootTreeNode.get('boundingBox');
+
+            debugger;
+
+            rootHitArea = rootTreeNodeBB.one('.tree-hitarea');
+
+            rootHitArea.simulate('click');
+
+            hitAreaNodeList = rootTreeNodeBB.all('.tree-hitarea');
+
+            Y.Assert.areEqual(2, hitAreaNodeList.size(), 'There must be two hit-area elements');
+
+            /*
+             * We can Mock the AJAX request here, but this is not we want to test. We want to test
+             * if paginator link will appear, so we will invoke the success handler directly here,
+             * assumming that server returned correct response. Clicking on hit area was proved to work above.
+             */
+            rootTreeNode.get('children')[0].ioSuccessHandler(null, null, {
+                responseText: '[ \
+                    { \
+                        "label": "subchild-one", \
+                        "leaf": true, \
+                        "type": "node" \
+                    }, \
+                    { \
+                        "label": "subchild-two", \
+                        "leaf": true, \
+                        "type": "node" \
+                    }, \
+                    { \
+                        "label": "subchild-three", \
+                        "leaf": true, \
+                        "type": "node" \
+                    } \
+                ]'
+            });
+
+            var paginatorLink = rootTreeNodeBB.one('a');
+
+            Y.Assert.isTrue(
+                paginatorLink.hasClass('tree-node-paginator'),
+                'childTreeNode has a paginator link');
+        },
+
+        // Tests: AUI-1450
+        'TreeView should update getChildrenLength after clicking \'Load More\' link': function() {
+            var oldChildrenLength,
+                test = this,
+                treeView;
+
+            treeView = new Y.TreeView({
+                children: [
+                    {
+                        id: 'one'
+                    },
+                    {
+                        id: 'two'
+                    },
+                    {
+                        id: 'three'
+                    }
+                ],
+                io: 'assets/pages.html',
+                paginator: {
+                    limit: 3,
+                    offsetParam: 'start',
+                    start: 0,
+                    total: 5
+                },
+                type: 'io'
+            }).render();
+
+            oldChildrenLength = treeView.getChildrenLength();
+
+            treeView.after('ioRequestSuccess', function() {
+                test.resume(function() {
+                    Y.Assert.isTrue(treeView.getChildrenLength() !== oldChildrenLength);
+
+                    treeView.destroy();
+                });
+            });
+
+            treeView.get('boundingBox').one('.tree-node-paginator').simulate('click');
+
+            test.wait();
+        },
+
+        'TreeView should not show more nodes than what\'s defined in paginator.total': function() {
+            var paginator,
+                test = this,
+                treeView;
+
+            treeView = new Y.TreeView({
+                children: [
+                    {
+                        id: 'one'
+                    },
+                    {
+                        id: 'two'
+                    },
+                    {
+                        id: 'three'
+                    }
+                ],
+                io: 'assets/pages.html',
+                paginator: {
+                    limit: 3,
+                    offsetParam: 'start',
+                    start: 0,
+                    total: 5
+                },
+                type: 'io'
+            }).render();
+
+            paginator = treeView.get('paginator');
+
+            treeView.after('ioRequestSuccess', function() {
+                test.resume(function() {
+                    Y.Assert.isTrue(treeView.getChildrenLength() <= paginator.total);
+
+                    treeView.destroy();
+                });
+            });
+
+            treeView.get('boundingBox').one('.tree-node-paginator').simulate('click');
+
+            test.wait();
+        },
+
+        'TreeViewIO should make an AJAX request and append children after expanding': function() {
+            var children = [],
+                test = this,
+                treeView;
+
+            var rootNode = new Y.TreeNodeIO({
+                alwaysShowHitArea: true,
+                children: children,
+                expanded: false,
+                io: 'assets/pages.html',
+                label: 'Root',
+                leaf: false
+            });
+
+            treeView = new Y.TreeView({
+                children: [rootNode],
+                type: 'file'
+            }).render();
+
+            rootNode.after('ioRequestSuccess', function() {
+                test.resume(function() {
+                    Y.Assert.isTrue(rootNode.getChildrenLength() > children.length);
+
+                    treeView.destroy();
+                });
+            });
+
+            rootNode.expand();
+
+            test.wait();
+        },
+
+        /**
+         * @tests AUI-1138
+         */
+        'TreeNodeTask should add a state for when one of its children is unchecked': function() {
+            var childTreeNode,
+                rootTreeNode,
+                treeView;
+
+            treeView = new Y.TreeView();
+
+            childTreeNode = new Y.TreeNodeTask({
+                id: 'one'
+            });
+
+            rootTreeNode = new Y.TreeNodeTask({
+                id: 'root'
+            });
+
+            treeView.appendChild(rootTreeNode);
+            rootTreeNode.appendChild(childTreeNode);
+
+            rootTreeNode.check();
+            childTreeNode.uncheck();
+
+            var rootTreeNodeCB = rootTreeNode.get('contentBox');
+
+            Y.Assert.isTrue(
+                rootTreeNodeCB.hasClass('tree-node-child-unchecked'),
+                'rootTreeNode has an unchecked child.');
+
+            childTreeNode.check();
+
+            Y.Assert.isFalse(
+                rootTreeNodeCB.hasClass('tree-node-child-unchecked'),
+                'rootTreeNode does not have unchecked child.');
         }
     }));
 
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['aui-tree', 'test']
+    requires: ['aui-tree', 'node-event-simulate', 'test']
 });

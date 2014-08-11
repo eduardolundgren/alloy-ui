@@ -82,8 +82,6 @@ var L = A.Lang,
     CSS_FORM_BUILDER_FIELD = getCN(FORM, BUILDER, FIELD),
     CSS_FORM_BUILDER_PLACEHOLDER = getCN(FORM, BUILDER, PLACEHOLDER),
 
-    INVALID_CLONE_ATTRS = [ID, NAME],
-
     TPL_PLACEHOLDER = '<div class="' + CSS_FORM_BUILDER_PLACEHOLDER + '"></div>';
 
 /**
@@ -505,8 +503,8 @@ var FormBuilder = A.Component.create({
          * @method getFieldProperties
          * @param field
          */
-        getFieldProperties: function(field) {
-            return field.getProperties();
+        getFieldProperties: function(field, excludeHidden) {
+            return field.getProperties(excludeHidden);
         },
 
         /**
@@ -539,7 +537,7 @@ var FormBuilder = A.Component.create({
 
             instance.tabView.enableTab(A.FormBuilder.SETTINGS_TAB);
             instance.tabView.selectChild(A.FormBuilder.SETTINGS_TAB);
-            instance.propertyList.set(DATA, instance.getFieldProperties(field));
+            instance.propertyList.set(DATA, instance.getFieldProperties(field, true));
         },
 
         /**
@@ -730,15 +728,7 @@ var FormBuilder = A.Component.create({
          */
         _cloneField: function(field, deep) {
             var instance = this,
-                config = {};
-
-            AArray.each(instance.getFieldProperties(field), function(property) {
-                var name = property.attributeName;
-
-                if (AArray.indexOf(INVALID_CLONE_ATTRS, name) === -1) {
-                    config[name] = property.value;
-                }
-            });
+                config = field.getAttributesForCloning();
 
             if (deep) {
                 config[FIELDS] = [];

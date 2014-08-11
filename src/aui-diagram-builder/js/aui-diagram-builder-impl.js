@@ -374,6 +374,7 @@ var DiagramBuilder = A.Component.create({
             instance.handlerKeyDown = A.getDoc().on(KEYDOWN, A.bind(instance._afterKeyEvent, instance));
 
             instance.dropContainer.delegate(CLICK, A.bind(instance._onNodeClick, instance), _DOT + CSS_DIAGRAM_NODE);
+            instance.dropContainer.delegate(MOUSEDOWN, A.bind(instance._onCloseButtonMouseDown, instance), '.diagram-builder-controls button');
             instance.dropContainer.delegate(MOUSEENTER, A.bind(instance._onNodeMouseEnter, instance), _DOT +
                 CSS_DIAGRAM_NODE);
             instance.dropContainer.delegate(MOUSELEAVE, A.bind(instance._onNodeMouseLeave, instance), _DOT +
@@ -912,6 +913,22 @@ var DiagramBuilder = A.Component.create({
         },
 
         /**
+         * Deletes the Selected `diagramNode` and any connectors attached to it.
+         *
+         * @method _deleteSelectedNode
+         * @param event {Event.Facade} Event Facade object
+         * @protected
+         */
+        _deleteSelectedNode: function(event) {
+            var instance = this;
+
+            instance.deleteSelectedConnectors();
+            instance.deleteSelectedNode();
+
+            event.halt();
+        },
+
+        /**
          * TODO. Wanna help? Please send a Pull Request.
          *
          * @method _onCancel
@@ -938,6 +955,23 @@ var DiagramBuilder = A.Component.create({
         },
 
         /**
+         * Handles `mousedown` events on the diagram close button.
+         *
+         * @method _onCloseButtonMouseDown
+         * @param event
+         * @protected
+         */
+        _onCloseButtonMouseDown: function(event) {
+            var instance = this;
+
+            var diagramNode = event.currentTarget.ancestor(_DOT + DIAGRAM_NODE_NAME);
+
+            if (isDiagramNode(A.Widget.getByNode(diagramNode))) {
+                instance._deleteSelectedNode(event);
+            }
+        },
+
+        /**
          * TODO. Wanna help? Please send a Pull Request.
          *
          * @method _onDeleteKey
@@ -945,11 +979,14 @@ var DiagramBuilder = A.Component.create({
          * @protected
          */
         _onDeleteKey: function(event) {
-            var instance = this;
+            var instance = this,
+                selectedConnectors = instance.getSelectedConnectors();
 
             if (isDiagramNode(A.Widget.getByNode(event.target))) {
+                instance._deleteSelectedNode(event);
+            }
+            else if (selectedConnectors.length > 0) {
                 instance.deleteSelectedConnectors();
-                instance.deleteSelectedNode();
 
                 event.halt();
             }
@@ -1233,11 +1270,12 @@ var DiagramBuilder = A.Component.create({
        },
                             {
                                 cfg: {
-                                    scrollDelay: 150
+                                    scrollDelay: 150,
+                                    node: dropContainer
                                 },
-                                fn: A.Plugin.DDWinScroll
-       }
-      ]
+                                fn: A.Plugin.DDNodeScroll
+                            }
+                        ]
                     },
                     nodes: _DOT + CSS_DIAGRAM_NODE
                 },

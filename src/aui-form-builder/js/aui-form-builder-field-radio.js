@@ -7,6 +7,9 @@
 
 var L = A.Lang,
 
+    AEscape = A.Escape,
+
+    BUILDER = 'builder',
     CHECKED = 'checked',
     CHOICE = 'choice',
     CONTAINER = 'container',
@@ -152,30 +155,40 @@ var FormBuilderRadioField = A.Component.create({
             var instance = this,
                 buffer = [],
                 counter = 0,
+                hasPredefinedValue = false,
+                predefinedValue = instance.get(PREDEFINED_VALUE),
                 templateNode = instance.get(TEMPLATE_NODE);
 
             A.each(val, function(item, index, collection) {
+                var checked = A.Array.indexOf(predefinedValue, item.value) > -1;
+
                 buffer.push(
                     L.sub(
                         TPL_RADIO, {
-                            checked: item.value === instance.get(PREDEFINED_VALUE) ? 'checked="checked"' : EMPTY_STR,
+                            checked: checked ? 'checked="checked"' : EMPTY_STR,
                             disabled: instance.get(DISABLED) ? 'disabled="disabled"' : EMPTY_STR,
-                            id: instance.get(ID) + counter++,
-                            label: item.label,
-                            name: instance.get(NAME),
-                            value: item.value
+                            id: AEscape.html(instance.get(ID) + counter++),
+                            label: AEscape.html(item.label),
+                            name: AEscape.html(instance.get(NAME)),
+                            value: AEscape.html(item.value)
                         }
                     )
                 );
+
+                if (checked) {
+                    hasPredefinedValue = true;
+                }
             });
 
             instance.optionNodes = A.NodeList.create(buffer.join(EMPTY_STR));
 
             templateNode.setContent(instance.optionNodes);
 
-            instance._uiSetPredefinedValue(
-                instance.get(PREDEFINED_VALUE)
-            );
+            if (!hasPredefinedValue) {
+                instance.set(PREDEFINED_VALUE, instance._valuePredefinedValueFn());
+
+                instance.get(BUILDER).editField(instance);
+            }
         },
 
         /**
@@ -195,7 +208,7 @@ var FormBuilderRadioField = A.Component.create({
 
             optionNodes.set(CHECKED, false);
 
-            optionNodes.all('input[value="' + val + '"]').set(CHECKED, true);
+            optionNodes.all('input[value="' + AEscape.html(val) + '"]').set(CHECKED, true);
         },
 
         /**

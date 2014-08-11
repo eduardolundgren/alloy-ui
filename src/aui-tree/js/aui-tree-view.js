@@ -168,24 +168,6 @@ var TreeView = A.Component.create({
         },
 
         /**
-         * Create Nodes.
-         *
-         * @method createNodes
-         * @param nodes
-         */
-        createNodes: function(nodes) {
-            var instance = this;
-
-            A.Array.each(A.Array(nodes), function(node) {
-                var newNode = instance.createNode(node);
-
-                instance.appendChild(newNode);
-            });
-
-            instance._syncPaginatorUI(nodes);
-        },
-
-        /**
          * Create the DOM structure for the TreeView. Lifecycle.
          *
          * @method renderUI
@@ -234,12 +216,10 @@ var TreeView = A.Component.create({
                     ownerTree: instance
                 });
 
-                if (deepContainer) {
-                    // render node before invoke the recursion
-                    treeNode.render();
-
-                    // propagating markup recursion
-                    instance._createFromHTMLMarkup(deepContainer);
+                if (instance.get('lazyLoad')) {
+                    A.setTimeout(function() {
+                        treeNode.render();
+                    }, 50);
                 }
                 else {
                     treeNode.render();
@@ -255,6 +235,11 @@ var TreeView = A.Component.create({
 
                 // and simulate the appendChild.
                 parentInstance.appendChild(treeNode);
+
+                if (deepContainer) {
+                    // propagating markup recursion
+                    instance._createFromHTMLMarkup(deepContainer);
+                }
             });
         },
 
@@ -766,10 +751,12 @@ var TreeViewDD = A.Component.create({
             instance._resetState(instance.nodeContent);
 
             // cannot drop the dragged element into any of its children
+            // nor above an undraggable element
             // using DOM contains method for performance reason
-            if (!dragNode.contains(dropNode)) {
-                // nArea splits the height in 3 areas top/center/bottom
-                // these areas are responsible for defining the state when the mouse is over any of them
+            if (!!dropTreeNode.get(DRAGGABLE) && !dragNode.contains(dropNode)) {
+                // nArea splits the height in 3 areas top/center/bottom these
+                // areas are responsible for defining the state when the mouse
+                // is over any of them
                 var nArea = nodeContent.get(OFFSET_HEIGHT) / 3;
                 var yTop = nodeContent.getY();
                 var yCenter = yTop + nArea;

@@ -294,6 +294,7 @@
         "requires": [
             "datatable-base",
             "calendar",
+            "escape",
             "overlay",
             "sortable",
             "aui-datatype",
@@ -512,11 +513,13 @@
             "aui-form-builder-field-radio",
             "aui-form-builder-field-select",
             "aui-form-builder-field-text",
-            "aui-form-builder-field-textarea"
+            "aui-form-builder-field-textarea",
+            "aui-tooltip-base"
         ]
     },
     "aui-form-builder-base": {
         "requires": [
+            "escape",
             "transition",
             "aui-button",
             "aui-collection",
@@ -1163,8 +1166,7 @@
     },
     "aui-timepicker": {
         "requires": [
-            "autocomplete-list",
-            "autocomplete-list-keys",
+            "autocomplete",
             "aui-datepicker-delegate",
             "aui-datepicker-popover"
         ],
@@ -1223,7 +1225,8 @@
     },
     "aui-tooltip-base": {
         "requires": [
-            "event-mouseenter",
+            "escape",
+            "event-hover",
             "transition",
             "widget",
             "widget-autohide",

@@ -304,6 +304,7 @@ Y.mix(YUI.Env[Y.version].modules, {
         "requires": [
             "datatable-base",
             "calendar",
+            "escape",
             "overlay",
             "sortable",
             "aui-datatype",
@@ -492,20 +493,20 @@ Y.mix(YUI.Env[Y.version].modules, {
         "condition": {
             "name": "aui-event-input",
             "test": function(A) {
-                var supportsDOMEvent = A.supportsDOMEvent,
-                    testFeature = A.Features.test,
-                    addFeature = A.Features.add;
+    var supportsDOMEvent = A.supportsDOMEvent,
+        testFeature = A.Features.test,
+        addFeature = A.Features.add;
 
-                if (testFeature('event', 'input') === undefined) {
-                    addFeature('event', 'input', {
-                        test: function() {
-                            return supportsDOMEvent(document.createElement('textarea'), 'input');
-                        }
-                    });
-                }
+    if (testFeature('event', 'input') === undefined) {
+        addFeature('event', 'input', {
+            test: function() {
+                return supportsDOMEvent(document.createElement('textarea'), 'input');
+            }
+        });
+    }
 
-                return !testFeature('event', 'input');
-            },
+    return !testFeature('event', 'input');
+},
             "trigger": "aui-event"
         },
         "requires": [
@@ -536,11 +537,13 @@ Y.mix(YUI.Env[Y.version].modules, {
             "aui-form-builder-field-radio",
             "aui-form-builder-field-select",
             "aui-form-builder-field-text",
-            "aui-form-builder-field-textarea"
+            "aui-form-builder-field-textarea",
+            "aui-tooltip-base"
         ]
     },
     "aui-form-builder-base": {
         "requires": [
+            "escape",
             "transition",
             "aui-button",
             "aui-collection",
@@ -1187,8 +1190,7 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "aui-timepicker": {
         "requires": [
-            "autocomplete-list",
-            "autocomplete-list-keys",
+            "autocomplete",
             "aui-datepicker-delegate",
             "aui-datepicker-popover"
         ],
@@ -1247,7 +1249,8 @@ Y.mix(YUI.Env[Y.version].modules, {
     },
     "aui-tooltip-base": {
         "requires": [
-            "event-mouseenter",
+            "escape",
+            "event-hover",
             "transition",
             "widget",
             "widget-autohide",
@@ -1416,4 +1419,4 @@ Y.mix(YUI.Env[Y.version].modules, {
         ]
     }
 });
-YUI.Env[Y.version].md5 = 'b686029fbc7b1029267a057f36ea552f';
+YUI.Env[Y.version].md5 = '732d541eeacac8e2ce755f01f1daffc3';

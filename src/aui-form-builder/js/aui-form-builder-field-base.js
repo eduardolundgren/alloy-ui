@@ -10,6 +10,7 @@ var L = A.Lang,
     isObject = L.isObject,
 
     AArray = A.Array,
+    AEscape = A.Escape,
 
     ACCEPT_CHILDREN = 'acceptChildren',
     ALERT = 'alert',
@@ -70,8 +71,6 @@ var L = A.Lang,
 
     getCN = A.getClassName,
 
-    CSS_ALERT = getCN(ALERT),
-    CSS_ALERT_INFO = getCN(ALERT, INFO),
     CSS_CLEARFIX = getCN(CLEARFIX),
     CSS_COMPONENT = getCN(COMPONENT),
     CSS_FB_DROP_ZONE = getCN(FORM, BUILDER, DROP, ZONE),
@@ -86,12 +85,13 @@ var L = A.Lang,
     CSS_ICON_WRENCH = getCN(ICON, WRENCH),
     CSS_WIDGET = getCN(WIDGET),
 
-    TPL_ALERT_TIP = '<div class="' + [CSS_ALERT, CSS_ALERT_INFO].join(SPACE) + '"></div>',
     TPL_BOUNDING_BOX = '<div class="' + [CSS_WIDGET, CSS_COMPONENT, CSS_FB_FIELD].join(SPACE) + '"></div>',
     TPL_DROP_ZONE = '<div class="' + CSS_FB_DROP_ZONE + '"></div>',
     TPL_FLAG_REQUIRED = '<span class="' + [CSS_ICON, CSS_ICON_ASTERISK].join(SPACE) + '"></span>',
     TPL_FLAG_TIP = '<span class="' + [CSS_ICON, CSS_ICON_QUESTION_SIGN].join(SPACE) + '"></span>',
-    TPL_LABEL = '<label for="{id}">{label}</label>';
+    TPL_LABEL = '<label for="{id}">{label}</label>',
+
+    INVALID_CLONE_ATTRS = [ID, NAME];
 
 /**
  * A base class for FormBuilderFieldBase.
@@ -474,8 +474,8 @@ var FormBuilderField = A.Component.create({
                 return A.Node.create(
                     L.sub(
                         TPL_LABEL, {
-                            id: instance.get(ID),
-                            label: instance.get(LABEL)
+                            id: AEscape.html(instance.get(ID)),
+                            label: AEscape.html(instance.get(LABEL))
                         }
                     )
                 );
@@ -585,30 +585,6 @@ var FormBuilderField = A.Component.create({
             instance.controlsToolbar = new A.Toolbar(
                 instance.get(CONTROLS_TOOLBAR)
             );
-
-            instance.toolTip = new A.Overlay({
-                align: {
-                    node: instance.get(TIP_FLAG_NODE),
-                    points: [A.WidgetPositionAlign.LC, A.WidgetPositionAlign.RC]
-                },
-                boundingBox: A.Node.create(TPL_ALERT_TIP),
-                zIndex: 500,
-                visible: false
-            });
-        },
-
-        /**
-         * Bind the events on the FormBuilderField UI. Lifecycle.
-         *
-         * @method bindUI
-         * @protected
-         */
-        bindUI: function() {
-            var instance = this,
-                tipFlagNode = instance.get(TIP_FLAG_NODE);
-
-            tipFlagNode.on('mouseover', A.bind(instance._onMouseOverTipFlagNode, instance));
-            tipFlagNode.on('mouseout', A.bind(instance._onMouseOutTipFlagNode, instance));
         },
 
         /**
@@ -634,7 +610,6 @@ var FormBuilderField = A.Component.create({
             contentBox.append(templateNode);
 
             instance.controlsToolbar.render(boundingBox);
-            instance.toolTip.render(contentBox);
         },
 
         /**
@@ -666,7 +641,7 @@ var FormBuilderField = A.Component.create({
             // use delegate
             instance.get(BOUNDING_BOX).dd.destroy();
 
-            instance.toolTip.destroy();
+            instance.tooltip.destroy();
 
             instance.get(PARENT).removeField(instance);
 
@@ -712,11 +687,37 @@ var FormBuilderField = A.Component.create({
         },
 
         /**
+         * Gets all necessary attributes for cloning this field.
+         *
+         * @method getAttributesForCloning
+         * @return {Object}
+         */
+        getAttributesForCloning: function() {
+            // List of all non-property attributes that need to be cloned.
+            var attributes = {
+                hiddenAttributes: this.get('hiddenAttributes'),
+                readOnlyAttributes: this.get('readOnlyAttributes'),
+                localizationMap: this.get('localizationMap')
+            };
+
+            // All field properties should be cloned as well.
+            AArray.each(this.getProperties(), function(property) {
+                var name = property.attributeName;
+
+                if (AArray.indexOf(INVALID_CLONE_ATTRS, name) === -1) {
+                    attributes[name] = property.value;
+                }
+            });
+
+            return attributes;
+        },
+
+        /**
          * TODO. Wanna help? Please send a Pull Request.
          *
          * @method getProperties
          */
-        getProperties: function() {
+        getProperties: function(excludeHidden) {
             var instance = this,
                 propertyModel = instance.getPropertyModel(),
                 hiddenAttributes = instance.get(HIDDEN_ATTRIBUTES),
@@ -726,8 +727,9 @@ var FormBuilderField = A.Component.create({
             AArray.each(propertyModel, function(property) {
                 var attribute = property.attributeName;
 
-                // TODO - Change checking to use hashes O(1) instead of indexOf arrays O(N)
-                if (AArray.indexOf(hiddenAttributes, attribute) > -1) {
+                // TODO - Change checking to use hashes O(1) instead of indexOf
+                // arrays O(N)
+                if (excludeHidden && AArray.indexOf(hiddenAttributes, attribute) > -1) {
                     return;
                 }
 
@@ -926,34 +928,6 @@ var FormBuilderField = A.Component.create({
         /**
          * TODO. Wanna help? Please send a Pull Request.
          *
-         * @method _onMouseOutTipFlagNode
-         * @protected
-         */
-        _onMouseOutTipFlagNode: function() {
-            var instance = this;
-
-            instance.toolTipTime = setTimeout(function() {
-                instance.toolTip.hide();
-            }, 300);
-        },
-
-        /**
-         * TODO. Wanna help? Please send a Pull Request.
-         *
-         * @method _onMouseOverTipFlagNode
-         * @protected
-         */
-        _onMouseOverTipFlagNode: function() {
-            var instance = this;
-
-            clearInterval(instance.toolTipTime);
-
-            instance.toolTip.show();
-        },
-
-        /**
-         * TODO. Wanna help? Please send a Pull Request.
-         *
          * @method _setId
          * @param val
          * @protected
@@ -1043,7 +1017,7 @@ var FormBuilderField = A.Component.create({
             var instance = this,
                 labelNode = instance.get(LABEL_NODE);
 
-            labelNode.setContent(val);
+            labelNode.setContent(AEscape.html(val));
         },
 
         /**
@@ -1086,12 +1060,7 @@ var FormBuilderField = A.Component.create({
                 controlsToolbar = instance.controlsToolbar,
                 requiredNode = instance.get(REQUIRED_FLAG_NODE);
 
-            if (val) {
-                requiredNode.show();
-            }
-            else {
-                requiredNode.hide();
-            }
+            requiredNode.toggle(val);
 
             controlsToolbar.set(CHILDREN, instance._getToolbarItems());
         },
@@ -1107,12 +1076,7 @@ var FormBuilderField = A.Component.create({
             var instance = this,
                 labelNode = instance.get(LABEL_NODE);
 
-            if (val) {
-                labelNode.show();
-            }
-            else {
-                labelNode.hide();
-            }
+            labelNode.toggle(val);
         },
 
         /**
@@ -1126,14 +1090,20 @@ var FormBuilderField = A.Component.create({
             var instance = this,
                 tipFlagNode = instance.get(TIP_FLAG_NODE);
 
-            if (val) {
-                tipFlagNode.show();
-            }
-            else {
-                tipFlagNode.hide();
+            tipFlagNode.toggle(val.length !== 0);
+
+            if (this.tooltip) {
+                this.tooltip.set(BODY_CONTENT, val);
+                return;
             }
 
-            instance.toolTip.set(BODY_CONTENT, val);
+            this.tooltip = new A.Tooltip({
+                bodyContent: val,
+                trigger: tipFlagNode,
+                position: 'right',
+                visible: false
+            }).render();
+
         },
 
         /**
