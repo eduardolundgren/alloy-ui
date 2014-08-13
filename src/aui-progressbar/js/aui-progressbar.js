@@ -254,6 +254,12 @@ var ProgressBar = A.Component.create({
         syncUI: function() {
             var instance = this;
 
+            var label = '';
+
+            if (instance.get('label')) {
+                label = 'label';
+            }
+
             if (instance.get('useARIA')) {
                 instance.plug(A.Plugin.Aria, {
                     attributes: {
@@ -261,7 +267,7 @@ var ProgressBar = A.Component.create({
                         max: 'valuemax',
                         min: 'valuemin',
                         orientation: 'orientation',
-                        label: 'label'
+                        label: label
                     }
                 });
             }
