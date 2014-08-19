@@ -107,6 +107,14 @@ YUI.add('aui-base-tests', function(Y) {
                     Assert.areEqual(paddedLengths.post, length);
                 }
             }
+        },
+
+        'should default to string correctly': function () {
+            Assert.areEqual('default', Y.Lang.String.defaultValue('', 'default'));
+            Assert.areEqual('', Y.Lang.String.defaultValue('', undefined));
+            Assert.areEqual('default', Y.Lang.String.defaultValue(undefined, 'default'));
+            Assert.areNotEqual(undefined, Y.Lang.String.defaultValue('string', undefined));
+            Assert.areNotEqual('default', Y.Lang.String.defaultValue('string', 'default'));
         }
     }));
 
