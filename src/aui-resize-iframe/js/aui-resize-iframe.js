@@ -107,16 +107,14 @@ ResizeIframe = A.Component.create(
 				var iframeDoc = instance._iframeDoc;
 
 				if (iframeDoc) {
-					var docEl;
-
 					try {
-						docEl = iframeDoc.documentElement;
+						var docEl = iframeDoc.documentElement;
+
+						if (docEl) {
+							docEl.style.overflowY = '';
+						}
 					}
 					catch (e) {
-					}
-
-					if (docEl) {
-						docEl.style.overflowY = '';
 					}
 				}
 
