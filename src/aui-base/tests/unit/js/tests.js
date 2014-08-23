@@ -2,6 +2,18 @@ YUI.add('aui-base-tests', function(Y) {
 
     var escapedEntities = ['&amp;', '&lt;', '&gt;', '&#034;', '&#039;', '&#047;', '&#096;'],
         numbersToPad = [1, 10, 2.5, 6.789, 123.4, 3000.3102, .5, .10001, 500000.0],
+        pluralizedStrings = [
+            'apples',
+            'fish',
+            'mailmen',
+            'octopi'
+        ],
+        singularStrings = [
+            'apple',
+            'fish',
+            'mailman',
+            'octopus'
+        ],
         symbolEntities = ['&','<','>','"','\'','/','`'],
         uncamelizedStrings = [
             'lorem-ipsum-dolor-sit-amet',
@@ -107,6 +119,17 @@ YUI.add('aui-base-tests', function(Y) {
                     Assert.areEqual(paddedLengths.post, length);
                 }
             }
+        },
+
+        'should pluralize known words correctly': function() {
+            for (var i = 0; i < singularStrings.length; i++) {
+                Assert.areEqual(Y.Lang.String.pluralize(0, singularStrings[i], pluralizedStrings[i]), '0 '.concat(pluralizedStrings[i]));
+                Assert.areEqual(Y.Lang.String.pluralize(1, singularStrings[i], pluralizedStrings[i]), '1 '.concat(singularStrings[i]));
+                Assert.areEqual(Y.Lang.String.pluralize(2, singularStrings[i], pluralizedStrings[i]), '2 '.concat(pluralizedStrings[i]));
+                Assert.areEqual(Y.Lang.String.pluralize(3, singularStrings[i], pluralizedStrings[i]), '3 '.concat(pluralizedStrings[i]));
+                Assert.areEqual(Y.Lang.String.pluralize(4, singularStrings[i], pluralizedStrings[i]), '4 '.concat(pluralizedStrings[i]));
+            }
+
         }
     }));
 
