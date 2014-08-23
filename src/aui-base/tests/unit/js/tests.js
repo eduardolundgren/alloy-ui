@@ -1,6 +1,18 @@
 YUI.add('aui-base-tests', function(Y) {
 
-    var escapedEntities = ['&amp;', '&lt;', '&gt;', '&#034;', '&#039;', '&#047;', '&#096;'],
+    var endsWithStrings = [
+            'lorem-ipsum',
+            'lorem ipsum',
+            'loremipsumdolor',
+            'lorem'
+        ],
+        endsWithStringsSuffixes = [
+            'ipsum',
+            ' ipsum',
+            'dolor',
+            'm'
+        ],
+        escapedEntities = ['&amp;', '&lt;', '&gt;', '&#034;', '&#039;', '&#047;', '&#096;'],
         numbersToPad = [1, 10, 2.5, 6.789, 123.4, 3000.3102, .5, .10001, 500000.0],
         symbolEntities = ['&','<','>','"','\'','/','`'],
         uncamelizedStrings = [
@@ -106,6 +118,12 @@ YUI.add('aui-base-tests', function(Y) {
                     Assert.areEqual(paddedLengths.pre, precision);
                     Assert.areEqual(paddedLengths.post, length);
                 }
+            }
+        },
+
+        'should check for ending suffix correctly': function() {
+            for (var i = 0; i < endsWithStrings.length; i++) {
+                Assert.isTrue(Y.Lang.String.endsWith(endsWithStrings[i], endsWithStringsSuffixes[i]));
             }
         }
     }));
