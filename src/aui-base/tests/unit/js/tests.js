@@ -2,6 +2,7 @@ YUI.add('aui-base-tests', function(Y) {
 
     var escapedEntities = ['&amp;', '&lt;', '&gt;', '&#034;', '&#039;', '&#047;', '&#096;'],
         numbersToPad = [1, 10, 2.5, 6.789, 123.4, 3000.3102, .5, .10001, 500000.0],
+        regExCharacters = ['(', ')', '^', '$', '.', '*', '?', '/', '+', '|', '[', ']', '\\'],
         symbolEntities = ['&','<','>','"','\'','/','`'],
         uncamelizedStrings = [
             'lorem-ipsum-dolor-sit-amet',
@@ -106,6 +107,12 @@ YUI.add('aui-base-tests', function(Y) {
                     Assert.areEqual(paddedLengths.pre, precision);
                     Assert.areEqual(paddedLengths.post, length);
                 }
+            }
+        },
+
+        'should escape regular expressions correctly': function() {
+            for (var i = 0; i < regExCharacters.length; i++) {
+                Assert.areEqual(Y.Lang.String.escapeRegEx(regExCharacters[i]), '\\'.concat(regExCharacters[i]));
             }
         }
     }));
