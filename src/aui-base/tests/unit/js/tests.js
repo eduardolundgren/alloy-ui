@@ -2,6 +2,16 @@ YUI.add('aui-base-tests', function(Y) {
 
     var caseStrings = ['liferay', 'Liferay', 'cAPITAL', 'Capital', 'word-dash', 'Word-dash'],
         containStrings = ['alongstring', 'a-different-string', 'anotherstring123'],
+        definedStrings = [
+            '',
+            '',
+            'defined'
+        ],
+        definitionStrings = [
+            ,
+            '',
+            'defined'
+        ],
         endsWithStrings = [
             'lorem-ipsum',
             'lorem ipsum',
@@ -235,6 +245,16 @@ YUI.add('aui-base-tests', function(Y) {
 
                 Assert.areNotEqual(expected, actual);
                 Assert.areEqual(expected, Y.Lang.String.capitalize(actual));
+            }
+        },
+
+        'should define undefined values correctly': function() {
+            var definitionStringsLength = definitionStrings.length;
+
+            Assert.areEqual(definitionStringsLength, definedStrings.length);
+
+            for (var i = 0; i < definitionStringsLength; i++) {
+                Assert.areEqual(Y.Lang.String.undef(definitionStrings[i]), definedStrings[i]);
             }
         }
     }));
