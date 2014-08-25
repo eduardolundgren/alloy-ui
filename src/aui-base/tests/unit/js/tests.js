@@ -236,6 +236,17 @@ YUI.add('aui-base-tests', function(Y) {
                 Assert.areNotEqual(expected, actual);
                 Assert.areEqual(expected, Y.Lang.String.capitalize(actual));
             }
+        },
+
+        'should return whether or not a string starts with a specified prefix correctly': function() {
+            var prefixedStringsLength = prefixedStrings.length;
+
+            Assert.isTrue((prefixedStringsLength == prefixStrings.length) && (prefixedStringsLength == prefixLessStrings.length))
+
+            for (var i = 0; i < prefixedStringsLength; i++) {
+                Assert.isTrue(Y.Lang.String.startsWith(prefixedStrings[i], prefixStrings[i]));
+                Assert.isTrue(!Y.Lang.String.startsWith(prefixedStrings[i], prefixLessStrings[i]));
+            }
         }
     }));
 
