@@ -59,6 +59,27 @@ YUI.add('aui-base-tests', function(Y) {
             'word'
         ],
         regExCharacters = ['(', ')', '^', '$', '.', '*', '?', '/', '+', '|', '[', ']', '\\'],
+        removalTestStrings = [
+            'broccoli roccoli brocoli broc coli brocoli.',
+            'carrots carrot carrotscarrot carrotcarrot',
+            'not tomatoes,tomato?',
+            '.potato potatoes potahto plobflaybo',
+            'vegetables'
+        ],
+        removedStrings = [
+            ' roccoli brocoli broc coli brocoli.',
+            's  s ',
+            'not es,?',
+            '. es potahto plobflaybo',
+            'tables'
+        ],
+        removalSubstrings = [
+            'broccoli',
+            'carrot',
+            'tomato',
+            'potato',
+            'vege'
+        ],
         singularStrings = [
             'apple',
             'fish',
@@ -235,6 +256,16 @@ YUI.add('aui-base-tests', function(Y) {
 
                 Assert.areNotEqual(expected, actual);
                 Assert.areEqual(expected, Y.Lang.String.capitalize(actual));
+            }
+        },
+
+        'should remove all matched strings correctly': function() {
+            var unremovedStringLength = removalTestStrings.length;
+
+            Assert.isTrue((unremovedStringLength == removalSubstrings.length) && (unremovedStringLength == removedStrings.length));
+
+            for (var i = 0; i < unremovedStringLength; i++) {
+                Assert.areEqual(Y.Lang.String.removeAll(removalTestStrings[i], removalSubstrings[i]), removedStrings[i]);
             }
         }
     }));
