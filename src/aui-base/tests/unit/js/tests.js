@@ -59,6 +59,7 @@ YUI.add('aui-base-tests', function(Y) {
             'word'
         ],
         regExCharacters = ['(', ')', '^', '$', '.', '*', '?', '/', '+', '|', '[', ']', '\\'],
+        repeatedString = 'word',
         singularStrings = [
             'apple',
             'fish',
@@ -235,6 +236,16 @@ YUI.add('aui-base-tests', function(Y) {
 
                 Assert.areNotEqual(expected, actual);
                 Assert.areEqual(expected, Y.Lang.String.capitalize(actual));
+            }
+        },
+
+        'should return a repeated string correctly': function() {
+            var testString = '';
+
+            for (var i = 0; i < 100; i++) {
+                Assert.areEqual(Y.Lang.String.repeat(repeatedString, i), testString);
+
+                testString = testString.concat(repeatedString);
             }
         }
     }));
