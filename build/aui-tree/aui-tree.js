@@ -492,7 +492,8 @@ A.mix(TreeData.prototype, {
 		// and then set the children, to have the appendChild propagation
 		// the PARENT_NODE references should be updated
 		var length = children.push(node);
-		instance.set(CHILDREN, children);
+
+		instance.childrenLength = children.length;
 
 		// updating prev/nextSibling attributes
 		var prevIndex = length - 2;
@@ -831,9 +832,13 @@ A.mix(TreeData.prototype, {
 					}
 
 					// creating node from json
+					var jsonNode = node;
+
 					node = instance.createNode(node);
 
 					if (hasChildren && lazyLoad) {
+						jsonNode.children = children;
+
 						node.childrenLength = children.length;
 
 						A.setTimeout(function() {
@@ -885,6 +890,7 @@ var Lang = A.Lang,
 	CONTAINER = 'container',
 	CONTENT = 'content',
 	CONTENT_BOX = 'contentBox',
+	DRAGGABLE = 'draggable',
 	EXPANDED = 'expanded',
 	HELPER = 'helper',
 	HIDDEN = 'hidden',
@@ -892,6 +898,7 @@ var Lang = A.Lang,
 	HITAREA = 'hitarea',
 	ICON = 'icon',
 	ICON_EL = 'iconEl',
+	INVALID = 'invalid',
 	ID = 'id',
 	LABEL = 'label',
 	LABEL_EL = 'labelEl',
@@ -933,6 +940,7 @@ var Lang = A.Lang,
 	CSS_TREE_LABEL = getCN(TREE, LABEL),
 	CSS_TREE_NODE = getCN(TREE, NODE),
 	CSS_TREE_NODE_CONTENT = getCN(TREE, NODE, CONTENT),
+	CSS_TREE_NODE_CONTENT_INVALID = getCN(TREE, NODE, CONTENT, INVALID),
 	CSS_TREE_NODE_HIDDEN_HITAREA = getCN(TREE, NODE, HIDDEN, HITAREA),
 	CSS_TREE_NODE_LEAF = getCN(TREE, NODE, LEAF),
 	CSS_TREE_NODE_OVER = getCN(TREE, NODE, OVER),
@@ -1228,6 +1236,7 @@ var TreeNode = A.Component.create(
 				// Sync the Widget TreeNode id with the BOUNDING_BOX id
 				instance._syncTreeNodeBBId();
 
+				instance._uiSetDraggable(instance.get(DRAGGABLE));
 				instance._uiSetExpanded(instance.get(EXPANDED));
 				instance._uiSetLeaf(instance.get(LEAF));
 
@@ -1244,6 +1253,7 @@ var TreeNode = A.Component.create(
 				var instance = this;
 
 				instance.after('childrenChange', A.bind(instance._afterSetChildren, instance));
+				instance.after('draggableChange', A.bind(instance._afterDraggableChange, instance));
 				instance.after('expandedChange', A.bind(instance._afterExpandedChange, instance));
 				instance.after('idChange', instance._afterSetId, instance);
 				instance.after('leafChange', A.bind(instance._afterLeafChange, instance));
@@ -1741,6 +1751,14 @@ var TreeNode = A.Component.create(
 				);
 			},
 
+			_uiSetDraggable: function(val) {
+				var instance = this;
+
+				var contentBox = instance.get(CONTENT_BOX);
+
+				contentBox.toggleClass(CSS_TREE_NODE_CONTENT_INVALID, !val);
+			},
+
 			_uiSetExpanded: function(val) {
 				var instance = this;
 
@@ -1924,19 +1942,6 @@ var TreeNodeIO = A.Component.create(
 			/*
 			* Methods
 			*/
-			createNodes: function(nodes) {
-				var instance = this;
-
-				A.Array.each(
-					A.Array(nodes),
-					function(node) {
-						instance.appendChild(instance.createNode(node));
-					}
-				);
-
-				instance._syncPaginatorUI(nodes);
-			},
-
 			expand: function() {
 				var instance = this;
 
@@ -2344,8 +2349,18 @@ var TreeNodeTask = A.Component.create(
 
 				instance.eachParent(
 					function(parentNode) {
-						if (isTreeNodeTask(parentNode) && !parentNode.isChecked()) {
-							parentNode.get(CONTENT_BOX).addClass(CSS_TREE_NODE_CHILD_UNCHECKED);
+						if (isTreeNodeTask(parentNode)) {
+							var hasUncheckedChild = false;
+
+							parentNode.eachChildren(function(child) {
+								if ((child !== instance) && !child.isChecked()) {
+									hasUncheckedChild = true;
+								}
+							});
+
+							if (!hasUncheckedChild) {
+								parentNode.get(CONTENT_BOX).removeClass(CSS_TREE_NODE_CHILD_UNCHECKED);
+							}
 						}
 					}
 				);
@@ -2373,8 +2388,8 @@ var TreeNodeTask = A.Component.create(
 
 				instance.eachParent(
 					function(parentNode) {
-						if (isTreeNodeTask(parentNode) && !parentNode.isChecked()) {
-							parentNode.get(CONTENT_BOX).removeClass(CSS_TREE_NODE_CHILD_UNCHECKED);
+						if (isTreeNodeTask(parentNode) && parentNode.isChecked()) {
+							parentNode.get(CONTENT_BOX).addClass(CSS_TREE_NODE_CHILD_UNCHECKED);
 						}
 					}
 				);
@@ -2765,6 +2780,7 @@ var L = A.Lang,
 	FILE = 'file',
 	HITAREA = 'hitarea',
 	ICON = 'icon',
+	INVALID = 'invalid',
 	LABEL = 'label',
 	LAST_SELECTED = 'lastSelected',
 	LEAF = 'leaf',
@@ -2793,6 +2809,7 @@ var L = A.Lang,
 	CSS_TREE_ICON = getCN(TREE, ICON),
 	CSS_TREE_LABEL = getCN(TREE, LABEL),
 	CSS_TREE_NODE_CONTENT = getCN(TREE, NODE, CONTENT),
+	CSS_TREE_NODE_CONTENT_INVALID = getCN(TREE, NODE, CONTENT, INVALID),
 	CSS_TREE_ROOT_CONTAINER = getCN(TREE, ROOT, CONTAINER),
 	CSS_TREE_VIEW_CONTENT = getCN(TREE, VIEW, CONTENT);
 
@@ -2912,18 +2929,6 @@ var TreeView = A.Component.create(
 				instance._delegateDOM();
 			},
 
-			createNodes: function(nodes) {
-				var instance = this;
-
-				A.Array.each(A.Array(nodes), function(node) {
-					var newNode = instance.createNode(node);
-
-					instance.appendChild(newNode);
-				});
-
-				instance._syncPaginatorUI(nodes);
-			},
-
 			/**
 			 * Create the DOM structure for the TreeView. Lifecycle.
 			 *
@@ -2973,12 +2978,10 @@ var TreeView = A.Component.create(
 						ownerTree: instance
 					});
 
-					if (deepContainer) {
-						// render node before invoke the recursion
-						treeNode.render();
-
-						// propagating markup recursion
-						instance._createFromHTMLMarkup(deepContainer);
+					if (instance.get('lazyLoad')) {
+						A.setTimeout(function() {
+							treeNode.render();
+						}, 50);
 					}
 					else {
 						treeNode.render();
@@ -2994,6 +2997,11 @@ var TreeView = A.Component.create(
 
 					// and simulate the appendChild.
 					parentInstance.appendChild(treeNode);
+
+					if (deepContainer) {
+						// propgating markup recursion
+						instance._createFromHTMLMarkup(deepContainer);
+					}
 				});
 			},
 
@@ -3365,6 +3373,7 @@ var TreeViewDD = A.Component.create(
 						{
 							bubbleTargets: instance,
 							container: boundingBox,
+							invalid: DOT+CSS_TREE_NODE_CONTENT_INVALID,
 							nodes: DOT+CSS_TREE_NODE_CONTENT,
 							target: true
 						}
@@ -3501,8 +3510,9 @@ var TreeViewDD = A.Component.create(
 				instance._resetState(instance.nodeContent);
 
 				// cannot drop the dragged element into any of its children
+				// nor above an undraggable element
 				// using DOM contains method for performance reason
-				if ( !dragNode.contains(dropNode) ) {
+				if (!!dropTreeNode.get(DRAGGABLE) && !dragNode.contains(dropNode)) {
 					// nArea splits the height in 3 areas top/center/bottom
 					// these areas are responsible for defining the state when the mouse is over any of them
 					var nArea = nodeContent.get(OFFSET_HEIGHT) / 3;
@@ -3697,7 +3707,7 @@ var TreeViewDD = A.Component.create(
 
 A.TreeViewDD = TreeViewDD;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-tree-node','aui-tree-paginator','aui-tree-io','dd-delegate','dd-proxy']});
+}, '@VERSION@' ,{requires:['aui-tree-node','aui-tree-paginator','aui-tree-io','dd-delegate','dd-proxy'], skinnable:true});
 AUI.add('aui-tree-io', function(A) {
 var Lang = A.Lang,
 	isFunction = Lang.isFunction,
@@ -3753,6 +3763,35 @@ TreeViewIO.prototype = {
 		instance.publish(
 
 		);
+	},
+
+	/**
+	 * Create nodes.
+	 *
+	 * @method createNodes
+	 * @param nodes
+	 */
+	createNodes: function(nodes) {
+		var instance = this;
+
+		var paginator = instance.get('paginator');
+
+		A.Array.each(
+			A.Array(nodes),
+			function(node) {
+				var childrenLength = instance.getChildrenLength();
+
+				if (paginator && paginator.total <= childrenLength) {
+					return;
+				}
+
+				instance.appendChild(
+					instance.createNode(node)
+				);
+			}
+		);
+
+		instance._syncPaginatorUI(nodes);
 	},
 
 	/**

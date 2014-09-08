@@ -40,6 +40,7 @@ var Lang = A.Lang,
 	FIELD_CONTAINER = 'fieldContainer',
 	FIELD_STRINGS = 'fieldStrings',
 	FOCUS = 'focus',
+	LABEL_CSS_CLASS = 'labelCssClass',
 	MESSAGE = 'message',
 	MESSAGE_CONTAINER = 'messageContainer',
 	NAME = 'name',
@@ -223,6 +224,11 @@ var FormValidator = A.Component.create({
 			validator: isObject
 		},
 
+		labelCssClass: {
+			validator: isString,
+			value: 'control-label'
+		},
+
 		messageContainer: {
 			getter: function(val) {
 				return A.Node.create(val).clone();
@@ -394,7 +400,7 @@ var FormValidator = A.Component.create({
 			if (isString(fieldOrFieldName)) {
 				fieldOrFieldName = instance.getFieldsByName(fieldOrFieldName);
 
-				if (fieldOrFieldName.length) {
+				if (fieldOrFieldName && fieldOrFieldName.length && !fieldOrFieldName.name) {
 					fieldOrFieldName = fieldOrFieldName[0];
 				}
 			}
@@ -613,17 +619,35 @@ var FormValidator = A.Component.create({
 		},
 
 		_defErrorFieldFn: function(event) {
-			var instance = this;
+			var instance = this,
+				ancestor,
+				field,
+				nextSibling,
+				stackContainer,
+				target,
+				validator;
 
-			var validator = event.validator;
-			var field = validator.field;
+			validator = event.validator;
+			field = validator.field;
 
 			instance.highlight(field);
 
 			if (instance.get(SHOW_MESSAGES)) {
-				var stackContainer = instance.getFieldStackErrorContainer(field);
+				target = field;
 
-				field.placeBefore(stackContainer);
+				stackContainer = instance.getFieldStackErrorContainer(field);
+
+				nextSibling = field.get('nextSibling');
+
+				if (nextSibling && nextSibling.get('nodeType') === 3) {
+					ancestor = field.ancestor();
+
+					if (ancestor && ancestor.hasClass(instance.get(LABEL_CSS_CLASS))) {
+						target = nextSibling;
+					}
+				}
+
+				target.placeAfter(stackContainer);
 
 				instance.printStackError(
 					field,
@@ -809,7 +833,6 @@ var FormValidator = A.Component.create({
 				}
 			}
 		},
-
 
 		_uiSetValidateOnBlur: function(val) {
 			var instance = this,

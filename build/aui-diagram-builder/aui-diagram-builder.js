@@ -795,7 +795,7 @@ var DiagramBuilderBase = A.Component.create(
 
 A.DiagramBuilderBase = DiagramBuilderBase;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-tabs','aui-property-list','collection','dd']});
+}, '@VERSION@' ,{requires:['aui-tabs','aui-property-list','collection','dd'], skinnable:true});
 AUI.add('aui-diagram-builder-impl', function(A) {
 var Lang = A.Lang,
 	isArray = Lang.isArray,
@@ -857,6 +857,7 @@ var Lang = A.Lang,
 	KEYDOWN = 'keydown',
 	LABEL = 'label',
 	LOCK = 'lock',
+	MOUSEDOWN = 'mousedown',
 	MOUSEENTER = 'mouseenter',
 	MOUSELEAVE = 'mouseleave',
 	NAME = 'name',
@@ -1494,7 +1495,7 @@ var DiagramBuilder = A.Component.create({
 			event.halt();
 		},
 
-		_onCanvasClick: function(event) {
+		_onCanvasMouseDown: function(event) {
 			var instance = this;
 
 			instance.stopEditing();
@@ -1582,11 +1583,11 @@ var DiagramBuilder = A.Component.create({
 
 		_renderGraphic: function() {
 			var instance = this;
-			var graphic = instance.get(GRAPHIC);
 			var canvas = instance.get(CANVAS);
+			var graphic = instance.get(GRAPHIC);
 
 			graphic.render(canvas);
-			A.one(canvas).on(CLICK, A.bind(instance._onCanvasClick, instance));
+			A.one(canvas).on(MOUSEDOWN, A.bind(instance._onCanvasMouseDown, instance));
 		},
 
 		_setConnector: function(val) {
@@ -2824,7 +2825,7 @@ A.DiagramNodeTask = A.Component.create({
 
 A.DiagramBuilder.types[TASK] = A.DiagramNodeTask;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-data-set','aui-diagram-builder-base','aui-diagram-builder-connector','overlay']});
+}, '@VERSION@' ,{requires:['aui-data-set','aui-diagram-builder-base','aui-diagram-builder-connector','overlay'], skinnable:true});
 AUI.add('aui-diagram-builder-connector', function(A) {
 var Lang = A.Lang,
 	isArray = Lang.isArray,
@@ -3463,7 +3464,7 @@ A.Connector = A.Base.create('line', A.Base, [], {
 	}
 });
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-base','aui-template','arraylist-add','arraylist-filter','json','graphics','dd']});
+}, '@VERSION@' ,{requires:['aui-base','aui-template','arraylist-add','arraylist-filter','json','graphics','dd'], skinnable:true});
 
 
 AUI.add('aui-diagram-builder', function(A){}, '@VERSION@' ,{skinnable:true, use:['aui-diagram-builder-base','aui-diagram-builder-impl']});

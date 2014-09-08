@@ -24,12 +24,12 @@ var Lang = A.Lang,
 	BODY = 'body',
 	BOUNDING_BOX = 'boundingBox',
 	BUTTON = 'button',
-	BUTTONITEM = 'buttonitem',
 	BUTTON_NODE = 'buttonNode',
+	BUTTONITEM = 'buttonitem',
 	CALENDAR = 'calendar',
 	CLEARFIX = 'clearfix',
-	CONTENT_BOX = 'contentBox',
 	CONTENT = 'content',
+	CONTENT_BOX = 'contentBox',
 	CURRENT_DAY = 'currentDay',
 	CURRENT_MONTH = 'currentMonth',
 	CURRENT_YEAR = 'currentYear',
@@ -38,9 +38,11 @@ var Lang = A.Lang,
 	DAY = 'day',
 	DAY_NODE = 'dayNode',
 	DAY_NODE_NAME = 'dayNodeName',
+	DISABLED = 'disabled',
 	DISPLAY = 'display',
 	DOT = '.',
 	HELPER = 'helper',
+	LOCALE = 'locale',
 	ID = 'id',
 	MAX_DATE = 'maxDate',
 	MIN_DATE = 'minDate',
@@ -543,7 +545,8 @@ var DatePickerSelect = A.Component.create(
 
 				var target = event.currentTarget || event.target;
 
-				var monthChanged = target.test(DOT+CSS_DATEPICKER_MONTH);
+				var monthChanged = target.test(DOT + CSS_DATEPICKER_MONTH);
+				var yearChanged = target.test(DOT + CSS_DATEPICKER_YEAR);
 
 				var currentDay = instance.get(DAY_NODE).val();
 				var currentMonth = instance.get(MONTH_NODE).val();
@@ -565,7 +568,7 @@ var DatePickerSelect = A.Component.create(
 					instance.calendar.set(CURRENT_YEAR, currentYear);
 				}
 
-				if (monthChanged) {
+				if (monthChanged || yearChanged) {
 					instance._uiSetCurrentMonth();
 
 					if (validDay) {
@@ -912,6 +915,11 @@ var DatePickerSelect = A.Component.create(
 				instance.get(DAY_NODE).set('disabled', disabled);
 				instance.get(MONTH_NODE).set('disabled', disabled);
 				instance.get(YEAR_NODE).set('disabled', disabled);
+
+				instance.datePicker.set(DISABLED, disabled);
+
+				instance._buttonItem.set(DISABLED, disabled);
+				instance._buttonItem.StateInteraction.set(DISABLED, disabled);
 			}
 		}
 	}
@@ -919,4 +927,4 @@ var DatePickerSelect = A.Component.create(
 
 A.DatePickerSelect = DatePickerSelect;
 
-}, '@VERSION@' ,{skinnable:true, requires:['aui-datepicker-base','aui-button-item']});
+}, '@VERSION@' ,{requires:['aui-datepicker-base','aui-button-item'], skinnable:true});
