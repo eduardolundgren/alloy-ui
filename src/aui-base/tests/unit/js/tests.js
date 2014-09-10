@@ -1,6 +1,13 @@
 YUI.add('aui-base-tests', function(Y) {
 
-    var caseStrings = ['liferay', 'Liferay', 'cAPITAL', 'Capital', 'word-dash', 'Word-dash'],
+    var camelizedStrings = [
+            'loremIpsumDolorSitAmet',
+            'LorEmIpsumDolorSitAMET',
+            'LoremIpsumDoLOR. sitAmet +1',
+            'loremIpsumDolorSitAmet, LOREMIpsumD&OLOR',
+            'LoremIpsumDolorSitAmet. loremIpsumDolorSitAmet, loremIpsumDolorSitAmet'
+        ],
+        caseStrings = ['liferay', 'Liferay', 'cAPITAL', 'Capital', 'word-dash', 'Word-dash'],
         containStrings = ['alongstring', 'a-different-string', 'anotherstring123'],
         definedStrings = [
             '',
@@ -228,7 +235,6 @@ YUI.add('aui-base-tests', function(Y) {
                     character = null,
                     dashCount = 0;
 
-                //find the dash and capitalized indicies
                 for (var j = 0; j < toBeCamelized.length; j++) {
                     character = toBeCamelized[j];
 
@@ -242,7 +248,6 @@ YUI.add('aui-base-tests', function(Y) {
                     }
                 }
 
-                //ensure the result is camelized
                 for (var k = 0; k < camelized.length; k++) {
                     character = camelized[k];
 
@@ -254,6 +259,39 @@ YUI.add('aui-base-tests', function(Y) {
                     }
                 }
             }
+        },
+
+        'should uncamelize strings correctly': function() {
+            for (var i = 0; i < camelizedStrings.length; i++) {
+                var toBeUncamelized = camelizedStrings[i],
+                    uncamelized = Y.Lang.String.uncamelize(toBeUncamelized, '-'),
+                    capitalIndices = [],
+                    character = null,
+                    dashCount = 0;
+
+                for (var j = 0; j < toBeUncamelized.length; j++) {
+                    character = toBeUncamelized[j];
+
+                    if (character.toUpperCase() === character) {
+                        capitalIndices.push(j);
+                    }
+                }
+
+                for (var k = 0; k < uncamelized.length; k++) {
+                    character = uncamelized[k];
+
+                    if (character === '-') {
+                        dashCount++;
+                    }
+
+                    if (capitalIndices.indexOf(k - dashCount) === -1) {
+                        Assert.areSame(character.toLowerCase(), character);
+                    }
+                    else {
+                        Assert.areSame(character.toUpperCase(), character);
+                    }
+                };
+            };
         },
 
         'should pad numbers correctly': function() {
