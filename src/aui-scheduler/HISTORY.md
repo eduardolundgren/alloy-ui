@@ -6,6 +6,7 @@
 
 * [AUI-1652](https://issues.liferay.com/browse/AUI-1652) Update Scheduler Agenda View
 * [AUI-1656](https://issues.liferay.com/browse/AUI-1656) Uniform styling for week and month headers
+* [AUI-1660](https://issues.liferay.com/browse/AUI-1660) Move scheduler date down into the calendar views
 * [AUI-1641](https://issues.liferay.com/browse/AUI-1641) Events in agenda view does not respond to "click" event when scheduler is disabled
 * [AUI-1635](https://issues.liferay.com/browse/AUI-1635) Fix lint problems
 * [AUI-1601](https://issues.liferay.com/browse/AUI-1601) Source format media query max-width for consistency with Bootstrap
