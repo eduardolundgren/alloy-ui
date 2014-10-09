@@ -70,7 +70,9 @@ A.ImageViewer = A.Base.create(
         renderUI: function() {
             A.ImageViewer.superclass.renderUI.apply(this, arguments);
 
-            this._renderFooter();
+            if (this._sources.length) {
+                this._renderFooter();
+            }
         },
 
         /**
@@ -82,19 +84,21 @@ A.ImageViewer = A.Base.create(
         bindUI: function() {
             A.ImageViewer.superclass.bindUI.apply(this, arguments);
 
-            this._attachLinkEvent();
+            if (this._sources.length) {
+                this._attachLinkEvent();
 
-            this._eventHandles.push(
-                this.after({
-                    linksChange: this._afterLinksChange,
-                    thumbnailsConfigChange: this._afterThumbnailsConfigChange
-                }),
-                this._closeEl.after('click', A.bind(this._afterCloseClicked, this)),
-                A.getDoc().on('keydown', A.bind(this._onKeydown, this)),
-                A.after(this._afterFillHeight, this, 'fillHeight')
-            );
+                this._eventHandles.push(
+                    this.after({
+                        linksChange: this._afterLinksChange,
+                        thumbnailsConfigChange: this._afterThumbnailsConfigChange
+                    }),
+                    this._closeEl.after('click', A.bind(this._afterCloseClicked, this)),
+                    A.getDoc().on('keydown', A.bind(this._onKeydown, this)),
+                    A.after(this._afterFillHeight, this, 'fillHeight')
+                );
 
-            this._bindThumbnails();
+                this._bindThumbnails();
+            }
         },
 
         /**
@@ -173,15 +177,17 @@ A.ImageViewer = A.Base.create(
         _afterResponsive: function() {
             A.ImageViewer.superclass._afterResponsive.apply(this, arguments);
 
-            this.footerNode.setStyle('width', '');
+            if (this._sources.length) {
+                this.footerNode.setStyle('width', '');
 
-            this.bodyNode.setStyles({
-                height: '',
-                lineHeight: ''
-            });
-            this._fillHeight();
+                this.bodyNode.setStyles({
+                    height: '',
+                    lineHeight: ''
+                });
+                this._fillHeight();
 
-            this._setAlignCenter(true);
+                this._setAlignCenter(true);
+            }
         },
 
         /**
@@ -228,21 +234,23 @@ A.ImageViewer = A.Base.create(
         _afterUISetVisible: function() {
             A.ImageViewer.superclass._afterUISetVisible.apply(this, arguments);
 
-            if (this.get('visible')) {
-                this._fillHeight();
+            if (this._sources.length) {
+                if (this.get('visible')) {
+                    this._fillHeight();
 
-                if (this._thumbnailsWidget) {
-                    this._thumbnailsWidget.updateDimensions();
-                }
+                    if (this._thumbnailsWidget) {
+                        this._thumbnailsWidget.updateDimensions();
+                    }
 
-                this._closeEl.show();
-                if (this.get('modal')) {
-                    this.get('maskNode').addClass(CSS_MASK);
+                    this._closeEl.show();
+                    if (this.get('modal')) {
+                        this.get('maskNode').addClass(CSS_MASK);
+                    }
                 }
-            }
-            else {
-                this._closeEl.hide();
-                this.get('maskNode').removeClass(CSS_MASK);
+                else {
+                    this._closeEl.hide();
+                    this.get('maskNode').removeClass(CSS_MASK);
+                }
             }
         },
 
@@ -268,10 +276,12 @@ A.ImageViewer = A.Base.create(
          * @protected
          */
         _bindControls: function() {
-            this._eventHandles.push(
-                this.get('controlPrevious').after('click', A.bind(this._onClickControl, this)),
-                this.get('controlNext').after('click', A.bind(this._onClickControl, this))
-            );
+            if (this._sources.length) {
+                this._eventHandles.push(
+                    this.get('controlPrevious').after('click', A.bind(this._onClickControl, this)),
+                    this.get('controlNext').after('click', A.bind(this._onClickControl, this))
+                );
+            }
         },
 
         /**
@@ -281,7 +291,7 @@ A.ImageViewer = A.Base.create(
          * @protected
          */
         _bindThumbnails: function() {
-            if (this._thumbnailsWidget) {
+            if (this._thumbnailsWidget && this._sources.length) {
                 this._eventHandles.push(
                     this._thumbnailsWidget.after('currentIndexChange', A.bind(this._afterThumbnailsIndexChange, this))
                 );
@@ -349,7 +359,7 @@ A.ImageViewer = A.Base.create(
             var image,
                 index,
                 links = this.get('links'),
-                sources = this.get('sources'),
+                sources = this._sources,
                 thumbnailSources = [];
 
             for (index = 0; index < links.size(); index++) {
@@ -414,7 +424,9 @@ A.ImageViewer = A.Base.create(
         _onResponsive: function() {
             A.ImageViewer.superclass._onResponsive.apply(this, arguments);
 
-            this.footerNode.setStyle('width', 0);
+            if (this._sources.length) {
+                this.footerNode.setStyle('width', 0);
+            }
         },
 
         /**

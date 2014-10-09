@@ -77,7 +77,9 @@ ImageViewerSlideshow.prototype = {
      * @protected
      */
     _afterSlideshowBindUI: function() {
-        this._bindPlayer();
+        if (this._sources.length) {
+            this._bindPlayer();
+        }
     },
 
     /**
@@ -87,7 +89,9 @@ ImageViewerSlideshow.prototype = {
      * @protected
      */
     _afterSlideshowRenderUI: function() {
-        this._renderPlayer();
+        if (this._sources.length) {
+            this._renderPlayer();
+        }
     },
 
     /**
@@ -128,9 +132,11 @@ ImageViewerSlideshow.prototype = {
      * @protected
      */
     _afterSlideshowShowPlayerChange: function() {
-        this._renderPlayer();
-        this._syncShowPlayer();
-        this._bindPlayer();
+        if (this._sources.length) {
+            this._renderPlayer();
+            this._syncShowPlayer();
+            this._bindPlayer();
+        }
     },
 
     /**

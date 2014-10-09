@@ -4,6 +4,7 @@
 
 ## @VERSION@
 
+* [AUI-1669](https://issues.liferay.com/browse/AUI-1669) Image Viewer Base throws error when no images or sources are provided
 * [AUI-1593](https://issues.liferay.com/browse/AUI-1593) Removing ie8 hack on ImageViewerBase
 * [AUI-1581](https://issues.liferay.com/browse/AUI-1581) AUI Carousel demo images don't appear in Firefox
 * [AUI-1485](https://issues.liferay.com/browse/AUI-1485) aui-image-viewer HISTORY.md
