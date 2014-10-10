@@ -6,6 +6,8 @@
 
 var Lang = A.Lang,
 
+    hasKey = A.Object.hasKey,
+
     clamp = function(value, min, max) {
         return Math.min(Math.max(value, min), max);
     };
@@ -87,6 +89,8 @@ DatePickerBase.ATTRS = {
 
 A.mix(DatePickerBase.prototype, {
     calendar: null,
+
+    _fireSelectionChange: true,
 
     /**
      * Construction logic executed during `DatePickerBase` instantiation.
@@ -174,9 +178,32 @@ A.mix(DatePickerBase.prototype, {
      * @param dates
      */
     selectDates: function(dates) {
-        var instance = this;
+        var instance = this,
+            calendar = instance.getCalendar(),
+            day = null,
+            month = null,
+            hashMapSelectedDates = calendar._selectedDates,
+            toSelect = [],
+            year = null;
 
-        instance.getCalendar().selectDates(dates);
+        if (dates) {
+            for (var i = 0; i < dates.length; i++) {
+                year = dates[i].getFullYear();
+                month = dates[i].getMonth();
+                day = dates[i].getDate();
+
+                if (!hasKey(hashMapSelectedDates, year) ||
+                    !hasKey(hashMapSelectedDates[year], month) ||
+                    !hasKey(hashMapSelectedDates[year][month], day)) {
+
+                    toSelect.push(dates[i]);
+                }
+            }
+
+            if (toSelect.length) {
+                instance.getCalendar().selectDates(toSelect);
+            }
+        }
     },
 
     /**
@@ -189,12 +216,19 @@ A.mix(DatePickerBase.prototype, {
         var instance = this,
             popover = instance.getPopover();
 
-        popover.set('trigger', node);
-        instance.set('activeInput', node);
+        if (instance.get('activeInput') !== node) {
+            popover.set('trigger', node);
+            instance.set('activeInput', node);
 
-        instance.alignTo(node);
-        instance.clearSelection(true);
+            instance.alignTo(node);
+            instance.clearSelection(true);
+
+            instance._fireSelectionChange = false;
+        }
+
         instance.selectDates(instance.getParsedDatesFromInputValue());
+
+        instance._fireSelectionChange = true;
     },
 
     /**
@@ -223,9 +257,11 @@ A.mix(DatePickerBase.prototype, {
     _afterCalendarSelectionChange: function(event) {
         var instance = this;
 
-        instance.fire('selectionChange', {
-            newSelection: event.newSelection
-        });
+        if (instance._fireSelectionChange) {
+            instance.fire('selectionChange', {
+                newSelection: event.newSelection
+            });
+        }
     },
 
     /**
