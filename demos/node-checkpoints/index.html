@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <script src="../../build/aui/aui.js"></script>
+    <!--[if !IE]><!-->
+        <link rel="stylesheet" type="text/css" href="extras.css" />
+    <!--<![endif]-->
+    <style>
+        pre {
+            margin-bottom: 2em;
+        }
+
+        .navbar {
+            border-radius: 0;
+        }
+
+        .navbar .nav-collapse.collapse {
+            height: auto;
+        }
+
+        #simpleCheckpointsDemo .column {
+            background-color: #BBD8E9;
+            height: 20em;
+            overflow: auto;
+        }
+
+        #simpleCheckpointsDemo .column p {
+            padding: 2em;
+        }
+
+        #simpleCheckpointsDemo .column .spacer {
+            padding-top: 30em;
+        }
+
+        #infinteScrollColours .infinite-list {
+            background: rgb(147, 177, 181);
+            height: 20em;
+            margin-left: 0;
+            max-width: 37em;
+            overflow: auto;
+        }
+
+        #infinteScrollColours .infinite-list li {
+            background: #444A50;
+            display: block;
+            float: left;
+            height: 10em;
+            margin: 1.5em 0 1.5em 1.5em;
+            width: 10em;
+        }
+
+        #infinteScrollYQL .stories {
+            background-color: #F2F2F2;
+            height: 20em;
+            overflow: auto;
+            padding: 1em;
+        }
+
+        #infinteScrollYQL .stories hr {
+            padding: 2em;
+        }
+
+        #infinteScrollYQL .template {
+            display: none;
+        }
+
+        #infinteScrollYQL .stories .template {
+            display: block;
+        }
+
+        #simpleCheckpointsDemo, #infinteScrollColours, #infinteScrollYQL {
+            overflow-y: scroll;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        #stickyElementDemo {
+            padding-bottom: 100em;
+        }
+
+        #stickyElementDemo .sticky-element {
+            background-color: #0088CC;
+            color: #FFF;
+            text-align: center;
+            width: 300px;
+        }
+
+        #stickyElementDemo .sticky-element.stuck {
+            position: fixed;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="http://alloyui.com/">Alloy-UI</a>
+
+                <button type="button" class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="..">Documentation</a>
+                    </li>
+                    <li>
+                        <a href="./simple-checkpoint/index.html">Simple Checkpoints</a>
+                    </li>
+                    <li>
+                        <a href="./yql-news/index.html">Infinite Results: YQL news</a>
+                    </li>
+                    <li>
+                        <a href="./sticky-element/index.html">Sticky Element</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <header>
+        <div class="container">
+            <h1>AlloyUI - Node Checkpoints</h1>
+
+            <p class="lead">Demos</p>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-3">
+                <ul id="sideNav" class="nav list-group">
+                    <li class="active" data-section="overview"><a href="#overview">Overview</a></li>
+                    <li data-section="simple-checkpoints"><a href="#simple-checkpoints">Simple checkpoints</a></li>
+                    <li data-section="infinite-scroll"><a href="#infinite-scroll">Infinite scroll</a></li>
+                    <li data-section="affix"><a href="#affix">Affix</a></li>
+                    <li data-section="sticky-element"><a href="#sticky-element">Sticky element</a></li>
+                </ul>
+            </div>
+            <div id="content" class="col-md-9">
+                <section id="overview">
+                    <h1>Overview</h1>
+
+                    <p class="lead">
+                    Execute a function when you scroll past an element.
+                    </p>
+
+<pre>
+var el = Y.one('#myElement');
+
+el.checkpoint(function(direction) {
+    el.text('success!');
+});
+</pre>
+
+                    <p><em>Checkpoints</em> apply to a Node or NodeList. A Checkpoint is encapsulated by a Node or NodeList, a function to execute once the element's checkpoint has been crossed, and a reference to it's <em>Scroll Context</em>.</p>
+
+                    <p>Options you can override are
+
+                    <ul>
+                        <li><code>axis</code>: a string to determine whether your callback is triggered at a <code>horizontal</code> or <code>vertical</code> threshold (defaults to <code>'vertical'</code>)</li>
+                        <li><code>context</code>: (defaults to <code>Y.getWin()</code>)</li>
+                        <li><code>enabled</code>: (defaults to <code>true</code>)</li>
+                        <li><code>offset</code>: the number of pixels to trigger the checkpoint callback before reaching its positional threshold (defaults to <code>0</code>)</li>
+                        <li><code>triggerAtTheEnd</code> (defaults to <code>false</code>)</li>
+                    </ul>
+
+                    <h5>Notes regarding options</h5>
+
+                    <p>
+                        <code>context</code> can either be a selector string or a <code>Node</code>.
+                    </p>
+
+                    <p>When <code>triggerAtTheEnd</code> is <code>true</code>, Checkpoints will only fire once it the scroll has reached is axis limit. In other words, to the bottom of the scroll context (or right if the checkpoint axis is 'horizontal'.</p>
+
+                    <p>To execute a Checkpoint function only once, invoke the destroy method during the callback. An example is shown:</p>
+
+<pre>
+var el = Y.one('#myElement');
+
+el.checkpoint(function(direction) {
+    el.text('success!');
+
+    this.destroy();
+});
+</pre>
+                </section>
+
+                <hr />
+
+                <section id="simple-checkpoints">
+                    <h1>Simple Checkpoints</h1>
+
+                    <div class="demo" id="simpleCheckpointsDemo">
+                        <h3>Example</h3>
+
+                        <p class="lead">Crossing a checkpoint changes its background to green. Checkpoints are marked as red before they are reached. Upon a cross it in the reverse direction, its background changes to white. <a href="../node-checkpoints">See the full page demo</a>.
+                        </p>
+
+                        <div class="column">
+                            <hr />
+
+                            <p>Checkpoint!</p>
+
+                            <hr class="spacer" />
+
+                            <hr />
+
+                            <p>Checkpoint!</p>
+
+                            <hr class="spacer" />
+
+                            <hr />
+
+                            <p>Checkpoint!</p>
+
+                            <hr class="spacer" />
+                        </div>
+
+                        <script>
+                        YUI({filter: 'raw'}).use('aui-node-checkpoints', function(Y) {
+                            var checkpointNodes = Y.all('#simple-checkpoints .column p');
+
+                            checkpointNodes.checkpoint(
+                                function(direction){
+                                    var backgroundColor = '';
+
+                                    if (direction === 'down') {
+                                        backgroundColor = 'green';
+                                    }
+                                    else if (direction === 'up') {
+                                        backgroundColor = 'white';
+                                    }
+
+                                    var node = this.getNode();
+
+                                    node.setStyle('backgroundColor', backgroundColor);
+
+                                    node.text('checkpoint reached scrolling ' + direction + '!');
+                                },
+                                {
+                                    context: '.column'
+                                }
+                            );
+
+                            checkpointNodes.setStyle('backgroundColor', 'red');
+                        });
+                        </script>
+
+                    </div>
+
+                    <h3>Javascript</h3>
+
+                    <p>Checkpoints are compatible with single Nodes and NodeLists. Here, we create a simple class toggle, based on direction, for a list of all paragraphs in the demo...</p>
+
+<pre>
+var checkpointNodes = Y.all('#simple-checkpoints .column p');
+
+checkpointNodes.setStyle('backgroundColor', 'red');
+
+checkpointNodes.checkpoint(
+    function(direction){
+        var node = this.getNode();
+
+        var color = (direction === 'down') ? 'green' : 'white';
+
+        node.setStyle('backgroundColor', color);
+
+        node.text('checkpoint reached scrolling ' + direction + '!');
+    },
+    {
+        context: '.column'
+    }
+);
+</pre>
+
+                </section>
+
+                <hr />
+
+                <section id="infinite-scroll">
+                    <h1>Infinite Scroll</h1>
+
+                    <div class="demo" id="infinteScrollColours">
+                        <h2>Example: infinite colours</h3>
+
+                        <p class="lead">
+                            By configuring a Checkpoint with an offset set to the string: <code>'end'</code>, we can apply actions when the we reach the end of a Scroll Context.
+                        </p>
+
+                        <ul class="infinite-list">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+
+                        <div>
+                            <p>
+                                Scroll down to the bottom of a context, and load more colourful boxes to the bottom of our context. Remember to refresh the checkpoint after you've changed the height of the context element (i.e. appended elements).
+                            </p>
+
+                            <h4>Styling</h4>
+
+                            <p>
+                                Define your infinite list container. Be sure to set overflow to auto and give it some height. Mine looks like this...
+                            </p>
+<pre>
+.infinite-list {
+    background: rgb(147, 177, 181);
+    height: 20em;
+    max-width: 37em;
+    overflow: auto;
+}
+</pre>
+
+                            <p>
+                                Next, let's define our list item styles. Here are mine...
+                            </p>
+
+<pre>
+.infinite-list li {
+    background: #444a50;
+    display: block;
+    float: left;
+    height: 10em;
+    margin: 1.5em 0 1.5em 1.5em;
+    width: 10em;
+}
+</pre>
+
+                            <h4>Javascript</h4>
+
+                            <p>Finally, add in some javascript</p>
+<pre>
+var demoNode = Y.one('#infinteScrollColours.demo');
+
+var randomColor = function() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+};
+
+var infiniteList = demoNode.one('.infinite-list');
+
+infiniteList.checkpoint(
+    function(direction) {
+        var liString = '&lt;li&gt;&lt;/li&gt;';
+        var newNodes = Y.all(
+            Y.Node.create(liString);
+        );
+
+        newNodes.push(Y.Node.create(liString));
+        newNodes.push(Y.Node.create(liString));
+
+        newNodes.setStyle('backgroundColor', randomColor());
+
+        newNodes.appendTo(infiniteList);
+
+        // remember to refresh after appending elements to the container
+        this.refresh();
+    },
+    {
+        triggerAtTheEnd: true,
+        context: infiniteList
+    }
+);
+</pre>
+
+                        </div>
+                        <script>
+                        YUI().use('aui-node-checkpoints', function(Y) {
+                            var demoNode = Y.one('#infinteScrollColours.demo');
+
+                            var randomColor = function() {
+                                return '#' + Math.floor(Math.random() * 16777215).toString(16);
+                            };
+
+                            var infiniteList = demoNode.one('.infinite-list');
+
+                            infiniteList.checkpoint(
+                                function(direction) {
+                                    var newNodes = Y.all(
+                                        Y.Node.create('<li></li>')
+                                    );
+
+                                    newNodes.push(Y.Node.create('<li></li>'));
+                                    newNodes.push(Y.Node.create('<li></li>'));
+
+                                    newNodes.setStyle('backgroundColor', randomColor());
+
+                                    newNodes.appendTo(infiniteList);
+
+                                    this.refresh(); // required when appending nodes to the container
+                                },
+                                {
+                                    context: infiniteList,
+                                    triggerAtTheEnd: true
+                                }
+                            );
+                        });
+
+                        </script>
+                    </div>
+
+                    <hr />
+
+                    <div id="infinteScrollYQL">
+                        <h2>Example: Infinite Scroll with YQL</h3>
+
+                        <div class="demo" class="container">
+                            <p class="lead">Here is a real world example of using Checkpoints to handle Infinite Scrolling with YQL. <a href="yql-news">See the full page demo</a>.</p>
+
+                            <h3>Example: Infinite Scroll with YQL</h3>
+
+                            <div class="stories"></div>
+
+                            <div class="template">
+                                <h2><a class="title" href="#"></a></h2>
+
+                                <div class="body">
+                                    <p>Excepteur sint occaecat cupidatat non
+                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+                                    <p>
+                                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+                                    <p>
+                                </div>
+
+                                <hr />
+                            </div>
+                        </div>
+
+                        <script>
+                        YUI().use('aui-node-checkpoints', 'yql', function(Y) {
+                            var offset = 0;
+                            var limit = 4;
+
+                            var tplStatement = 'select title from rss where url="http://rss.news.yahoo.com/rss/topstories" limit {limit} offset {offset}';
+
+                            var stories = Y.one('#infinteScrollYQL .stories');
+
+                            var checkpoint;
+
+                            function getStories() {
+                                offset += 4;
+
+                                var statement = Y.Lang.sub(tplStatement, {offset: offset, limit: limit});
+
+                                if (checkpoint) {
+                                    checkpoint.disable();
+                                }
+
+                                Y.YQL(statement, function(r) {
+                                    var results = r.query.results;
+
+                                    if (!results) {
+                                        offset = 0;
+
+                                        checkpoint.enable();
+
+                                        getStories();
+                                    }
+                                    else {
+                                        Y.Array.each(
+                                            results.item,
+                                            function(item, index, collection) {
+                                                var title = item.title;
+
+                                                var el = Y.one('#infinteScrollYQL .template').clone();
+
+                                                el.one('.title').text(title);
+
+                                                stories.append(el);
+                                            }
+                                        );
+
+                                        if (checkpoint) {
+                                            checkpoint.enable(); //enable will refresh the checkpoint
+                                        }
+                                        else {
+                                            addStoriesCheckpoint();
+                                        }
+                                    }
+                                });
+
+                                offset += 10;
+                            }
+
+                            getStories();
+
+                            function addStoriesCheckpoint() {
+                                stories.checkpoint(
+                                    function(direction) {
+                                        if (direction === 'down') {
+                                            checkpoint = this;
+
+                                            getStories();
+                                        }
+                                    },
+                                    {
+                                        context: stories,
+                                        triggerAtTheEnd: true
+                                    }
+                                );
+                            }
+                        });
+                        </script>
+                    </div>
+
+                </section>
+
+                <hr />
+
+                <section id="affix">
+                    <h1>Affix Element</h1>
+
+                    <div id="affix-demo">
+                        <p class="lead">
+                            Position fixed elements will not change position on scroll. This example of an <em>Affix element</em> applies to a list of items that starts off with a non-fixed position, and then becomes affixed as the user scrolls beyond a desired checkpoint.
+                        </p>
+
+                        <h2>Styling</h2>
+
+                        <p>Add in some styles to prepare your affix element</p>
+
+<pre>
+.affix-top {
+    position: fixed;
+    top: 2em;
+}
+</pre>
+
+                        <h2>Markup</h2>
+
+                        <p>Now create your affix element in markup. Don't add the affix class..yet. Let javascript add in the class when the checkpoint has been crossed.</p>
+
+<pre>
+&lt;ul id="sideNav" class="nav nav-list"&gt;
+    &lt;li class="active"&gt;
+        &lt;a href="#overview"&gt;
+            &lt;i class="icon-chevron-right"&gt;&lt;/i&gt;
+            Overview
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a href="#simple-checkpoints"&gt;
+            &lt;i class="icon-chevron-right"&gt;&lt;/i&gt;
+            Simple checkpoints
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a href="#infinite-scroll"&gt;
+            &lt;i class="icon-chevron-right"&gt;&lt;/i&gt;
+            Infinite scroll
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a href="#affix"&gt;
+            &lt;i class="icon-chevron-right"&gt;&lt;/i&gt;
+            Affix
+        &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+        &lt;a href="#sticky-element"&gt;
+            &lt;i class="icon-chevron-right"&gt;&lt;/i&gt;
+            Sticky element
+        &lt;/a&gt;
+    &lt;/li&gt;
+&lt;/ul&gt;
+</pre>
+
+                    <h3>Javascript</h3>
+
+                    <p>Define an affix element.</p>
+
+<pre>
+var affixElement = Y.one('#sideNav.nav.nav-list');
+</pre>
+
+                    <p>Determine which element will be the checkpoint for triggering the affix class on our affix element. In this example, we will use the content element.</p>
+
+<pre>
+var affixTriggerElement = Y.one('#content');
+</pre>
+                    <p>The Checkpoint method should toggle the affix-top class on our affix element.</p>
+
+<pre>
+function(direction) {
+    affixElement.toggleClass('affix-top', direction === 'down');
+}
+</pre>
+
+                    <p>Putting it all together...</p>
+
+<pre>
+var affixElement = Y.one('#sideNav.nav.nav-list');
+
+var affixTriggerElement = Y.one('#content');
+
+affixTriggerElement.checkpoint(
+    function(direction) {
+        affixElement.toggleClass('affix-top', direction === 'down');
+    },
+    config
+);
+</pre>
+                    </div>
+                </section>
+
+                <hr />
+
+                <section id="sticky-element">
+                    <h1>Sticky Element</h1>
+
+                    <div id="stickyElementDemo">
+                        <p class="lead">
+                            <em>Sticky Elements</em> will "stick" to the top of the page when the user scrolls past a certain point. Luckily for us, tt is simple to achieve <em>Sticky Elements</em> using AlloyUI Checkpoints. <a href="sticky-element">See the full page demo</a>.</p>
+                        </p>
+
+                        <div class="sticky-element">
+                            <h3>My Sticky Element</h3>
+                        </div>
+
+                        <h3>Styling</h3>
+
+                        <p>Styling a very basic sticky element will look a little something like this...</p>
+<pre>
+
+.sticky-element {
+    background-color: #0088cc;
+    color: #fff;
+    text-align: center;
+    width: 600px;
+}
+
+.sticky-element.stuck {
+    position: fixed;
+    top: 0;
+}
+
+</pre>
+
+                        <h3>Markup</h3>
+
+                        <p>Your markup can look like this...</p>
+
+<pre>
+
+<span><</span><span>div class=</span><span>"sticky-element"</span><span>></span>
+    <span><</span><span>h3></span><span>My Sticky Element</span><span><</span><span>/h3</span><span>></span>
+<span><</span><span>/div</span><span>></span>
+
+</pre>
+
+                        <h3>Javascript</h3>
+
+                        <p>..and some javascript similar to this...</p>
+
+<pre>
+var stickyEl = Y.one('.sticky-element');
+
+stickyEl.checkpoint(function(direction) {
+    stickyEl.toggleClass('stuck', (direction === 'down'));
+});
+</pre>
+
+                        <script>
+                        YUI().use('aui-node-checkpoints', function(Y) {
+                            var stickyEl = Y.one('.sticky-element');
+
+                            stickyEl.checkpoint(function(direction) {
+                                stickyEl.toggleClass('stuck', (direction === 'down'));
+                            });
+                        });
+                        </script>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <p id="end"></p>
+    </div>
+
+    <script>
+    YUI().use('aui-node-checkpoints', function(Y) {
+        var content = Y.one('#content');
+        var contentEnd = Y.one('#contentEnd');
+        var sideNav = Y.one('#sideNav');
+
+        var contentCheckpoint;
+
+        content.checkpoint(
+            function(direction) {
+                sideNav.toggleClass('affix-top', direction === 'down');
+
+                if (!contentCheckpoint) {
+                    contentCheckpoint = this;
+                }
+            },
+            {
+                offset: (Y.one('.navbar').height() - 16)
+            }
+        );
+
+        var sections = content.all('section');
+        var sideNavItems = sideNav.all('li');
+
+        sections.checkpoint(
+            function(direction) {
+                sideNavItems.removeClass('active');
+
+                var id = this.getNode().attr('id');
+
+                var sectionItem = sideNav.one('[data-section=' + id + ']');
+
+                sectionItem.addClass('active');
+            }
+        );
+
+        sideNav.delegate(
+            'click',
+            function(event) {
+                sideNavItems.removeClass('active');
+
+                contentCheckpoint.disable();
+
+                setTimeout(
+                    function() {
+                        event.currentTarget.addClass('active');
+
+                        contentCheckpoint.enable();
+
+                        contentCheckpoint.refresh();
+                    },
+                    10
+                );
+            },
+            'li'
+        );
+    });
+    </script>
+
+    <script src="js/nav-collapse-toggle.js"></script>
+</body>
+</html>

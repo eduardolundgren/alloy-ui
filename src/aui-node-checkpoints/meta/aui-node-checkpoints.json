@@ -1,0 +1,10 @@
+{
+    "aui-node-checkpoints": {
+        "requires": [
+            "array-invoke",
+            "aui-base",
+            "node-scroll-info",
+            "resize-base"
+        ]
+    }
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+<head>
+    <title>aui-node-checkpoints</title>
+    <link rel="stylesheet" href="../../../../build/aui-css/css/bootstrap.css">
+    <script src="../../../../build/aui/aui.js"></script>
+    <script src="js/tests.js"></script>
+    <style>
+        #checkpoint {
+            position: relative;
+            top: 500px;
+        }
+
+        #checkpoint.stuck {
+            position: fixed;
+            top: 0;
+        }
+
+        #triggerAtTheEnd {
+            height: 10em;
+            max-width: 37em;
+            overflow: auto;
+        }
+
+        #delayTrigger, #triggerDisabled {
+            top: 1000px;
+        }
+
+        .trigger {
+            position: absolute;
+            height: 1em;
+            width: 1em;
+        }
+
+        .spacer {
+            height: 2000px;
+            width: 2000px;
+        }
+    </style>
+    <meta charset="utf-8" />
+</head>
+<body class="yui3-skin-sam">
+    <div id="container">
+        <div id="logger"></div>
+
+        <div id="triggerAtTheEnd">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </div>
+
+        <div id="triggerAtNode">
+            <div id="checkpoint">checkpoint</div>
+
+            <div class="spacer"></div>
+        </div>
+
+        <div id="triggerDirection" class="trigger"></div>
+
+        <div class="spacer"></div>
+
+        <div id="triggerDisabled" class="trigger"></div>
+
+        <div id="triggerList">
+            <div class="checkpoint"></div>
+
+            <div class="checkpoint"></div>
+        </div>
+
+        <div id="delayTrigger" class="trigger"></div>
+
+        <div id="refreshTrigger" class="trigger"></div>
+    </div>
+
+    <script>
+    YUI({
+        coverage: ['aui-node-checkpoints'],
+        filter: (window.location.search.match(/[?&]filter=([^&]+)/) || [])[1] || 'raw'
+    }).use('test-console', 'test', 'aui-node-checkpoints-tests', function(Y) {
+
+        (new Y.Test.Console()).render('#logger');
+
+        Y.Test.Runner.setName('aui-node-checkpoints');
+        Y.Test.Runner.run();
+    });
+    </script>
+</body>
+</html>

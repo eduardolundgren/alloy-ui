@@ -1,0 +1,10 @@
+{
+    "name": "aui-node-checkpoints",
+    "builds": {
+        "aui-node-checkpoints": {
+            "jsfiles": [
+                "js/aui-node-checkpoints.js"
+            ]
+        }
+    }
+}

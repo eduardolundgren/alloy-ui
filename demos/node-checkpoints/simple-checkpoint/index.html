@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../../build/aui-css/css/bootstrap.css">
+    <script src="../../../build/aui/aui.js"></script>
+    <style>
+    p {
+        padding: 2em;
+    }
+
+    .navbar {
+        border-radius: 0;
+    }
+
+    .navbar .nav-collapse.collapse {
+        height: auto;
+    }
+
+    .col-md-4 {
+        background-color: #BBD8E9;
+        height: 20em;
+        overflow: auto;
+    }
+    .col-md-8 {
+        background-color: #DCEAF4;
+    }
+
+    .spacer {
+        height: 30em;
+    }
+
+    #demo {
+        margin: 2em;
+    }
+
+    #checkpointNotify {
+        background-color: #BB213E;
+    }
+    </style>
+</head>
+<body>
+    <div class="navbar navbar-inverse">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="http://alloyui.com/">Alloy-UI</a>
+
+                <button type="button" class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="..">Documentation</a>
+                    </li>
+                    <li class="active">
+                        <a href=".">Simple Checkpoints</a>
+                    </li>
+                    <li>
+                        <a href="../yql-news/index.html">Infinite Results: YQL news</a>
+                    </li>
+                    <li>
+                        <a href="../sticky-element/index.html">Sticky Element</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="container">
+        <h1>AlloyUI - Node Checkpoints</h1>
+
+        <div id="demo">
+            <div class="col-md-8">
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+            </div>
+
+            <div class="col-md-4">
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+
+                <hr />
+
+                <p>Checkpoint!</p>
+
+                <hr class="spacer" />
+            </div>
+        </div>
+    </div>
+    <script>
+    YUI({filter: 'raw'}).use('aui-node-checkpoints', function(Y) {
+        var demoNodesA = Y.all('.col-md-8 p');
+        var demoNodesB = Y.all('.col-md-4 p');
+
+        var onCheckpoint = function(direction){
+            var backgroundColor;
+
+            if (direction === 'down') {
+                backgroundColor = 'green';
+            }
+            else if (direction === 'up') {
+                backgroundColor = 'white';
+            }
+
+            var node = this.getNode();
+
+            node.setStyle('backgroundColor', backgroundColor);
+
+            node.text('checkpoint reached scrolling ' + direction + '!');
+
+            // this.destroy();
+        };
+
+        demoNodesA.checkpoint(onCheckpoint);
+        demoNodesB.checkpoint(onCheckpoint, {context: '.col-md-4'});
+
+        demoNodesA.setStyle('backgroundColor', 'red');
+        demoNodesB.setStyle('backgroundColor', 'red');
+    });
+
+    </script>
+
+    <script src="../js/nav-collapse-toggle.js"></script>
+</body>
+</html>
