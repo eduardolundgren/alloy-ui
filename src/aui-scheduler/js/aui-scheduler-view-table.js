@@ -158,6 +158,27 @@ var SchedulerTableView = A.Component.create({
         },
 
         /**
+         * The element or locator to constrain the events overlay.
+         *
+         * When a cell has more events than can be shown, it offers an option
+         * to open an overlay to see all of them by clicking in a "See x more"
+         * link. This overlay should be constrained by another element, lest
+         * it could be cropped or would resize the entire document.
+         *
+         * The default value is `true`, in which case the overlay is constrained
+         * to the viewport.
+         *
+         * @attribute eventsOverlayConstrain
+         * @default null
+         * @type {Boolean | Node | String}
+         * @writeOnce
+         */
+        eventsOverlayConstrain: {
+            value: true,
+            writeOnce: true
+        },
+
+        /**
          * Indicates whether the height of the `SchedulerTableView` is fixed.
          *
          * @attribute fixedHeight
@@ -419,6 +440,10 @@ var SchedulerTableView = A.Component.create({
                 if (!events) {
                     events = [];
                 }
+
+                events = events.filter(function(currEvent) {
+                    return currEvent.get('visible');
+                });
 
                 var evt = instance._getRenderableEvent(events, rowStartDate, rowEndDate, celDate);
 
@@ -925,10 +950,10 @@ var SchedulerTableView = A.Component.create({
                 filterFn = this.get('filterFn'),
                 i = 0;
 
-            // Sort events by start date (they are sorted in a different way
+            // Sort events by start date and time (they are sorted in a different way
             // by default).
             events.sort(function(evt1, evt2) {
-                return evt1.getClearStartDate() - evt2.getClearStartDate();
+                return evt1.isAfter(evt2) ? 1 : -1;
             });
 
             while (i < events.length) {
@@ -1031,10 +1056,10 @@ var SchedulerTableView = A.Component.create({
             var startDate = evt.getClearStartDate();
             var endDate = evt.getClearEndDate();
 
-            var maxColspan = DateMath.getDayOffset(rowEndDate, celDate);
+            var maxColspan = DateMath.countDays(rowEndDate, celDate);
 
             var info = {
-                colspan: Math.min(DateMath.getDayOffset(endDate, celDate), maxColspan) + 1,
+                colspan: Math.min(DateMath.countDays(endDate, celDate), maxColspan) + 1,
                 left: DateMath.before(startDate, rowStartDate),
                 right: DateMath.after(endDate, rowEndDate)
             };
@@ -1131,6 +1156,8 @@ var SchedulerTableView = A.Component.create({
             var eventsNodeList = A.NodeList.create();
 
             A.Array.each(events, function(evt) {
+                evt.syncNodeTitleUI();
+
                 var evtNode = evt.get('node').item(0).clone();
 
                 evtNode.setData('scheduler-event', evt);
@@ -1174,6 +1201,7 @@ var SchedulerTableView = A.Component.create({
                         label: strings.close
                     }
                 ),
+                constrain: instance.get('eventsOverlayConstrain'),
                 render: instance.get('boundingBox'),
                 visible: false,
                 width: 250,
@@ -1227,9 +1255,11 @@ var SchedulerTableView = A.Component.create({
             var startDate = evt.get('startDate');
 
             var intervalStartDate = DateMath.clearTime(instance._findCurrentIntervalStart());
-            var startDateFirstDayOfWeek = DateMath.getFirstDayOfWeek(new Date(Math.max(startDate, intervalStartDate)),
-                firstDayOfWeek);
-            var paddingNodeIndex = Math.floor(DateMath.getDayOffset(celDate, startDateFirstDayOfWeek) / WEEK_LENGTH);
+            var startDateFirstDayOfWeek = DateMath.clearTime(DateMath.getFirstDayOfWeek(
+                new Date(Math.max(startDate, intervalStartDate)),
+                firstDayOfWeek
+            ));
+            var paddingNodeIndex = Math.floor(DateMath.countDays(celDate, startDateFirstDayOfWeek) / WEEK_LENGTH);
 
             if (evtNodeList.size() <= paddingNodeIndex) {
                 evt.addPaddingNode();
@@ -1241,6 +1271,7 @@ var SchedulerTableView = A.Component.create({
 
             var evtNode = evtNodeList.item(paddingNodeIndex);
 
+            evtNode.show();
             evtNode.setStyles({
                 height: 'auto',
                 left: 0,

@@ -255,7 +255,7 @@ var SchedulerDayView = A.Component.create({
          */
         filterFn: {
             value: function(evt) {
-                return (evt.getHoursDuration() <= 24 && !evt.get('allDay'));
+                return (evt.get('visible') && evt.getHoursDuration() <= 24 && !evt.get('allDay'));
             }
         },
 
@@ -745,7 +745,7 @@ var SchedulerDayView = A.Component.create({
             var viewDate = DateMath.safeClearTime(
                 instance.get('scheduler').get('viewDate'));
 
-            return DateMath.getDayOffset(
+            return DateMath.countDays(
                 DateMath.safeClearTime(date), viewDate);
         },
 
@@ -830,6 +830,8 @@ var SchedulerDayView = A.Component.create({
             var instance = this;
             var scheduler = instance.get('scheduler');
             var filterFn = instance.get('filterFn');
+
+            instance.get('scheduler').flushEvents();
 
             instance.columnShims.each(function(colShimNode, i) {
                 var columnEvents = scheduler.getEventsByDay(instance.getDateByColumn(i), true);
@@ -935,43 +937,58 @@ var SchedulerDayView = A.Component.create({
          */
         syncEventsIntersectionUI: function(columnEvents) {
             var instance = this;
+            var insertedNodes = [];
             var eventWidth = instance.get('eventWidth');
-
-            instance.get('scheduler').flushEvents();
 
             A.Array.each(columnEvents, function(colEvt) {
                 var intercessors = instance.findEventIntersections(
                     colEvt, columnEvents);
 
+                var i = 0;
                 var total = intercessors.length;
                 var distributionRate = (eventWidth / total);
 
-                A.Array.each(intercessors, function(evt, j) {
-                    var evtNode = evt.get('node').item(0);
-                    var left = distributionRate * j;
-                    var width = distributionRate * 1.7;
+                A.Array.each(intercessors, function(evt) {
+                    var clientId = evt.get('clientId');
+                    var nodeIndex = A.Array.indexOf(insertedNodes, clientId);
 
-                    if (j === (total - 1)) {
-                        width = eventWidth - left;
+                    if (nodeIndex === -1) {
+                        nodeIndex = 0;
+
+                        if (evt._filtered) {
+                            nodeIndex = 1;
+                        }
+
+                        var evtNode = evt.get('node').item(nodeIndex);
+                        var left = distributionRate * i;
+                        var width = distributionRate * 1.7;
+
+                        if (i === (total - 1)) {
+                            width = eventWidth - left;
+                        }
+
+                        evtNode.setStyle('width', width + '%');
+                        evtNode.setStyle('left', left + '%');
+
+                        if (total > 1) {
+                            evtNode.addClass(CSS_SCHEDULER_EVENT_INTERSECTING);
+                        }
+                        else {
+                            evtNode.removeClass(CSS_SCHEDULER_EVENT_INTERSECTING);
+                        }
+
+                        var evtParentNode = evtNode.get('parentNode');
+
+                        if (evtParentNode) {
+                            evtParentNode.insert(evtNode, i);
+                        }
+
+                        evt._filtered = true;
+
+                        insertedNodes.push(clientId);
+
+                        i = i + 1;
                     }
-
-                    evtNode.setStyle('width', width + '%');
-                    evtNode.setStyle('left', left + '%');
-
-                    if (total > 1) {
-                        evtNode.addClass(CSS_SCHEDULER_EVENT_INTERSECTING);
-                    }
-                    else {
-                        evtNode.removeClass(CSS_SCHEDULER_EVENT_INTERSECTING);
-                    }
-
-                    var evtParentNode = evtNode.get('parentNode');
-
-                    if (evtParentNode) {
-                        evtParentNode.insert(evtNode, j);
-                    }
-
-                    evt._filtered = true;
                 });
             });
         },
@@ -1072,7 +1089,7 @@ var SchedulerDayView = A.Component.create({
             var group = [];
 
             A.Array.each(events, function(evtCmp) {
-                if (!evt._filtered && evtCmp.get('visible') && evt.intersectHours(evtCmp)) {
+                if (evtCmp.get('visible') && evt.intersects(evtCmp)) {
                     group.push(evtCmp);
                 }
             });
