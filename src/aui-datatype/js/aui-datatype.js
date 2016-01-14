@@ -361,6 +361,26 @@ A.mix(A.DataType.DateMath, {
     },
 
     /**
+     * Counts the number of days between two dates excluding the last one. The
+     * order of the dates is not important.
+     *
+     * For example, if the first one is March 8, 2015 and the second one is
+     * March 14, 2015, then the returned value should be 6. If the first one is
+     * March 29, 2015 and the second one is April 4, 2015, then the returned
+     * value should be 6.
+     *
+     * @method countDays
+     * @param d1 One of the days
+     * @param d2 The other day
+     * @return the number of days between the two dates.
+     */
+    countDays: function(d1, d2) {
+        var diff = Math.abs(d1.getTime() - d2.getTime());
+
+        return Math.floor(diff / this.ONE_DAY_MS);
+    },
+
+    /**
      * Subtracts the specified amount of time from the this instance.
      *
      * @method subtract
