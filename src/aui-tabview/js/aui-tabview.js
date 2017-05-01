@@ -24,8 +24,8 @@ A.TabviewBase._classNames = {
 A.TabviewBase._queries = {
     selectedPanel: '> div ' + '.' + A.TabviewBase._classNames.selectedPanel,
     selectedTab: '> ul > ' + '.' + A.TabviewBase._classNames.selectedTab,
-    tab: '> ul > li:not(.nav-header)',
-    tabLabel: '> ul > li:not(.nav-header) > a',
+    tab: '> ul > li:not(.dropdown-header)',
+    tabLabel: '> ul > li:not(.dropdown-header) > a',
     tabPanel: '> div > div',
     tabview: '.' + A.TabviewBase._classNames.tabview,
     tabviewList: '> ul',

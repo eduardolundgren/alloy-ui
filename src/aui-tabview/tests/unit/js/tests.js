@@ -101,11 +101,35 @@ YUI.add('aui-tabview-tests', function(Y) {
             Y.Assert.areEqual(1, disabledTabs.length, 'Only one tab marked as disabled is expected.');
             Y.Assert.areEqual(1, tabs.indexOf(disabledTabs[0]),
                 'The disabled tab should be the second one.');
+        },
+
+        /*
+         * Tests: AUI-1385
+         */
+        '#bar should have class active on initialize': function() {
+            new Y.TabView({
+                srcNode: '#list',
+                type: 'list'
+            }).render();
+
+            Y.Assert.isTrue(Y.one('#bar').hasClass('active'), '#bar does not have class active');
+        },
+
+        /*
+         * Tests: AUI-1385
+         */
+        '#foo and first .list-group-item should have class active after click': function() {
+            var tabItem = Y.one('#list .tab');
+
+            tabItem.simulate('click');
+
+            Y.Assert.isTrue(Y.one('#foo').hasClass('active'), '#foo does not have class active');
+            Y.Assert.isTrue(tabItem.hasClass('active'), 'First .list-group-item does not have class active');
         }
     }));
 
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['test', 'aui-tabview']
+    requires: ['aui-tabview', 'node-event-simulate', 'test']
 });
