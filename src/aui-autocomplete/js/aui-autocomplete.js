@@ -1163,11 +1163,29 @@ var AutoComplete = A.Component.create(
 			_onButtonMouseDown: function(event) {
 				var instance = this;
 
+				var value = instance.inputNode.get('value');
+
 				event.halt();
 
 				instance._focus();
 
-				instance._sendQuery(instance.inputNode.get('value') + '*');
+				if (value) {
+					var delimChar = instance.get('delimChar');
+
+					if (delimChar) {
+						var extraction = instance._extractQuery(value);
+
+						value = extraction.query;
+					}
+				}
+
+				var query = instance.inputNode.get('value');
+
+				if (!value) {
+					query = query + '*';
+				}
+
+				instance._sendQuery(query);
 			},
 
 			/**
