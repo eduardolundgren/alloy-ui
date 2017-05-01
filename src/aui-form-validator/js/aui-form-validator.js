@@ -113,7 +113,7 @@ A.mix(defaults, {
             'uFDCF\\uFDF0-\\uFFEF])|(%[\\da-f]{2})|[!\\$&\'\\(\\)\\*\\' +
             '+,;=]|:|@)|\\/|\\?)*)?$', 'i'),
 
-        number: /^[+\-]?(\d+([.,]\d+)?)+([eE][+-]?\d+)?$/,
+        number: /^[+\-]?(\d{1,3})(((\.\d{3})*(,\d+))|((,\d{3})*(\.\d+)))?([eE][+-]?\d+)?$/,
 
         // Regex from Scott Gonzalez Common URL:
         // http://projects.scottsplayground.com/iri/demo/common.html
