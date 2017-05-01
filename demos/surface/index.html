@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Surface index.html</title>
+    <link rel="stylesheet" href="../../build/aui-css/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/main.css">
+    <script src="../../build/aui/aui.js"></script>
+</head>
+<body>
+<div class="progress progress-spa">
+  <div class="progress-bar" role="progressbar" id="loading">
+    <span class="sr-only">%</span>
+  </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 surface-1" id="header">
+            <div id="header-default">
+                <h1>AlloyUI - /demos/surface</h1>
+                <h2>Surface #header</h2>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <ul class="nav" id="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="index.html?foo=bar">Unrouted home</a></li>
+                <li><a href="example.html">Example</a></li>
+                <li><a href="example.html?sid=1&amp;foo=complex">Example (with uncacheable screen)</a></li>
+                <li><a href="#hash">In-page hash link</a></li>
+                <li><a href="example.html#hash">Valid link with hash</a></li>
+                <li><a href="/demos/image-viewer/index.html">Outside base path</a></li>
+                <li><a href="unrouted">Unrouted link</a></li>
+                <li><a href="https://www.google.com">External</a></li>
+                <li><a href="dummy">Dummy link</a></li>
+            </ul>
+            <table class="table">
+                <tr>
+                <td>Initial request</td>
+                <td>index.html</td>
+                </tr>
+                <tr>
+                <td>Initial request time</td>
+                <td id="initial-request"></td>
+                </tr>
+                <tr>
+                <td>Last surface update</td>
+                <td id="surface-update"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-8 surface-2" id="main">
+            <div id="main-default">
+            <h2>Surface #main</h2>
+            <h3>Cancelling navigation example</h3>
+            <form class="form">
+            <div class="form-group">
+            <label for="surface-textarea">Message</label>
+            <textarea id="cancellable-textarea" class="form-control" rows="4" placeholder="If you write something on this textarea below you'll need to submit it before navigating away from it when using a Surface link."></textarea>
+            <p id="cancellable-notice" class="hide bg-danger">You need to submit changes before navigating away from this page.</p>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="reset" value="Reset">Submit changes</button>
+            </div>
+            </form>
+            <p>Each surface works like an independent portlet. You can update its content individually.</p>
+            <h3>Loading feedback and transitions</h3>
+            <p>See this demo code to see how to add transition effects (as in surface #header) and a progress bar.</p>
+            <h3>Wrapping your content</h3>
+            <p>Wrap the content you want to show by default on a surface like so:
+            <pre>&lt;div id="gallery"&gt;
+    &lt;div id="gallery-default"&gt;
+        &lt;p&gt;Surface #gallery default content&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</pre>
+            </p>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 surface-3" id="footer">
+            <div id="footer-default">
+                <h2 id="great-lorem-ipsum">Surface #footer</h2>
+                <p>Just a footer set on the index.html file.</p>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
