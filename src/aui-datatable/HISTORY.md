@@ -4,6 +4,22 @@
 
 ## @VERSION@
 
+* [AUI-3094](https://issues.liferay.com/browse/AUI-3094) Datatable handles incorrectly new line characters in textarea field.
+
+## [3.1.0](https://github.com/liferay/alloy-ui/releases/tag/3.1.0)
+
+* [AUI-2038](https://issues.liferay.com/browse/AUI-2038) UI should alert about non-unique value in structure field of type Select.
+
+## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
+
+No changes.
+
+## [3.0.2](https://github.com/liferay/alloy-ui/releases/tag/3.0.2)
+
+No changes.
+
+## [3.0.1](https://github.com/liferay/alloy-ui/releases/tag/3.0.1)
+
 * [AUI-1839](https://issues.liferay.com/browse/AUI-1839) Update AUI Datatable CSS from overriding bootstrap table CSS.
 * [AUI-1769](https://issues.liferay.com/browse/AUI-1769) Fix datatable celleditor checkbox / radio position.
 

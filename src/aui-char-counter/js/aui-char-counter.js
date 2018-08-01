@@ -5,7 +5,11 @@
  */
 
 var L = A.Lang,
-    isNumber = L.isNumber;
+    isNumber = L.isNumber,
+    isString = L.isString;
+
+    A.Node.DOM_EVENTS.compositionend = 1;
+    A.Node.DOM_EVENTS.compositionstart = 1;
 
 /**
  * A base class for CharCounter, providing:
@@ -43,6 +47,17 @@ var CharCounter = A.Component.create({
      */
     ATTRS: {
         /**
+         * ARIA atomic attribute that describes assistive technologies will present all, or only parts of, the changed region based on the change notifications defined by the aria-relevant attribute.
+         *
+         * @attribute atomic
+         * @default true
+         * @type {Boolean}
+         */
+        atomic: {
+            value: true
+        },
+
+        /**
          * Node or Selector to display the information of the counter.
          *
          * @attribute counter
@@ -54,6 +69,17 @@ var CharCounter = A.Component.create({
         },
 
         /**
+         * ARIA describedby attribute that describes the current element.
+         *
+         * @attribute describedby
+         * @default ''
+         * @type {String}
+         */
+        describedby: {
+            value: ''
+        },
+
+        /**
          * Node or Selector for the input field. Required.
          *
          * @attribute input
@@ -62,6 +88,19 @@ var CharCounter = A.Component.create({
          */
         input: {
             setter: A.one
+        },
+
+        /**
+         * ARIA live attribute to help assistive technology properly read updates
+         * to the number of characters remaining.
+         *
+         * @attribute live
+         * @default 'polite'
+         * @type {String}
+         */
+        live: {
+            validator: isString,
+            value: 'polite'
         },
 
         /**
@@ -79,6 +118,20 @@ var CharCounter = A.Component.create({
             },
             validator: isNumber,
             value: Infinity
+        },
+
+        /**
+         * Boolean indicating if use of the WAI-ARIA Roles and States
+         * should be enabled.
+         *
+         * @attribute useARIA
+         * @default true
+         * @type Boolean
+         */
+        useARIA: {
+            value: true,
+            validator: L.isBoolean,
+            writeOnce: 'initOnly'
         }
     },
 
@@ -94,14 +147,23 @@ var CharCounter = A.Component.create({
     prototype: {
 
         /**
-         * Event handler for the input [aui-event](../modules/aui-event.html)
-         * event.
+         * Holds the event handles for any bind event from the internal
+         * implementation.
          *
-         * @property handler
-         * @type EventHandle
+         * @property _eventHandles
+         * @type {Array}
          * @protected
          */
-        handler: null,
+        _eventHandles: null,
+
+        /**
+         * Tracks whether input is being manipulated by an IME tool.
+         *
+         * @property _inputComposition
+         * @type {Boolean}
+         * @protected
+         */
+        _inputComposition: false,
 
         /**
          * Construction logic executed during CharCounter instantiation.
@@ -126,6 +188,7 @@ var CharCounter = A.Component.create({
          */
         bindUI: function() {
             var instance = this;
+
             var input = instance.get('input');
 
             instance.publish('maxLength');
@@ -133,8 +196,12 @@ var CharCounter = A.Component.create({
             instance.after('maxLengthChange', instance.checkLength);
 
             if (input) {
-                // use cross browser input-handler event
-                instance.handler = input.on('input', A.bind(instance._onInputChange, instance));
+                instance._eventHandles = [
+                    input.on('compositionend', A.bind(instance._onInputCompositionEnd, instance)),
+                    input.on('compositionstart', A.bind(instance._onInputCompositionStart, instance)),
+                    // use cross browser input-handler event
+                    input.on('input', A.bind(instance._onInputChange, instance))
+                ];
             }
         },
 
@@ -146,7 +213,9 @@ var CharCounter = A.Component.create({
          */
         syncUI: function() {
             var instance = this;
+
             var counter = instance.get('counter');
+            var useAria = instance.get('useARIA');
 
             if (counter) {
                 var value = instance.get('input').val();
@@ -154,6 +223,10 @@ var CharCounter = A.Component.create({
                 var counterValue = instance.get('maxLength') - instance._getNormalizedLength(value);
 
                 counter.html(counterValue);
+            }
+
+            if (useAria) {
+                this._syncAriaControlsUI();
             }
         },
 
@@ -167,9 +240,7 @@ var CharCounter = A.Component.create({
         destroy: function() {
             var instance = this;
 
-            if (instance.handler) {
-                instance.handler.detach();
-            }
+            (new A.EventHandle(instance._eventHandles)).detach();
         },
 
         /**
@@ -185,6 +256,7 @@ var CharCounter = A.Component.create({
          */
         checkLength: function() {
             var instance = this;
+
             var input = instance.get('input');
 
             var returnValue = false;
@@ -253,7 +325,37 @@ var CharCounter = A.Component.create({
         _onInputChange: function() {
             var instance = this;
 
+            if (!instance._inputComposition) {
+                instance.checkLength();
+            }
+        },
+
+        /**
+         * Fired on input when `compositionend` event occurs.
+         *
+         * @method _onInputCompositionEnd
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onInputCompositionEnd: function() {
+            var instance = this;
+
+            instance._inputComposition = false;
+
             instance.checkLength();
+        },
+
+        /**
+         * Fired on input when `compositionstart` event occurs.
+         *
+         * @method _onInputCompositionStart
+         * @param {EventFacade} event
+         * @protected
+         */
+        _onInputCompositionStart: function() {
+            var instance = this;
+
+            instance._inputComposition = true;
         },
 
         /**
@@ -267,6 +369,7 @@ var CharCounter = A.Component.create({
          */
         _setMaxLength: function(v) {
             var instance = this;
+
             var input = instance.get('input');
 
             if (input && (v < Infinity)) {
@@ -274,6 +377,50 @@ var CharCounter = A.Component.create({
             }
 
             return v;
+        },
+
+         /**
+         * Updates the aria attribute for the component.
+         *
+         * @method _syncAriaControlsUI
+         * @protected
+         */
+        _syncAriaControlsUI: function() {
+            var instance = this;
+
+            instance.plug(
+                A.Plugin.Aria,
+                {
+                    attributes: {
+                        describedby: 'describedby',
+                    },
+                    attributeNode: instance.get('input')
+                }
+            );
+
+            var describedBy = instance.get('describedby');
+
+            describedBy = A.one('#' + describedBy);
+
+            if (describedBy) {
+                var atomic = instance.get('atomic');
+                var live = instance.get('live');
+
+                this.aria.setAttributes(
+                    [
+                        {
+                            name: 'atomic',
+                            node: describedBy,
+                            value: atomic
+                        },
+                        {
+                            name: 'live',
+                            node: describedBy,
+                            value: live
+                        }
+                    ]
+                );
+            }
         }
     }
 });

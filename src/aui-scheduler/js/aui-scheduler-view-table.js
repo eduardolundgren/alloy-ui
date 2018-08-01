@@ -72,7 +72,7 @@ var Lang = A.Lang,
         '</tbody>' +
         '</table>',
 
-    TPL_SVT_MORE = '<a href="javascript:;" class="' + CSS_SVT_MORE + '">{labelPrefix} {count} {labelSuffix}</a>',
+    TPL_SVT_MORE = '<a href="javascript:;" class="' + CSS_SVT_MORE + '">{showMoreLabel}</a>',
 
     TPL_SVT_ROW = '<div class="' + CSS_SVT_ROW + '"></div>',
 
@@ -155,6 +155,27 @@ var SchedulerTableView = A.Component.create({
          */
         displayRows: {
             value: 3
+        },
+
+        /**
+         * The element or locator to constrain the events overlay.
+         *
+         * When a cell has more events than can be shown, it offers an option
+         * to open an overlay to see all of them by clicking in a "See x more"
+         * link. This overlay should be constrained by another element, lest
+         * it could be cropped or would resize the entire document.
+         *
+         * The default value is `true`, in which case the overlay is constrained
+         * to the viewport.
+         *
+         * @attribute eventsOverlayConstrain
+         * @default null
+         * @type {Boolean | Node | String}
+         * @writeOnce
+         */
+        eventsOverlayConstrain: {
+            value: true,
+            writeOnce: true
         },
 
         /**
@@ -241,8 +262,7 @@ var SchedulerTableView = A.Component.create({
         strings: {
             value: {
                 close: 'Close',
-                show: 'Show',
-                more: 'more'
+                showMore: 'Show {0} more'
             }
         },
 
@@ -399,7 +419,7 @@ var SchedulerTableView = A.Component.create({
             var renderedEvents = false;
 
             instance.loopDates(rowStartDate, rowEndDate, function(celDate, index) {
-                var key = String(celDate.getTime());
+                var key = instance._getEvtRenderedStackKey(celDate);
 
                 var evtRenderedStack = instance.evtRenderedStack[key];
 
@@ -420,6 +440,10 @@ var SchedulerTableView = A.Component.create({
                     events = [];
                 }
 
+                events = A.Array.filter(events, function(currEvent) {
+                    return currEvent.get('visible');
+                });
+
                 var evt = instance._getRenderableEvent(events, rowStartDate, rowEndDate, celDate);
 
                 var evtColNode = A.Node.create(TPL_SVT_TABLE_DATA_COL);
@@ -428,12 +452,17 @@ var SchedulerTableView = A.Component.create({
                 if ((evtRenderedStack.length < events.length) && displayRows && (rowDisplayIndex === (displayRows - 1))) {
                     var strings = instance.get('strings');
 
+                    var showMoreLabel = Lang.sub(
+                        strings.showMore,
+                        [
+                            (events.length - evtRenderedStack.length)
+                        ]
+                    );
+
                     var showMoreEventsLink = A.Node.create(
                         Lang.sub(
                             TPL_SVT_MORE, {
-                                count: (events.length - evtRenderedStack.length),
-                                labelPrefix: strings.show,
-                                labelSuffix: strings.more
+                                showMoreLabel: showMoreLabel
                             }
                         )
                     );
@@ -617,7 +646,7 @@ var SchedulerTableView = A.Component.create({
             var instance = this;
             var scheduler = instance.get('scheduler');
 
-            var key = String(date.getTime());
+            var key = instance._getEvtRenderedStackKey(date);
 
             if (!instance.evtDateStack[key]) {
                 var events = scheduler.getIntersectEvents(date);
@@ -702,11 +731,11 @@ var SchedulerTableView = A.Component.create({
          */
         loopDates: function(startDate, endDate, fn, incrementBy, factor) {
             var instance = this;
+            var countDays = DateMath.countDays(startDate, endDate) + 1;
             var curDate = DateMath.clone(startDate);
-            var endDateMs = endDate.getTime();
             var index;
 
-            for (index = 0; curDate.getTime() <= endDateMs; index++) {
+            for (index = 0; index < countDays; index++) {
                 fn.apply(instance, [curDate, index]);
 
                 curDate = DateMath.add(curDate, (incrementBy || DateMath.DAY), (factor || 1));
@@ -829,7 +858,8 @@ var SchedulerTableView = A.Component.create({
          * @protected
          */
         _addEventToAllDates: function(event, firstDate, lastDate) {
-            var currentDate = firstDate,
+            var instance = this,
+                currentDate = firstDate,
                 eventEndDate = event.getClearEndDate();
 
             if (DateMath.after(lastDate, eventEndDate)) {
@@ -838,7 +868,7 @@ var SchedulerTableView = A.Component.create({
 
             while (!DateMath.after(currentDate, lastDate)) {
                 this._addToEvtDateStack(
-                    String(currentDate.getTime()),
+                    instance._getEvtRenderedStackKey(currentDate),
                     event
                 );
 
@@ -925,10 +955,10 @@ var SchedulerTableView = A.Component.create({
                 filterFn = this.get('filterFn'),
                 i = 0;
 
-            // Sort events by start date (they are sorted in a different way
+            // Sort events by start date and time (they are sorted in a different way
             // by default).
             events.sort(function(evt1, evt2) {
-                return evt1.getClearStartDate() - evt2.getClearStartDate();
+                return evt1.isAfter(evt2) ? 1 : -1;
             });
 
             while (i < events.length) {
@@ -1015,6 +1045,21 @@ var SchedulerTableView = A.Component.create({
         },
 
         /**
+         * Returns a unique string representation for a date (disregarding time).
+         *
+         * @method _getEvtRenderedStackKey
+         * @param {Date} date A date
+         * @protected
+         * @return {String} one string that uniquely represents the date.
+         */
+        _getEvtRenderedStackKey: function(date) {
+            var day = Lang.String.padNumber(date.getDate(), 2),
+                month = Lang.String.padNumber(date.getMonth(), 2);
+
+            return [date.getFullYear(), month, day].join('');
+        },
+
+        /**
          * Returns nn object containing the `colspan`, `left` and
          * `right` values that determine a `SchedulerEvent`'s split information.
          *
@@ -1031,10 +1076,10 @@ var SchedulerTableView = A.Component.create({
             var startDate = evt.getClearStartDate();
             var endDate = evt.getClearEndDate();
 
-            var maxColspan = DateMath.getDayOffset(rowEndDate, celDate);
+            var maxColspan = DateMath.countDays(rowEndDate, celDate);
 
             var info = {
-                colspan: Math.min(DateMath.getDayOffset(endDate, celDate), maxColspan) + 1,
+                colspan: Math.min(DateMath.countDays(endDate, celDate), maxColspan) + 1,
                 left: DateMath.before(startDate, rowStartDate),
                 right: DateMath.after(endDate, rowEndDate)
             };
@@ -1059,7 +1104,7 @@ var SchedulerTableView = A.Component.create({
          */
         _getRenderableEvent: function(events, rowStartDate, rowEndDate, celDate) {
             var instance = this,
-                key = String(celDate.getTime()),
+                key = instance._getEvtRenderedStackKey(celDate),
                 i;
 
             if (!instance.evtRenderedStack[key]) {
@@ -1131,6 +1176,8 @@ var SchedulerTableView = A.Component.create({
             var eventsNodeList = A.NodeList.create();
 
             A.Array.each(events, function(evt) {
+                evt.syncNodeTitleUI();
+
                 var evtNode = evt.get('node').item(0).clone();
 
                 evtNode.setData('scheduler-event', evt);
@@ -1174,6 +1221,7 @@ var SchedulerTableView = A.Component.create({
                         label: strings.close
                     }
                 ),
+                constrain: instance.get('eventsOverlayConstrain'),
                 render: instance.get('boundingBox'),
                 visible: false,
                 width: 250,
@@ -1227,9 +1275,11 @@ var SchedulerTableView = A.Component.create({
             var startDate = evt.get('startDate');
 
             var intervalStartDate = DateMath.clearTime(instance._findCurrentIntervalStart());
-            var startDateFirstDayOfWeek = DateMath.getFirstDayOfWeek(new Date(Math.max(startDate, intervalStartDate)),
-                firstDayOfWeek);
-            var paddingNodeIndex = Math.floor(DateMath.getDayOffset(celDate, startDateFirstDayOfWeek) / WEEK_LENGTH);
+            var startDateFirstDayOfWeek = DateMath.clearTime(DateMath.getFirstDayOfWeek(
+                new Date(Math.max(startDate, intervalStartDate)),
+                firstDayOfWeek
+            ));
+            var paddingNodeIndex = Math.floor(DateMath.countDays(celDate, startDateFirstDayOfWeek) / WEEK_LENGTH);
 
             if (evtNodeList.size() <= paddingNodeIndex) {
                 evt.addPaddingNode();
@@ -1241,6 +1291,7 @@ var SchedulerTableView = A.Component.create({
 
             var evtNode = evtNodeList.item(paddingNodeIndex);
 
+            evtNode.show();
             evtNode.setStyles({
                 height: 'auto',
                 left: 0,

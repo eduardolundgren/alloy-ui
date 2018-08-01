@@ -10,12 +10,9 @@ var Lang = A.Lang,
 
     CSS_VIDEO_NODE = getClassName('video', 'node'),
 
-    DEFAULT_PLAYER_PATH = A.config.base + 'aui-video/assets/player.swf?t=' + Lang.now(),
-
     DOC = A.config.doc,
 
-    TPL_VIDEO = '<video id="{id}" controls="controls" class="' + CSS_VIDEO_NODE + '" {height} {width}></video>',
-    TPL_VIDEO_FALLBACK = '<div class="' + CSS_VIDEO_NODE + '"></div>';
+    TPL_VIDEO = '<video id="{id}" controls="controls" class="' + CSS_VIDEO_NODE + '"></video>';
 
 /**
  * A base class for Video.
@@ -49,29 +46,6 @@ var Video = A.Component.create({
      * @static
      */
     ATTRS: {
-
-        /**
-         * The required Flash version for the swf player
-         *
-         * @attribute flashPlayerVersion
-         * @default '9,0,0,0'
-         * @type String
-         */
-        flashPlayerVersion: {
-            validator: Lang.isString,
-            value: '9,0,0,0'
-        },
-
-        /**
-         * Variables used by Flash player.
-         *
-         * @attribute flashVars
-         * @default {}
-         * @type Object
-         */
-        flashVars: {
-            value: {}
-        },
 
         /**
          * An additional list of attributes.
@@ -132,18 +106,6 @@ var Video = A.Component.create({
         },
 
         /**
-         * URL (on .swf format) used by Video to create
-         * a fallback player with Flash.
-         *
-         * @attribute swfUrl
-         * @default aui-video/assets/player.swf
-         * @type String
-         */
-        swfUrl: {
-            value: DEFAULT_PLAYER_PATH
-        },
-
-        /**
          * URL used by Video to play.
          *
          * @attribute url
@@ -177,7 +139,7 @@ var Video = A.Component.create({
      * @type Array
      * @static
      */
-    BIND_UI_ATTRS: ['url', 'poster', 'ogvUrl', 'swfUrl', 'fixedAttributes', 'flashVars'],
+    BIND_UI_ATTRS: ['url', 'poster', 'ogvUrl', 'fixedAttributes'],
 
     /**
      * Static property used to define the attributes
@@ -192,6 +154,19 @@ var Video = A.Component.create({
     prototype: {
 
         /**
+          * Destructor implementation.
+          * Lifecycle.
+          *
+          * @method destructor
+          * @protected
+          */
+        destructor: function() {
+            var instance = this;
+
+            (new A.EventHandle(instance._eventHandles)).detach();
+        },
+
+        /**
          * Render the Video component instance. Lifecycle.
          *
          * @method renderUI
@@ -201,20 +176,34 @@ var Video = A.Component.create({
             var instance = this;
 
             instance._renderVideoTask = A.debounce(instance._renderVideo, 1, instance);
-            instance._renderSwfTask = A.debounce(instance._renderSwf, 1, instance);
 
             instance._renderVideo(!instance.get('ogvUrl'));
 
-            instance._video.on('play', function (event) {
-                instance.fire('play', {
-                    cropType: event.type
-                });
-            });
-            instance._video.on('pause', function (event) {
-                instance.fire('pause', {
-                    cropType: event.type
-                });
-            });
+            instance._video.on(
+                'play',
+                function (event) {
+                    instance.fire(
+                        'play',
+                        {
+                            cropType: event.type
+                        }
+                    );
+                }
+            );
+
+            instance._video.on(
+                'pause',
+                function (event) {
+                    instance.fire(
+                        'pause',
+                        {
+                            cropType: event.type
+                        }
+                    );
+                }
+            );
+
+            instance._setResponsiveDimensions();
         },
 
         /**
@@ -227,13 +216,21 @@ var Video = A.Component.create({
             var instance = this;
 
             instance.publish(
-                'videoReady', {
+                'videoReady',
+                {
                     fireOnce: true
                 }
             );
 
             instance.publish('play');
             instance.publish('pause');
+
+            instance._eventHandles = [
+                A.after(
+                    'windowresize',
+                    A.bind('_afterWindowResize', instance)
+                )
+            ];
         },
 
         /**
@@ -246,10 +243,13 @@ var Video = A.Component.create({
             var instance = this;
 
             if (instance.get('useARIA')) {
-                instance.plug(A.Plugin.Aria, {
-                    roleName: instance.get('role'),
-                    roleNode: instance.get('contentBox')
-                });
+                instance.plug(
+                    A.Plugin.Aria,
+                    {
+                        roleName: instance.get('role'),
+                        roleNode: instance.get('contentBox')
+                    }
+                );
             }
         },
 
@@ -293,6 +293,19 @@ var Video = A.Component.create({
         },
 
         /**
+         * Fired after the `windowresize` event.
+         *
+         * @method _afterWindowResize
+         * @protected
+         */
+        _afterWindowResize: function() {
+            var instance = this;
+
+            instance._responsiveBoundingBox();
+            instance._setResponsiveDimensions();
+        },
+
+        /**
          * Create `source` element
          * using passed type attribute.
          *
@@ -309,125 +322,40 @@ var Video = A.Component.create({
         },
 
         /**
-         * Render SWF in DOM.
-         *
-         * @method _renderSwf
-         * @protected
-         */
-        _renderSwf: function() {
-            var instance = this;
-
-            var swfUrl = instance.get('swfUrl');
-
-            if (swfUrl) {
-                var videoUrl = instance.get('url');
-                var posterUrl = instance.get('poster');
-                var flashVars = instance.get('flashVars');
-
-                A.mix(
-                    flashVars, {
-                        controls: true,
-                        src: videoUrl,
-                        poster: posterUrl
-                    }
-                );
-
-                var flashVarString = A.QueryString.stringify(flashVars);
-
-                if (instance._swfId) {
-                    instance._video.removeChild(A.one('#' + instance._swfId));
-                }
-                else {
-                    instance._swfId = A.guid();
-                }
-
-                var tplObj = '<object id="' + instance._swfId + '" ';
-
-                if (UA.ie) {
-                    tplObj += 'classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" ' +
-                        'codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=' +
-                        instance.get('flashPlayerVersion') + '" ';
-                }
-                else {
-                    tplObj += 'type="application/x-shockwave-flash" data="' + swfUrl + '" ';
-                }
-
-                tplObj += 'height="100%" width="100%">';
-
-                if (UA.ie) {
-                    tplObj += '<param name="movie" value="' + swfUrl + '"/>';
-                }
-
-                var fixedAttributes = instance.get('fixedAttributes');
-
-                for (var i in fixedAttributes) {
-                    if (fixedAttributes.hasOwnProperty(i)) {
-                        tplObj += '<param name="' + i + '" value="' + fixedAttributes[i] + '" />';
-                    }
-                }
-
-                if (flashVarString) {
-                    tplObj += '<param name="flashVars" value="' + flashVarString + '" />';
-                }
-
-                if (posterUrl !== '') {
-                    tplObj += '<img src="' + posterUrl + '" alt="" />';
-                }
-
-                tplObj += '</object>';
-
-                instance._video.append(tplObj);
-            }
-        },
-
-        /**
          * Render Video in DOM.
          *
          * @method _renderVideo
-         * @param fallback
          * @protected
          */
-        _renderVideo: function(fallback) {
-            var instance = this,
-                attrHeight,
-                attrWidth,
+        _renderVideo: function() {
+            var instance,
                 height,
                 tpl,
                 tplObj,
                 video,
                 width;
 
+            instance = this;
             tpl = TPL_VIDEO;
 
-            if (UA.gecko && fallback) {
-                tpl = TPL_VIDEO_FALLBACK;
-            }
-            else {
-                attrHeight = '';
-                attrWidth = '';
-
-                height = instance.get('height');
-
-                width = instance.get('width');
-
-                if (height) {
-                    attrHeight = 'height="' + height + '"';
-                }
-
-                if (width) {
-                    attrWidth = 'width="' + width + '"';
-                }
-            }
+            height = instance.get('height');
+            width = instance.get('width');
 
             tplObj = Lang.sub(
-                tpl, {
-                    height: attrHeight,
-                    id: A.guid(),
-                    width: attrWidth
+                tpl,
+                {
+                    id: A.guid()
                 }
             );
 
             video = A.Node.create(tplObj);
+
+            if (width) {
+                video.width(width);
+            }
+            if (height) {
+                video.height(height);
+            }
 
             instance.get('contentBox').append(video);
 
@@ -435,29 +363,68 @@ var Video = A.Component.create({
         },
 
         /**
-         * Set the `fixedAttributes` on the UI.
+         * Remove the defined height and width from the bounding box.
          *
-         * @method _uiSetFixedAttributes
-         * @param val
+         * @method _responsiveBoundingBox
          * @protected
          */
-        _uiSetFixedAttributes: function() {
-            var instance = this;
+        _responsiveBoundingBox: function() {
+            var instance = this,
+                boundingBox = instance.get('boundingBox');
 
-            instance._renderSwfTask();
+            boundingBox.setStyles(
+                {
+                    height: '',
+                    width: ''
+                }
+            );
         },
 
         /**
-         * Set the `flashVars` on the UI.
+         * Set the dimensions of the video player based on the window size.
          *
-         * @method _uiSetFlashVars
-         * @param val
+         * @method _setResponsiveDimensions
          * @protected
          */
-        _uiSetFlashVars: function() {
-            var instance = this;
+        _setResponsiveDimensions: function() {
+            var instance,
+                aspectRatio,
+                currentTargetHeight,
+                currentTargetWidth,
+                height,
+                updatedHeight,
+                updatedWidth,
+                width,
+                winNode;
 
-            instance._renderSwfTask();
+            instance = this;
+
+            height = instance.get('height');
+            width = instance.get('width');
+
+            aspectRatio = height / width;
+
+            updatedHeight = height;
+            updatedWidth = width;
+
+            winNode = A.one(window);
+
+            currentTargetHeight = winNode.get('innerHeight');
+
+            if (currentTargetHeight < height) {
+                updatedHeight = currentTargetHeight;
+                updatedWidth = currentTargetHeight / aspectRatio;
+            }
+
+            currentTargetWidth = winNode.get('innerWidth');
+
+            if (currentTargetWidth < width) {
+                updatedHeight = currentTargetWidth * aspectRatio;
+                updatedWidth = currentTargetWidth;
+            }
+
+            instance._video.width(updatedWidth);
+            instance._video.height(updatedHeight);
         },
 
         /**
@@ -481,10 +448,7 @@ var Video = A.Component.create({
                     instance._renderVideoTask(!val);
                 }
 
-                if (!val) {
-                    instance._renderSwfTask();
-                }
-                else {
+                if (val) {
                     var sourceOgv = instance._sourceOgv;
 
                     if (!sourceOgv) {
@@ -515,21 +479,6 @@ var Video = A.Component.create({
             if (instance._usingVideo()) {
                 video.setAttribute('poster', val);
             }
-
-            instance._renderSwfTask();
-        },
-
-        /**
-         * Set the `swfUrl` on the UI.
-         *
-         * @method _uiSetSwfUrl
-         * @param val
-         * @protected
-         */
-        _uiSetSwfUrl: function() {
-            var instance = this;
-
-            instance._renderSwfTask();
         },
 
         /**
@@ -554,21 +503,17 @@ var Video = A.Component.create({
                     instance._sourceMp4 = null;
                 }
             }
-            else {
-                if (video || !ogvUrl) {
-                    if (!sourceMp4) {
-                        sourceMp4 = instance._createSource('video/mp4;');
+            else if (video || !ogvUrl) {
+                if (!sourceMp4) {
+                    sourceMp4 = instance._createSource('video/mp4;');
 
-                        video.append(sourceMp4);
+                    video.append(sourceMp4);
 
-                        instance._sourceMp4 = sourceMp4;
-                    }
-
-                    sourceMp4.attr('src', val);
+                    instance._sourceMp4 = sourceMp4;
                 }
-            }
 
-            instance._renderSwfTask();
+                sourceMp4.attr('src', val);
+            }
         },
 
         /**

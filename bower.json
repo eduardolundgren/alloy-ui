@@ -1,6 +1,6 @@
 {
   "name": "alloy-ui",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "homepage": "http://alloyui.com",
   "authors": [
     "Eduardo Lundgren <eduardo.lundgren@liferay.com>"
@@ -15,10 +15,10 @@
   ],
   "license": "BSD",
   "dependencies": {
-    "yui3": "liferay/yui3#patched-v3.18.0"
+    "yui3": "liferay/yui3#patched-v3.18.1"
   },
   "devDependencies": {
-    "ace-builds": "1.1.3",
+    "ace-builds": "1.1.4",
     "alloy-apidocs-theme": "liferay/alloy-apidocs-theme#master",
     "alloyui.com": "liferay/alloyui.com#master"
   }

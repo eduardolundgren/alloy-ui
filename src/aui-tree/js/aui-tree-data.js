@@ -100,8 +100,6 @@ A.mix(TreeData.prototype, {
     initializer: function() {
         var instance = this;
 
-        A.Array.invoke(this.get('children'), 'addTarget', this);
-
         // binding on initializer, needed before .render() phase
         instance.publish('move');
         instance.publish('append', {
@@ -110,8 +108,6 @@ A.mix(TreeData.prototype, {
         instance.publish('remove', {
             defaultFn: instance._removeChild
         });
-
-        instance.after('childrenChange', A.bind(instance._afterChildrenChange, instance));
     },
 
     /**
@@ -461,18 +457,6 @@ A.mix(TreeData.prototype, {
 
         instance.bubbleEvent('append', output, cancelBubbling);
     },
- 
-    /**
-     * Fires after children changes.
-     *
-     * @method _afterChildrenChange
-     * @param {EventFacade} event
-     * @protected
-     */
-    _afterChildrenChange: function(event) {
-        A.Array.invoke(event.prevVal, 'removeTarget', this);
-        A.Array.invoke(event.newVal, 'addTarget', this);
-    },
 
     /**
      * Append a child node to the TreeData.
@@ -574,6 +558,12 @@ A.mix(TreeData.prototype, {
         return cNodes;
     },
 
+    /**
+     * Get the number of child nodes of the current TreeData.
+     *
+     * @method getChildrenLength
+     * @return {Number}
+     */
     getChildrenLength: function() {
         var instance = this;
 

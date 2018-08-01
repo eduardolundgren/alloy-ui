@@ -56,10 +56,116 @@ YUI.add('aui-tooltip-delegate-tests', function(Y) {
 
                 trigger.simulate('mouseout');
             });
+        },
+
+        'should show/hide tooltip for all trigger events': function() {
+            var tooltip,
+                tooltipClass = 'tooltip-class',
+                trigger = Y.one('.tooltip-multiple-trigger-events');
+
+            this._delegate = new Y.TooltipDelegate({
+                cssClass: tooltipClass,
+                duration: 0,
+                trigger: '.tooltip-multiple-trigger-events',
+                triggerHideEvent: ['blur', 'mouseleave'],
+                triggerShowEvent: ['focus', 'mouseover']
+            });
+
+            trigger.simulate('mouseover');
+
+            tooltip = Y.one('.' + tooltipClass);
+
+            this.wait(function() {
+                Y.Assert.isTrue(tooltip.getStyle('opacity') > 0, '.tooltip is hidden.');
+
+                trigger.simulate('mouseout');
+
+                this.wait(function() {
+                    Y.Assert.isFalse(tooltip.getStyle('opacity') > 0, '.tooltip is not hidden.');
+
+                    trigger.simulate('focus');
+
+                    this.wait(function() {
+                        Y.Assert.isTrue(tooltip.getStyle('opacity') > 0, '.tooltip is hidden.');
+
+                        trigger.simulate('blur');
+
+                        this.wait(function() {
+                            Y.Assert.isFalse(tooltip.getStyle('opacity') > 0, '.tooltip is not hidden.');
+                        }, 0);
+                    }, 0);
+                }, 0);
+            }, 0);
+        },
+
+        'should validate triggerHideEvent and triggerShowEvent': function() {
+            this._delegate = new Y.TooltipDelegate({
+                duration: 0,
+                trigger: '.tooltip-multiple-trigger-events',
+                triggerHideEvent: [1, 'mouseleave'],
+                triggerShowEvent: {}
+            });
+
+            Y.Assert.areEqual('mouseenter', this._delegate.get('triggerShowEvent'));
+            Y.Assert.areEqual('mouseleave', this._delegate.get('triggerHideEvent'));
+        },
+
+        'tooltips should be aligned to trigger': function() {
+            var tooltip1 = Y.one('#trigger1');
+            var tooltip2 = Y.one('#trigger2');
+
+            var tooltip = new Y.TooltipDelegate(
+                {
+                    position: 'right',
+                    trigger: '.tooltip-delegate li',
+                    triggerHideEvent: ['blur', 'mouseleave'],
+                    triggerShowEvent: ['focus', 'mouseover'],
+                    visible: false
+                }
+            );
+
+            tooltip1.simulate('mouseover');
+
+            tooltip = tooltip.getTooltip();
+
+            var contentBox = tooltip.get('contentBox');
+
+            var oldTooltipContent = contentBox.text();
+            var oldOffsetLeft = contentBox.get('offsetLeft');
+            var oldOffsetTop = contentBox.get('offsetTop');
+
+            tooltip1.simulate('mouseout');
+
+            tooltip2.simulate('focus');
+            tooltip2.simulate('blur');
+
+            tooltip1.simulate('focus');
+
+            var newTooltipContent = contentBox.text();
+            var newOffsetLeft = contentBox.get('offsetLeft');
+            var newOffsetTop = contentBox.get('offsetTop');
+
+            Y.Assert.areEqual(
+                oldTooltipContent,
+                newTooltipContent,
+                'Tooltip should use the correct content.'
+            );
+
+            Y.Assert.areEqual(
+                oldOffsetTop,
+                newOffsetTop,
+                'Tooltip should be aligned with trigger\'s top position.'
+            );
+
+            Y.Assert.areEqual(
+                oldOffsetLeft,
+                newOffsetLeft,
+                'Tooltip should be aligned with trigger\'s left position.'
+            );
         }
     }));
     Y.Test.Runner.add(suite);
 
 }, '', {
-    requires: ['aui-tooltip-delegate', 'node-event-simulate', 'test', 'node-base']
+    requires: ['aui-tooltip-delegate', 'node-base', 'node-event-simulate', 'test']
 });

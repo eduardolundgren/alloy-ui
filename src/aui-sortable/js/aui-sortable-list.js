@@ -83,6 +83,8 @@ var SortableList = A.Component.create({
                 var dropNode = drop.get('node');
                 var dropOn = instance.get('dropOn');
 
+                dropNode.attr('dropzone', 'move');
+
                 return dropNode.one(dropOn);
             },
             validator: isFunction
@@ -199,6 +201,12 @@ var SortableList = A.Component.create({
 
             if (nodes) {
                 instance.addAll(nodes);
+
+                nodes.each(
+                    function(item) {
+                        item.attr('draggable', true);
+                    }
+                );
             }
         },
 
@@ -255,7 +263,8 @@ var SortableList = A.Component.create({
                 // creating delayed drag instance
                 new A.DD.Drag(
                     A.mix(dragOptions, instance.get('dd'))
-                ).plug(A.Plugin.DDProxy, proxyOptions);
+                ).plug(A.Plugin.DDProxy, proxyOptions)
+                .plug(A.Plugin.DDWinScroll);
             }
         },
 

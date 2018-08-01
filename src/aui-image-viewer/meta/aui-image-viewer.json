@@ -2,13 +2,15 @@
 	"aui-image-viewer-base": {
         "requires": [
             "anim",
+            "aui-aria",
             "aui-classnamemanager",
             "aui-node",
             "aui-widget-responsive",
             "base-build",
             "imageloader",
             "node-base",
-            "widget"
+            "widget",
+            "widget-stack"
         ],
         "skinnable": true
     },

@@ -9,6 +9,7 @@ var Lang = A.Lang,
     isString = Lang.isString,
 
     EVENT_ENTER_KEY = 'enterKey',
+    EVENT_TAB_KEY = 'tabKey',
 
     _DOCUMENT = A.one(A.config.doc);
 
@@ -84,7 +85,12 @@ DatePickerDelegate.prototype = {
                 A.bind('_onceUserInteractionRelease', instance), trigger),
 
             container.delegate(
-                'key', A.bind('_handleTabKeyEvent', instance), 'tab', trigger)
+                'key',
+                A.bind('_handleTabKeyEvent', instance), 'tab', trigger),
+
+            container.delegate(
+                'key',
+                A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
 
         ];
 
@@ -95,8 +101,16 @@ DatePickerDelegate.prototype = {
         instance.publish(
             'selectionChange', {
                 defaultFn: instance._defSelectionChangeFn
-            });
+            }
+        );
     },
+
+    /**
+     * Method not implemented.
+     *
+     * @method focusSelectedValue
+     */
+    focusSelectedValue: function() {},
 
     /**
      * Gets the selected dates.
@@ -108,13 +122,13 @@ DatePickerDelegate.prototype = {
     getSelectedDates: function(node) {
         var instance = this,
             activeInput = node || instance.get('activeInput'),
-            selectedDates = activeInput.getData('datepickerSelection');
+            selectedDates = null;
 
-        if (selectedDates) {
-            return selectedDates;
+        if (activeInput) {
+            selectedDates = activeInput.getData('datepickerSelection');
         }
 
-        return null;
+        return selectedDates;
     },
 
     /**
@@ -135,7 +149,7 @@ DatePickerDelegate.prototype = {
             });
         }
 
-        return null;
+       return null;
     },
 
     /**
@@ -195,7 +209,25 @@ DatePickerDelegate.prototype = {
 
         valueFormatter.call(instance, selection);
 
-        activeInput.setData('datepickerSelection', selection);
+        if (activeInput) {
+            activeInput.setData('datepickerSelection', selection);
+        }
+    },
+
+    /**
+     * Focus on active calendar.
+     *
+     * @method _focusActiveCalendar
+     * @protected
+     */
+    _focusActiveCalendar: function() {
+        var instance = this;
+
+        if (instance.calendar) {
+            var calendar = instance.getCalendar();
+
+            calendar.get('boundingBox').focus();
+        }
     },
 
     /**
@@ -210,10 +242,14 @@ DatePickerDelegate.prototype = {
         var instance = this,
             mask = instance.get('mask');
 
-        return A.Date.format(date, {
-            format: mask
-        });
+        return A.Date.format(
+            date,
+            {
+                format: mask
+            }
+        );
     },
+
 
     /**
     * Handles keydown events
@@ -228,16 +264,37 @@ DatePickerDelegate.prototype = {
         if (event.isKey('enter')) {
             instance.fire(EVENT_ENTER_KEY);
         }
+        else if (event.isKey('tab')) {
+            instance.fire(EVENT_TAB_KEY);
+        }
     },
 
     /**
-    * Handles tab key events
-    *
-    * @method _handleTabKeyEvent
-    * @protected
-    */
-    _handleTabKeyEvent: function() {
-        this.hide();
+     * Handles tab key events
+     *
+     * @method _handleTabKeyEvent
+     * @param event
+     * @protected
+     */
+    _handleTabKeyEvent: function(event) {
+        var instance = this;
+
+        instance._focusActiveCalendar();
+    },
+
+    /**
+     * Handles enter key events
+     *
+     * @method _handleEnterKeyEvent
+     * @param event
+     * @protected
+     */
+    _handleEnterKeyEvent: function(event) {
+        var instance = this;
+
+        event.preventDefault();
+
+        instance.show();
     },
 
     /**
@@ -267,6 +324,8 @@ DatePickerDelegate.prototype = {
 
         instance.useInputNodeOnce(event.currentTarget);
 
+        instance.focusSelectedValue();
+
         instance._userInteractionInProgress = false;
     },
 
@@ -295,21 +354,37 @@ DatePickerDelegate.prototype = {
         return function(opt_value) {
             var instance = this,
                 activeInput = instance.get('activeInput'),
-                activeInputValue = Lang.trim(opt_value || activeInput.val()),
+                activeInputVal,
+                activeInputValue,
                 dateSeparator = instance.get('dateSeparator'),
                 mask = instance.get('mask'),
                 dates;
 
+            if (activeInput) {
+                activeInputVal = activeInput.val();
+            }
+
+            activeInputValue = Lang.trim(opt_value || activeInputVal);
+
             if (activeInputValue) {
                 dates = [];
+
                 A.Array.each(
                     activeInputValue.split(dateSeparator),
                     function(text) {
                         text = Lang.trim(text);
+
                         if (text) {
-                            dates.push(A.Date.parse(mask, text));
+                            var date = A.Date.parse(mask, text);
+
+                            if (!Lang.isDate(date)) {
+                                date = new Date();
+                            }
+
+                            dates.push(date);
                         }
-                    });
+                    }
+                );
             }
 
             return dates;
@@ -334,9 +409,11 @@ DatePickerDelegate.prototype = {
                 values.push(instance._formatDate(date));
             });
 
-            activeInput.val(values.join(dateSeparator));
+            if (activeInput) {
+                activeInput.val(values.join(dateSeparator));
+            }
         };
-    }
+    },
 };
 
 /**

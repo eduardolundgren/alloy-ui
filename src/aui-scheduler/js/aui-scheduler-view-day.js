@@ -14,25 +14,6 @@ var Lang = A.Lang,
     DateMath = A.DataType.DateMath,
     WidgetStdMod = A.WidgetStdMod,
 
-    getScrollbarWidth = A.cached(function() {
-        var doc = A.config.doc,
-            testNode = doc.createElement('div'),
-            body = doc.getElementsByTagName('body')[0],
-            // 0.1 because cached doesn't support falsy refetch values
-            width = 0.1;
-
-        if (body) {
-            testNode.style.cssText = 'position:absolute;visibility:hidden;overflow:scroll;width:20px;';
-            testNode.appendChild(doc.createElement('p')).style.height = '1px';
-            body.insertBefore(testNode, body.firstChild);
-            width = testNode.offsetWidth - testNode.clientWidth;
-
-            body.removeChild(testNode);
-        }
-
-        return width;
-    }, null, 0.1),
-
     getNodeListHTMLParser = function(selector, sizeCondition) {
         return function(srcNode) {
             var nodes = srcNode.all(selector);
@@ -255,7 +236,7 @@ var SchedulerDayView = A.Component.create({
          */
         filterFn: {
             value: function(evt) {
-                return (evt.getHoursDuration() <= 24 && !evt.get('allDay'));
+                return (evt.get('visible') && evt.getHoursDuration() <= 24 && !evt.get('allDay'));
             }
         },
 
@@ -745,7 +726,7 @@ var SchedulerDayView = A.Component.create({
             var viewDate = DateMath.safeClearTime(
                 instance.get('scheduler').get('viewDate'));
 
-            return DateMath.getDayOffset(
+            return DateMath.countDays(
                 DateMath.safeClearTime(date), viewDate);
         },
 
@@ -831,6 +812,8 @@ var SchedulerDayView = A.Component.create({
             var scheduler = instance.get('scheduler');
             var filterFn = instance.get('filterFn');
 
+            instance.get('scheduler').flushEvents();
+
             instance.columnShims.each(function(colShimNode, i) {
                 var columnEvents = scheduler.getEventsByDay(instance.getDateByColumn(i), true);
                 var plottedEvents = [];
@@ -891,17 +874,11 @@ var SchedulerDayView = A.Component.create({
          * @method syncCurrentTimeUI
          */
         syncCurrentTimeUI: function() {
-            var currentTimeNode = this.get('currentTimeNode'),
-                todayColumn = this.colDaysNode.get('parentNode').one('.' + CSS_SCHEDULER_TODAY);
+            var instance = this;
+            var scheduler = instance.get('scheduler');
+            var currentTime = scheduler.get('currentTimeFn');
 
-            if (todayColumn) {
-                todayColumn.one('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM).append(currentTimeNode);
-
-                currentTimeNode.setStyle('top', this.calculateTop(new Date()) + 'px');
-            }
-            else {
-                currentTimeNode.remove();
-            }
+            currentTime(A.bind(instance._moveCurrentTimeNode, instance));
         },
 
         /**
@@ -935,43 +912,58 @@ var SchedulerDayView = A.Component.create({
          */
         syncEventsIntersectionUI: function(columnEvents) {
             var instance = this;
+            var insertedNodes = [];
             var eventWidth = instance.get('eventWidth');
-
-            instance.get('scheduler').flushEvents();
 
             A.Array.each(columnEvents, function(colEvt) {
                 var intercessors = instance.findEventIntersections(
                     colEvt, columnEvents);
 
+                var i = 0;
                 var total = intercessors.length;
                 var distributionRate = (eventWidth / total);
 
-                A.Array.each(intercessors, function(evt, j) {
-                    var evtNode = evt.get('node').item(0);
-                    var left = distributionRate * j;
-                    var width = distributionRate * 1.7;
+                A.Array.each(intercessors, function(evt) {
+                    var clientId = evt.get('clientId');
+                    var nodeIndex = A.Array.indexOf(insertedNodes, clientId);
 
-                    if (j === (total - 1)) {
-                        width = eventWidth - left;
+                    if (nodeIndex === -1) {
+                        nodeIndex = 0;
+
+                        if (evt._filtered) {
+                            nodeIndex = 1;
+                        }
+
+                        var evtNode = evt.get('node').item(nodeIndex);
+                        var left = distributionRate * i;
+                        var width = distributionRate * 1.7;
+
+                        if (i === (total - 1)) {
+                            width = eventWidth - left;
+                        }
+
+                        evtNode.setStyle('width', width + '%');
+                        evtNode.setStyle('left', left + '%');
+
+                        if (total > 1) {
+                            evtNode.addClass(CSS_SCHEDULER_EVENT_INTERSECTING);
+                        }
+                        else {
+                            evtNode.removeClass(CSS_SCHEDULER_EVENT_INTERSECTING);
+                        }
+
+                        var evtParentNode = evtNode.get('parentNode');
+
+                        if (evtParentNode) {
+                            evtParentNode.insert(evtNode, i);
+                        }
+
+                        evt._filtered = true;
+
+                        insertedNodes.push(clientId);
+
+                        i = i + 1;
                     }
-
-                    evtNode.setStyle('width', width + '%');
-                    evtNode.setStyle('left', left + '%');
-
-                    if (total > 1) {
-                        evtNode.addClass(CSS_SCHEDULER_EVENT_INTERSECTING);
-                    }
-                    else {
-                        evtNode.removeClass(CSS_SCHEDULER_EVENT_INTERSECTING);
-                    }
-
-                    var evtParentNode = evtNode.get('parentNode');
-
-                    if (evtParentNode) {
-                        evtParentNode.insert(evtNode, j);
-                    }
-
-                    evt._filtered = true;
                 });
             });
         },
@@ -1033,7 +1025,11 @@ var SchedulerDayView = A.Component.create({
 
                 headerView.plotEvents();
 
-                instance.headerNode.setStyle('paddingRight', getScrollbarWidth());
+                var headerNode = instance.headerNode;
+
+                if (headerNode) {
+                    headerNode.setStyle('overflowY', 'scroll');
+                }
 
                 var headerViewBB = headerView.get('boundingBox');
 
@@ -1072,7 +1068,7 @@ var SchedulerDayView = A.Component.create({
             var group = [];
 
             A.Array.each(events, function(evtCmp) {
-                if (!evt._filtered && evtCmp.get('visible') && evt.intersectHours(evtCmp)) {
+                if (evtCmp.get('visible') && evt.intersects(evtCmp)) {
                     group.push(evtCmp);
                 }
             });
@@ -1279,6 +1275,30 @@ var SchedulerDayView = A.Component.create({
         },
 
         /**
+         * Move the red line representing the current time to a specific point,
+         * determined by the given {Date} object.
+         *
+         * @method _moveCurrentTimeNode
+         * @param {Date} time
+         * @protected
+         */
+        _moveCurrentTimeNode: function(time) {
+            var instance = this;
+
+            var currentTimeNode = instance.get('currentTimeNode');
+            var todayColumn = instance.colDaysNode.get('parentNode').one('.' + CSS_SCHEDULER_TODAY);
+
+            if (todayColumn) {
+                todayColumn.one('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM).append(currentTimeNode);
+
+                currentTimeNode.setStyle('top', instance.calculateTop(time) + 'px');
+            }
+            else {
+                currentTimeNode.remove();
+            }
+        },
+
+        /**
          * Configures a `DD.Delegate` that handles `DD` events for this
          * `SchedulerDayView`.
          *
@@ -1445,6 +1465,16 @@ var SchedulerDayView = A.Component.create({
             var recorder = scheduler.get('eventRecorder');
 
             if (recorder && !scheduler.get('disabled')) {
+                if (!instance.recorderPlotted) {
+                    var startDate = recorder.get('startDate');
+                    var duration = recorder.get('duration');
+                    var endDate = DateMath.add(startDate, DateMath.MINUTES, duration);
+
+                    recorder.set('endDate', endDate, {
+                        silent: true
+                    });
+                }
+
                 if (instance.creationStartDate) {
                     instance.plotEvent(recorder);
 
@@ -1453,6 +1483,7 @@ var SchedulerDayView = A.Component.create({
             }
 
             instance.creationStartDate = null;
+            instance.recorderPlotted = false;
             instance.resizing = false;
             instance.startXY = null;
 
@@ -1477,7 +1508,7 @@ var SchedulerDayView = A.Component.create({
                 recorder.hidePopover();
 
                 if (target.test('.' + CSS_SCHEDULER_VIEW_DAY_TABLE_COL_SHIM)) {
-                    this._prepareEventCreation(event);
+                    this._prepareEventCreation(event, 30);
                 }
                 else if (target.test(
                             ['.' + CSS_SCHEDULER_VIEW_DAY_RESIZER,
@@ -1533,6 +1564,7 @@ var SchedulerDayView = A.Component.create({
 
                     instance.plotEvent(recorder);
 
+                    instance.recorderPlotted = true;
                     instance._delta = delta;
                 }
             }

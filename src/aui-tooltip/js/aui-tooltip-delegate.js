@@ -31,10 +31,16 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
      * @protected
      */
     initializer: function() {
-        var instance = this;
+        var instance = this,
+            useARIA = instance.get('useARIA');
 
         instance._eventHandles = [];
+
         instance.bindUI();
+
+        if (useARIA) {
+            instance.plug(A.Plugin.Aria);
+        }
     },
 
     /**
@@ -72,6 +78,12 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
         );
     },
 
+    /**
+     * Get the current Tooltip.
+     *
+     * @method getTooltip
+     * @return {Tooltip}
+     */
     getTooltip: function() {
         var instance = this,
             tooltip = instance.tooltip;
@@ -86,6 +98,7 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
                 opacity: instance.get('opacity'),
                 position: instance.get('position'),
                 html: instance.get('html'),
+                useARIA: instance.get('useARIA'),
                 visible: false,
                 zIndex: instance.get('zIndex')
             });
@@ -99,11 +112,18 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
      *
      * @method _onUserHideInteraction
      * @param event
+     * @protected
      */
     _onUserHideInteraction: function() {
-        var instance = this;
+        var instance = this,
+            tooltipBoundingBox = instance.getTooltip().get('boundingBox'),
+            useARIA = instance.get('useARIA');
 
         instance.getTooltip().hide();
+
+        if (useARIA) {
+            instance.aria.setAttribute('hidden', true, tooltipBoundingBox);
+        }
     },
 
     /**
@@ -111,14 +131,39 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
      *
      * @method _onUserShowInteraction
      * @param event
+     * @protected
      */
     _onUserShowInteraction: function(event) {
         var instance = this,
-            trigger;
+            tooltipBoundingBox = instance.getTooltip().get('boundingBox'),
+            trigger = event.currentTarget,
+            useARIA = instance.get('useARIA');
 
-        trigger = event.currentTarget;
+        instance.getTooltip().show().set('trigger', trigger).render();
 
-        instance.getTooltip().set('trigger', trigger).render().show();
+        if (useARIA) {
+            instance.aria.setAttribute('hidden', false, tooltipBoundingBox);
+        }
+    },
+
+    /**
+     * Validate the trigger events.
+     *
+     * @method _validateTriggerEvent
+     * @param  {String | Array} val
+     * @protected
+     */
+    _validateTriggerEvent: function(val) {
+        if (A.Lang.isString(val)) {
+            return true;
+        }
+        else if (A.Lang.isArray(val)) {
+            return val.every(function (element) {
+                return A.Lang.isString(element);
+            });
+        }
+
+        return false;
     }
 }, {
     /**
@@ -211,7 +256,7 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
          * @type String
          */
         triggerHideEvent: {
-            validator: Lang.isString,
+            validator: '_validateTriggerEvent',
             value: 'mouseleave',
             writeOnce: true
         },
@@ -224,9 +269,23 @@ A.TooltipDelegate = A.Base.create('tooltip-delegate', A.Base, [], {
          * @type String
          */
         triggerShowEvent: {
-            validator: Lang.isString,
+            validator: '_validateTriggerEvent',
             value: 'mouseenter',
             writeOnce: true
+        },
+
+        /**
+        * Boolean indicating if use of the WAI-ARIA Roles and States
+        * should be enabled.
+        *
+        * @attribute useARIA
+        * @default true
+        * @type Boolean
+        */
+        useARIA: {
+            validator: Lang.isBoolean,
+            value: true,
+            writeOnce: 'initOnly'
         },
 
         /**

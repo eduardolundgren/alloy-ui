@@ -2,9 +2,11 @@
     "aui-carousel": {
         "requires": [
             "anim",
-            "node-event-delegate",
+            "aui-event",
             "aui-image-viewer-base",
-            "aui-image-viewer-slideshow"
+            "aui-image-viewer-slideshow",
+            "node-event-delegate",
+            "node-focusmanager"
         ],
         "skinnable": true
     },

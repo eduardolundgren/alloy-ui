@@ -4,7 +4,20 @@
 
 ## @VERSION@
 
-No registries yet.
+* [AUI-3135](https://issues.liferay.com/browse/AUI-3135) Connectors are hidden when nodes are dragged in different positions
+* [AUI-1354](https://issues.liferay.com/browse/AUI-1354) Make aui-diagram-builder accessible
+
+## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
+
+No changes.
+
+## [3.0.2](https://github.com/liferay/alloy-ui/releases/tag/3.0.2)
+
+No changes.
+
+## [3.0.1](https://github.com/liferay/alloy-ui/releases/tag/3.0.1)
+
+* [AUI-1849](https://issues.liferay.com/browse/AUI-1849) XSS issue in AUI Diagram Builder node label
 
 ## [3.0.0](https://github.com/liferay/alloy-ui/releases/tag/3.0.0)
 

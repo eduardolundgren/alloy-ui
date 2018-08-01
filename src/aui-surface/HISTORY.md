@@ -4,6 +4,21 @@
 
 ## @VERSION@
 
+* [AUI-1580](https://issues.liferay.com/browse/AUI-1580) [Surface] Scroll position is wrong when opening links with hash
+* [AUI-1584](https://issues.liferay.com/browse/AUI-1584) [Surface] Empty screens are not being rendered on page refresh
+
+## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
+
+No changes.
+
+## [3.0.2](https://github.com/liferay/alloy-ui/releases/tag/3.0.2)
+
+No changes.
+
+## [3.0.1](https://github.com/liferay/alloy-ui/releases/tag/3.0.1)
+
+No changes.
+
 ## [3.0.0](https://github.com/liferay/alloy-ui/releases/tag/3.0.0)
 
 * [AUI-1650](https://issues.liferay.com/browse/AUI-1650) Surface reloads infinitely on android's mobile browser

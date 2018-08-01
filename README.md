@@ -36,25 +36,25 @@ gulp help
 
 ### Setup
 
-1. Install NodeJS >= [v0.11.13](http://nodejs.org/dist/v0.11.13/), if you don't have it yet.
+1. Install NodeJS <= [v0.12.0](http://nodejs.org/dist/v0.12.0/), if you don't have it yet.
 
 2. Install global dependencies:
 
-    ```
+```
 [sudo] npm install -g gulp
-    ```
+```
 
 3. Install local dependencies:
 
-    ```
+```
 npm install
-    ```
+```
 
 4. Build AlloyUI & YUI3 using Shifter:
 
-    ```
+```
 gulp build
-    ```
+```
 
 ## Discussion
 
@@ -85,7 +85,7 @@ The basic structure of the project is given in the following way:
 AlloyUI is maintained by these people and a bunch of awesome [contributors](https://github.com/liferay/alloy-ui/graphs/contributors).
 
 [![Eduardo Lundgren](http://gravatar.com/avatar/42327de520e674a6d1686845b30778d0?s=70)](https://github.com/eduardolundgren) | [![Nate Cavanaugh](http://gravatar.com/avatar/3f754d8a639c608d338b580b446c59d6?s=70)](https://github.com/natecavanaugh) | [![Bruno Basto](http://gravatar.com/avatar/4d7367e850216a8e6f9be296c74f0d68?s=70)](https://github.com/brunobasto) | [![Iliyan Peychev](http://gravatar.com/avatar/c2a0cb9ed0d19196b7fe061055c18838?s=70)](https://github.com/ipeychev) | [![Zeno Rocha](http://gravatar.com/avatar/e190023b66e2b8aa73a842b106920c93?s=70)](https://github.com/zenorocha)
---- | --- | --- | --- | --- | --- | ---
+--- | --- | --- | --- | ---
 [Eduardo Lundgren](https://github.com/eduardolundgren) | [Nate Cavanaugh](https://github.com/natecavanaugh) | [Bruno Basto](https://github.com/brunobasto) | [Iliyan Peychev](https://github.com/ipeychev) | [Zeno Rocha](https://github.com/zenorocha)
 
 ## History
@@ -96,4 +96,4 @@ Each module (located under `src/`) contains a `HISTORY.md` file, check them for 
 
 ## License
 
-[BSB License](https://github.com/liferay/alloy-ui/blob/master/LICENSE.md) (c) Liferay, Inc.
+[BSD-3-Clause License](https://github.com/liferay/alloy-ui/blob/master/LICENSE.md) (c) Liferay, Inc.

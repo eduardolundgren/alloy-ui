@@ -4,7 +4,30 @@
 
 ## @VERSION@
 
-No registries yet.
+* [AUI-1356](https://issues.liferay.com/browse/AUI-1356) Make aui-form-validator accessible with aria
+* [AUI-2820](https://issues.liferay.com/browse/AUI-2820) Radio button validation warnings don't disappear after input is entered
+
+## [3.1.0](https://github.com/liferay/alloy-ui/releases/tag/3.1.0)
+
+* [AUI-2811](https://issues.liferay.com/browse/AUI-2811) IE8 showing error "Object doesn't support this property or method" for aui-form-validator.js file
+* [AUI-2094](https://issues.liferay.com/browse/AUI-2094) Remove feedback added by Form Validator when the field is not required and empty
+* [AUI-2055](https://issues.liferay.com/browse/AUI-2055) aria-invalid attribute not removed from blank input fields
+* [AUI-2038](https://issues.liferay.com/browse/AUI-2038) UI should alert about non-unique value in structure field of type Select.
+* [AUI-2037](https://issues.liferay.com/browse/AUI-2037) validateField() does not reset error states for fields no longer in the DOM, preventing form submission
+* [AUI-2043](https://issues.liferay.com/browse/AUI-2043) Make required rule the default error message when showAllMessages is false.
+
+## [3.0.3](https://github.com/liferay/alloy-ui/releases/tag/3.0.3)
+
+* [AUI-2049](https://issues.liferay.com/browse/AUI-2049) Remove custom and requireValidation validator properties
+
+## [3.0.2](https://github.com/liferay/alloy-ui/releases/tag/3.0.2)
+
+* [AUI-2027](https://issues.liferay.com/browse/AUI-2027) Allow requiring custom validation without field values
+* [AUI-2040](https://issues.liferay.com/browse/AUI-2040) Change validation for file input on change event
+
+## [3.0.1](https://github.com/liferay/alloy-ui/releases/tag/3.0.1)
+
+No changes.
 
 ## [3.0.0](https://github.com/liferay/alloy-ui/releases/tag/3.0.0)
 
